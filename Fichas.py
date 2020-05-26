@@ -71,9 +71,3 @@ def crear_diccionario_de_puntos():
     return diccionario_de_puntos
 
 #Checkeando como hacer cambios en git
-
-
-
-
-
-

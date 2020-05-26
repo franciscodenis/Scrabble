@@ -1,34 +1,99 @@
-import PySimpleGUI as sg
-import MetaTablero
 
-filas = 5
-columnas = 6
-tablero = MetaTablero.Tablero(filas,columnas)
-atril = MetaTablero.Atril(5)
-atril.agregar_letras()
+import Casilla
+class Tablero:
+
+        #gettersYsetters
+    def set_filas(self, filas):
+        self.__filas=filas
+    def get_filas(self):
+        return self.__filas
+    def set_columnas(self, columnas):
+        self.__columnas= columnas
+    def get_columnas(self):
+        return self.__columnas
+    def set_matriz(self, matriz):
+        self.__matriz= matriz
+    def get_matriz(self):
+        return self.__matriz
+    #def set_matriz_pos(self,fila, columna,dato):
+    #    self.__matriz[fila, columna]=dato
+    #def get_matriz_pos(self,fila, columna):
+        #return self.__matriz #iterable matriz
 
 
-letter_button = { 'size' : (5, 2), 'pad' : (0,0)  } #"image_filename" : 'fondoBoton.png', 'image_subsample': 30
+    def __init__(self, filas, columnas):
+        self.set_filas(filas)
+        self.set_columnas(columnas)
+        self.set_matriz( [[Casilla.Casilla() for x in range(columnas)] for y in range(filas)])
+        for i in range(filas):
+            for j in range(columnas):
+                self.get_matriz()[i][j] = Casilla.Casilla(i,j)
 
-layout = [[sg.Button(key = (i, j),button_text= ' ', **letter_button) for i in range(filas)] for j in range(columnas)]
+    def imprimir(self):
+        ''' imprime el tablero'''
+        for i in range(self.get_filas()):
+            for j in range(self.get_columnas()):
+                print(self.get_matriz()[i][j])
 
-layout.append([sg.Text('Seleccione una letra de abajo', auto_size_text=True)])
-layout.append([sg.Button(key=(-1, i) , button_text= atril.espacio_fichas[i].letra, **letter_button) for i in range(5)])
+    def listado_botones(self):
+        '''   '''
+        listado =[]
+        for i in range(self.get_filas()):
+            for j in range(self.get_columnas()):
+                listado.append(self.get_matriz()[i][j].get_id())
+        return listado
 
-window = sg.Window('Scrabble', layout)
+    def click(self, atril, coordenadas):
+    #    if atril.casilla_seleccionada.letra
+        if((self.get_matriz()[coordenadas[0]][coordenadas[1]].get_habilitado())==True):
+            self.actualizar_letra_tablero(atril, coordenadas)
+        update_tablero = self.get_matriz()[coordenadas[0]][coordenadas[1]].get_letra()
+        update_atril = atril.get_casilla_seleccionada().get_letra()
+        return [update_tablero, update_atril]
 
-while True:
-    event, values = window.read()
+    def actualizar_letra_tablero(self, atril, coordenadas):
+        self.get_matriz()[coordenadas[0]][coordenadas[1]].set_letra(atril.get_casilla_seleccionada().get_letra())
+        self.get_matriz()[coordenadas[0]][coordenadas[1]].set_activo(True)
+        self.bloquear_tablero()
+        atril.get_casilla_seleccionada().set_letra (' ')
 
-    if event in tablero.listado_botones():
-        if (atril.casilla_seleccionada.ID in atril.listado_botones()):
-            refresh = tablero.click(atril, event)
-            window[event].update(refresh[0])
-            window[atril.casilla_seleccionada.ID].update(refresh[1])
 
-    if event in atril.listado_botones():
-        refresh = atril.click(tablero, event)
-        window[event].update(refresh)
+    def bloquear_tablero(self):
+        coordenadas_activas = []
+        for i in range(self.get_filas()):
+            for j in range(self.get_columnas()):
+                self.get_matriz()[i][j].set_habilitado( False)
+                if self.get_matriz()[i][j].get_activo() == True:
+                    coordenadas_activas.append(self.get_matriz()[i][j].get_id())
+        if len(coordenadas_activas) == 1:
+            try:
+                self.get_matriz()[coordenadas_activas[0][0] + 1][coordenadas_activas[0][1] + 0 ].set_habilitado(True)
+                self.get_matriz()[coordenadas_activas[0][0] - 1][coordenadas_activas[0][1] + 0].set_habilitado(True)
+                self.get_matriz()[coordenadas_activas[0][0] + 0][coordenadas_activas[0][1] + 1].set_habilitado(True)
+                self.get_matriz()[coordenadas_activas[0][0] + 0][coordenadas_activas[0][1] - 1].set_habilitado(True)
+            except IndexError:
+                print("HUBO UN ERROR DE INDEXACION") #Borrar
+                pass
 
-    if event in (None, 'Exit'):
-        break
+        if (len(coordenadas_activas) > 1):
+            coordenada_max = max(coordenadas_activas)
+            coordenada_min = min(coordenadas_activas)
+            print(coordenada_max)
+            print(coordenada_min)
+            horizontal = False
+            if coordenada_max[0] == coordenada_min[0]:
+                horizontal = True
+            if horizontal:
+                try:
+                    self.get_matriz()[coordenada_max[0] ][coordenada_max[1]+ 1].set_habilitado( True)
+                    self.get_matriz()[coordenada_min[0] ][coordenada_max[1]- 1].set_habilitado(True)
+                except IndexError:
+                    print("ERROR?")#borrar
+                    pass
+            else:
+                try:
+                    self.get_matriz()[coordenada_max[0]+1][coordenada_max[1]].set_habilitado( True)
+                    self.get_matriz()[coordenada_min[0]-1][coordenada_max[1]].set_habilitado( True)
+                except IndexError:
+                    print('errror')#borrar
+                    pass
