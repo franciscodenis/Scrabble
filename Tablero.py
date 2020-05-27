@@ -1,5 +1,8 @@
-
+from pattern.es import *
+from pattern.web import Wiktionary
 import Casilla
+import Fichas
+
 class Tablero:
 
         #gettersYsetters
@@ -85,15 +88,50 @@ class Tablero:
                 horizontal = True
             if horizontal:
                 try:
-                    self.get_matriz()[coordenada_max[0] ][coordenada_max[1]+ 1].set_habilitado( True)
-                    self.get_matriz()[coordenada_min[0] ][coordenada_max[1]- 1].set_habilitado(True)
+                    self.get_matriz()[coordenada_max[0] ][coordenada_max[1]+ 1].set_habilitado(True)
+                    self.get_matriz()[coordenada_min[0] ][coordenada_min[1]- 1].set_habilitado(True)
                 except IndexError:
                     print("ERROR?")#borrar
                     pass
+                finally:
+                    self.get_matriz()[coordenada_min[0] ][coordenada_max[1]- 1].set_habilitado(True)
             else:
                 try:
-                    self.get_matriz()[coordenada_max[0]+1][coordenada_max[1]].set_habilitado( True)
-                    self.get_matriz()[coordenada_min[0]-1][coordenada_max[1]].set_habilitado( True)
+                    self.get_matriz()[coordenada_max[0]+1][coordenada_max[1]].set_habilitado(True)
+                    self.get_matriz()[coordenada_min[0]-1][coordenada_max[1]].set_habilitado(True)
                 except IndexError:
                     print('errror')#borrar
                     pass
+                finally:
+                    self.get_matriz()[coordenada_min[0]-1][coordenada_max[1]].set_habilitado(True)
+
+
+    def calcular_puntaje(self, lista):
+        dic_puntos = Fichas.crear_diccionario_de_puntos()
+        total = 0
+        for coor in lista:
+            if self.get_matriz()[coor[0]][coor[1]].get_letra() in dic_puntos.keys():
+                total = total + dic_puntos[self.get_matriz()[coor[0]][coor[1]].get_letra()]
+        return total
+
+
+
+    def validar_pal(self, lista_coors):
+        puntaje = self.calcular_puntaje(lista_coors)
+        w = Wiktionary(language="es")
+        palabra_separada = []
+        for coor in lista_coors:
+            palabra_separada.append(self.get_matriz()[coor[0]][coor[1]].get_letra())
+        palabra = ''.join(palabra_separada)
+        analisis = parse(palabra.lower()).split('/')
+        if analisis[1] == "JJ" or analisis[1] == "VB":
+            return (True, puntaje)
+        elif (analisis[1] == "NN"):
+            article=w.search(palabra.lower())
+            if (article != None):
+                return (True, puntaje)
+            else:
+                return (False, 0)
+        else:
+            return (False, 0)
+
