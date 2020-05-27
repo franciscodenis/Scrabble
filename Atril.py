@@ -1,5 +1,7 @@
 import Casilla as cas #podemos cambiarlo si queda feo hacer un from casilla import *
-from random import randint
+import random
+import Fichas
+
 def random_letter():
     return chr(randint(65, 90))
 
@@ -33,8 +35,17 @@ class Atril:
 
     def agregar_letras(self):
         '''Agrega letras a un atril vacio'''
+        list_letras = Fichas.crear_bolsa_de_fichas()
+        print(len(list_letras))
         for i in self.get_espacio_fichas():
-            i.set_letra( random_letter())
+            letra = random.choice(list_letras)
+            if (letra.upper() in list_letras):
+                i.set_letra(letra)
+                list_letras.pop(list_letras.index(letra))
+            else:
+                letra = random.choice(list_letras)
+                i.set_letra(letra)
+        print(len(list_letras))
 
     def listado_botones(self):
         ''' retorna una lista con las teclas del atril'''
@@ -48,3 +59,4 @@ class Atril:
         self.set_casilla_seleccionada(self.get_espacio_fichas()[coordenadas[1]])
         refresh = self.get_casilla_seleccionada().get_letra()
         return refresh
+
