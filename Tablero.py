@@ -18,11 +18,6 @@ class Tablero:
         self.__matriz= matriz
     def get_matriz(self):
         return self.__matriz
-    #def set_matriz_pos(self,fila, columna,dato):
-    #    self.__matriz[fila, columna]=dato
-    #def get_matriz_pos(self,fila, columna):
-        #return self.__matriz #iterable matriz
-
 
     def __init__(self, filas, columnas):
         self.set_filas(filas)
@@ -71,8 +66,21 @@ class Tablero:
         if len(coordenadas_activas) == 1:
             try:
                 self.get_matriz()[coordenadas_activas[0][0] + 1][coordenadas_activas[0][1] + 0 ].set_habilitado(True)
+
+            except IndexError:
+                print("HUBO UN ERROR DE INDEXACION") #Borrar
+                pass
+            try:
                 self.get_matriz()[coordenadas_activas[0][0] - 1][coordenadas_activas[0][1] + 0].set_habilitado(True)
+            except IndexError:
+                print("HUBO UN ERROR DE INDEXACION") #Borrar
+                pass
+            try:
                 self.get_matriz()[coordenadas_activas[0][0] + 0][coordenadas_activas[0][1] + 1].set_habilitado(True)
+            except IndexError:
+                print("HUBO UN ERROR DE INDEXACION") #Borrar
+                pass
+            try:
                 self.get_matriz()[coordenadas_activas[0][0] + 0][coordenadas_activas[0][1] - 1].set_habilitado(True)
             except IndexError:
                 print("HUBO UN ERROR DE INDEXACION") #Borrar
@@ -89,7 +97,13 @@ class Tablero:
             if horizontal:
                 try:
                     self.get_matriz()[coordenada_max[0] ][coordenada_max[1]+ 1].set_habilitado(True)
+                except IndexError:
+                    print("ERROR?")#borrar
+                    pass
+                try:
                     self.get_matriz()[coordenada_min[0] ][coordenada_min[1]- 1].set_habilitado(True)
+
+
                 except IndexError:
                     print("ERROR?")#borrar
                     pass
@@ -98,12 +112,13 @@ class Tablero:
             else:
                 try:
                     self.get_matriz()[coordenada_max[0]+1][coordenada_max[1]].set_habilitado(True)
-                    self.get_matriz()[coordenada_min[0]-1][coordenada_max[1]].set_habilitado(True)
+                except IndexError:
+                    pass
+                try:
+                    self.get_matriz()[coordenada_min[0]-1][coordenada_min[1]].set_habilitado(True)
                 except IndexError:
                     print('errror')#borrar
                     pass
-                finally:
-                    self.get_matriz()[coordenada_min[0]-1][coordenada_max[1]].set_habilitado(True)
 
 
     def calcular_puntaje(self, lista):
@@ -129,9 +144,9 @@ class Tablero:
         elif (analisis[1] == "NN"):
             article=w.search(palabra.lower())
             if (article != None):
+
                 return (True, puntaje)
             else:
                 return (False, 0)
         else:
             return (False, 0)
-
