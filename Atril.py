@@ -14,7 +14,6 @@ def random_letter(lista_letras ):
 
 class Atril:
 
-
     __casilla_seleccionada = cas.Casilla()
 
     #----------- getters y setters-------------------------
@@ -56,13 +55,33 @@ class Atril:
     def refrescar_atril(self, window):
         letras=(self.get_espacio_fichas())
         for i in range(len(letras)):
-            window[(-1,i)].update(text=letras[i].get_letra())
+            window.Element((-1,i)).Update(text=letras[i].get_letra())
 
 
     def llenar_atril(self, lista_letras):
         for i in self.get_espacio_fichas():
             if i.get_letra()== "" or i.get_letra()==' ': # tengo que llenar
-                i.set_letra(random_letter.get_espacio_fichas())
+                i.set_letra(random_letter(lista_letras))
+
+    def devolver_fallo(self, lista_coor, window, tablero):
+        '''Este metodo devuelve las letras al atril'''
+        letra_devolver = []
+        letras = self.get_espacio_fichas()
+        for coor in lista_coor: #actualiza los botones usados en el tablero y se guarda las letras para devolver al atril
+            letra_devolver.append(tablero.get_matriz()[coor[0]][coor[1]].get_letra())
+            tablero.get_matriz()[coor[0]][coor[1]].set_letra(' ')
+            tablero.get_matriz()[coor[0]][coor[1]].set_activo(False)
+            window.Element(coor).Update(tablero.get_matriz()[coor[0]][coor[1]].get_letra(), button_color=(('white', 'white')))
+            tablero.get_coorUsadas().remove(coor) #libera la lista de las coordenadas de los botones que se actualizaron
+        for i in range(len(letras)): #devuelve las letras al atril(falta pulir)
+            if letras[i].get_letra() == '' or letras[i].get_letra() == ' ':
+                if (len(letra_devolver) > 0):
+                    letras[i].set_letra(letra_devolver[0])
+                    window.Element((-1, i)).Update(letras[i].get_letra())
+                    letra_devolver.pop(0)
+        #for letra in letra_devolver:
+
+
 
 
 
