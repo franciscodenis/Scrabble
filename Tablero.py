@@ -215,6 +215,42 @@ class Tablero:
         lista_2L=[(5,8),(7,7),(7,9)]
         lista_2L= self.devolver_lista(lista_2L)
         self.modificar_premios(lista_2L,'2L','2L','#33D4FF')#celeste
+        
+   # def modificaciones_principiante(self):
+       # self.set_columnas(15)
+       # self.set_filas(15)
+       # lista_3p = []
+       # lista_2p = []
+       # lista_3l = []
+       # lista_2l = []
+       # for i in range(0, 15, 2):
+       #     tupla = (i, i)
+       #     tupla2 = (((self.get_columnas()-1)-i), ((self.get_filas()-1)-i))
+       #     lista_3p.append(tupla)
+       #     lista_3p.append(tupla2)
+       # self.modificar_premios(lista_3p,'3P','3P','#33FF71') #verde
+       # for i in range(1, 14, 2):
+       #     if (i == 7):
+       #         continue
+       #     tupla = (i, i)
+       #     tupla2 = (((self.get_columnas()-1)-i), ((self.get_filas()-1)-i))
+       #     lista_2l.append(tupla)
+       #     lista_2l.append(tupla2)
+       # self.modificar_premios(lista_2l,'2L','2L','#33D4FF') #naranja
+       # for i in range(0, 15, 2):
+       #     tupla = ((i, (self.get_columnas()-1)-i))
+       #     tupla2 = (((self.get_filas()-1)-i), i)
+       #     lista_3l.append(tupla)
+       #     lista_3l.append(tupla2)
+       # self.modificar_premios(lista_3l,'3L','3L','#334CFF') #azul
+       # for i in range(1, 14, 2):
+       #     if (i == 7):
+       #         continue
+       #     tupla = ((i, (self.get_columnas()-1)-i))
+       #     tupla2 = (((self.get_filas()-1)-i), i)
+       #     lista_2p.append(tupla)
+       #     lista_2p.append(tupla2)
+       # self.modificar_premios(lista_2p,'2P','2P','#FFC133')#celeste    
 
     def modificaciones_intermedio(self):
 
