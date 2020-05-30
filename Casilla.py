@@ -9,16 +9,25 @@ class Casilla:
         self.set_definitivo(False) # Evita la modificación de la casilla definitivamente
         self.set_letra('') # Letra almacenada temporal o definitivamente en la casilla.
         self.set_multiplicador_de_puntos(multiplicador) # Multiplica los puntos de la letra al ocupar la casilla.
-        self.set_imagen_fondo( '') #String de la dirección de la imagen de fondo.
+        self.set_imagen_fondo('') #String de la dirección de la imagen de fondo.
         self.set_premio(' ')
         self.set_color('white')
+        self.set_tiene_letra(False)
 
 
 #--------------------GETTERS Y SETTERS
     def set_color(self, color):
         self.__color= color
+
     def get_color(self):
         return self.__color
+
+    def set_tiene_letra(self, tiene_letra):
+        self.__tiene_letra = tiene_letra
+
+    def get_tiene_letra(self):
+        return self.__tiene_letra
+
 
     def set_premio(self, premio):
         self.__premio= premio

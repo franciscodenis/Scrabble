@@ -12,16 +12,16 @@ def random_letter(lista_letras ):
             lista_nueva.remove(letra) #no hacer el remove definitivo aca, hacer en el metodo validar
             return letra
 
-class Atril:
-    __casilla_seleccionada = cas.Casilla()
+class Atril():
 
 
     def __init__(self, columnas):
+        self.__casilla_seleccionada  = None
         self.set_columnas(columnas)
         self.set_espacio_fichas( [cas.Casilla() for x in range(columnas)])
         for i in range(columnas):
-            self.get_espacio_fichas()[i] =(cas.Casilla(-1, i)) #ES CORRECTO?
-        self.set_cambios_atril(3)
+            self.get_espacio_fichas()[i] =(cas.Casilla(-1, i))  # ES CORRECTO?
+        self.set_cambios_atril(3) # Cantidad de cambios está dada por la cantidad de fichas para cambiar en la bolsa
         self.set_esta_vacio(True)
 
 
@@ -59,11 +59,12 @@ class Atril:
         return self.__esta_vacio
 
 #_____________________________________________Comienzo de  otros metodos ____________
+
     def agregar_letras(self,lista_letras ):
         '''Agrega letras a un atril vacio'''
         for i in self.get_espacio_fichas():
             i.set_letra( random_letter(lista_letras))
-
+            i.set_tiene_letra(True)
 
     def cambiar_letras(self, lista_letras,window,tablero):
         ''' cambio las letras del atril por nuevas letras'''
@@ -112,7 +113,6 @@ class Atril:
         return listado
 
     def click(self, casilla, coordenadas):
-
         self.set_casilla_seleccionada(self.get_espacio_fichas()[coordenadas[1]])
         refresh = self.get_casilla_seleccionada().get_letra()
         return refresh

@@ -1,42 +1,43 @@
-from pattern.es import *
-from pattern.web import Wiktionary
 import Casilla
 import Fichas
 import PySimpleGUI as sg
+from pattern.es import *
+from pattern.web import Wiktionary
+
+
 class Tablero:
 
     def __init__(self, filas=15, columnas=15):
-        coordenadas = []
-        coordenadas_activas = []
+
         self.set_filas(filas)
         self.set_columnas(columnas)
         self.set_coorUsadas()
         self.set_coordenadasActivas()
-        self.set_matriz( [[Casilla.Casilla() for x in range(columnas)] for y in range(filas)])
+        self.set_matriz([[Casilla.Casilla() for x in range(columnas)] for y in range(filas)])
         for i in range(filas):
             for j in range(columnas):
                 self.get_matriz()[i][j] = Casilla.Casilla(i,j)
 
 
 #------------------------------Comienzo getters y setters-----------------------
-    def crearTablero(self ):
-        pass
-
-
-
 
     def set_filas(self, filas):
-        self.__filas=filas
+        self.__filas= filas
+
     def get_filas(self):
         return self.__filas
+
     def set_columnas(self, columnas):
         self.__columnas= columnas
+
     def get_columnas(self):
         return self.__columnas
     def set_matriz(self, matriz):
         self.__matriz= matriz
+
     def get_matriz(self):
         return self.__matriz
+
     def set_coorUsadas(self, listCoorUsadas=[]):
         self.__coorUsadas = listCoorUsadas
     def get_coorUsadas(self):
@@ -55,67 +56,77 @@ class Tablero:
                 print(self.get_matriz()[i][j])
 
     def listado_botones(self):
-        '''   '''
         listado =[]
         for i in range(self.get_filas()):
             for j in range(self.get_columnas()):
                 listado.append(self.get_matriz()[i][j].get_id())
         return listado
 
-    def click(self, atril, coordenadas):
-    #    if atril.casilla_seleccionada.letra
-        if((self.get_matriz()[coordenadas[0]][coordenadas[1]].get_habilitado())==True):
-            self.actualizar_letra_tablero(atril, coordenadas)
-        update_tablero = self.get_matriz()[coordenadas[0]][coordenadas[1]].get_letra()
-        update_atril = atril.get_casilla_seleccionada().get_letra()
-        return [update_tablero, update_atril]
+    def click(self, atril, coordenadas, ventana):
+            if atril.get_casilla_seleccionada() is not None:
+                if self.get_matriz()[coordenadas[0]][coordenadas[1]].get_habilitado() and not self.get_matriz()[coordenadas[0]][coordenadas[1]].get_definitivo():
+                    self.actualizar_letra_tablero(atril, coordenadas)
+                    ventana.Element(atril.get_casilla_seleccionada().get_id()).Update(' ')
+                    atril.set_casilla_seleccionada(None)
+                    ventana.Element(coordenadas).Update(self.get_matriz()[coordenadas[0]][coordenadas[1]].get_letra(), button_color=('white', '#C8C652'))
+
+
 
     def actualizar_letra_tablero(self, atril, coordenadas):
         self.get_matriz()[coordenadas[0]][coordenadas[1]].set_letra(atril.get_casilla_seleccionada().get_letra())
         self.get_matriz()[coordenadas[0]][coordenadas[1]].set_activo(True)
         self.bloquear_tablero()
-        atril.get_casilla_seleccionada().set_letra (' ')
 
 
-    def bloquear_tablero(self):
+    def enlistar_coordenadas_activas(self):
+        coordenadas_activas = []
         for i in range(self.get_filas()):
             for j in range(self.get_columnas()):
                 self.get_matriz()[i][j].set_habilitado(False)
-                if self.get_matriz()[i][j].get_activo() == True:
-                    if self.get_matriz()[i][j].get_id() not in self.get_coorUsadas(): #agrega solamente si no estan en esta lista para que no haya coordenadas repetidas
-                        self.get_coordenadasActivas().append(self.get_matriz()[i][j].get_id())
-                        self.get_coorUsadas().append(self.get_matriz()[i][j].get_id())
+                if self.get_matriz()[i][j].get_activo():
+                    coordenadas_activas.append(self.get_matriz()[i][j].get_id())
+        return coordenadas_activas
 
-        if len(self.get_coordenadasActivas()) == 1:
-            try:
-                self.get_matriz()[self.get_coordenadasActivas()[0][0] + 1][self.get_coordenadasActivas()[0][1] + 0 ].set_habilitado(True)
+    def bloquear_tablero(self):
+        coordenadas_activas = self.enlistar_coordenadas_activas()
+        adyacente_arriba = (0, -1)
+        adyacente_abajo = (0, +1)
+        adyacente_izquierda = (-1, 0)
+        adyacente_derecha = (+1, 0)
 
-            except IndexError:
-                print("HUBO UN ERROR DE INDEXACION") #Borrar
-                pass
-            try:
-                self.get_matriz()[self.get_coordenadasActivas()[0][0] + 0][self.get_coordenadasActivas()[0][1] + 1].set_habilitado(True)
-            except IndexError:
-                print("HUBO UN ERROR DE INDEXACION") #Borrar
-                pass
-        if (len(self.get_coordenadasActivas()) > 1):
-            coordenada_max = max(self.get_coordenadasActivas())
-            coordenada_min = min(self.get_coordenadasActivas())
-            print(coordenada_max)
-            print(coordenada_min)
+        adyacentes_todas = (adyacente_arriba, adyacente_abajo, adyacente_izquierda, adyacente_derecha)
+
+        if len(coordenadas_activas) == 1:
+            for i in adyacentes_todas:
+                try:
+                    fila_a_desbloquear = coordenadas_activas[0][0]+i[1]
+                    columna_a_desbloquear =coordenadas_activas[0][1]+i[0]
+                    if fila_a_desbloquear >= 0 and columna_a_desbloquear >= 0:
+                        self.get_matriz()[fila_a_desbloquear][columna_a_desbloquear].set_habilitado(True)
+                except IndexError:
+                    print("Casilla a desbloquear fuera de rango, se ignora")  # Borrar
+                    pass
+
+        if len(coordenadas_activas) > 1:
+            coordenada_max = max(coordenadas_activas)
+            coordenada_min = min(coordenadas_activas)
             horizontal = False
-            if coordenada_max[0] == coordenada_min[0]:
+            if coordenada_max[0] != coordenada_min[0]:
                 horizontal = True
             if horizontal:
-                try:
-                    self.get_matriz()[coordenada_max[0] ][coordenada_max[1]+ 1].set_habilitado(True)
-                except IndexError:
-                    print("ERROR?")#borrar
-                    pass
+                coordenada_adyacente_izquierda = (coordenada_min[0]-1, coordenada_min[1])
+                coordenada_adyacente_derecha = (coordenada_max[0]+1, coordenada_max[1])
+                coordenadas_a_desbloquear = [coordenada_adyacente_izquierda, coordenada_adyacente_derecha]
             else:
+                coordenada_adyacente_arriba = (coordenada_min[0], coordenada_min[1]-1)
+                coordenada_adyacente_abajo = (coordenada_max[0], coordenada_max[1]+1)
+                coordenadas_a_desbloquear = [coordenada_adyacente_arriba, coordenada_adyacente_abajo]
+
+            for i in coordenadas_a_desbloquear:
                 try:
-                    self.get_matriz()[coordenada_max[0]+1][coordenada_max[1]].set_habilitado(True)
+                    self.get_matriz()[i[0]][i[1]].set_habilitado(True)
                 except IndexError:
+                    print("Casilla a desbloquear fuera de rango, se ignora")  # borrar
                     pass
 
     def calcular_puntaje(self, lista):
@@ -125,26 +136,34 @@ class Tablero:
             if self.get_matriz()[coor[0]][coor[1]].get_letra() in dic_puntos.keys():
                 total = total + dic_puntos[self.get_matriz()[coor[0]][coor[1]].get_letra()]
         return total
+
+    def desactivar_coordenadas_activas(self, lista_coordenadas_activas):
+        for coor in lista_coordenadas_activas:
+            self.get_matriz()[coor[0]][coor[1]].set_activo(False)
+
     def set_palabra_definitiva(self, lista_coors): #ver si se usa
         for coor in lista_coors:
             #eliminar_letra(lista_letras) hay que hacerlo!!
             self.get_matriz()[coor[0]][coor[1]].set_definitivo(True)
 
-    def validar_pal(self, lista_coors):
-        puntaje = self.calcular_puntaje(lista_coors)
+    def validar_pal(self):
+        lista_coordenadas_activas = self.enlistar_coordenadas_activas()
+        puntaje = self.calcular_puntaje(lista_coordenadas_activas)
         w = Wiktionary(language="es")
         palabra_separada = []
-        for coor in lista_coors:
+        for coor in lista_coordenadas_activas:
             palabra_separada.append(self.get_matriz()[coor[0]][coor[1]].get_letra())
         palabra = ''.join(palabra_separada)
         analisis = parse(palabra.lower()).split('/')
         if analisis[1] == "JJ" or analisis[1] == "VB":
-            self.set_palabra_definitiva(lista_coors)           # la palabra es definitiva
+            self.set_palabra_definitiva(lista_coordenadas_activas)           # la palabra es definitiva
             return (True, puntaje)
         elif (analisis[1] == "NN"):
             article=w.search(palabra.lower())
-            if (article != None):
-                self.set_palabra_definitiva(lista_coors)       # la palabra es definitiva
+            if article is not None:
+                self.set_palabra_definitiva(lista_coordenadas_activas)
+                # la palabra es definitiva
+                self.desactivar_coordenadas_activas(lista_coordenadas_activas)
                 return (True, puntaje)
             else:
 
@@ -158,6 +177,8 @@ class Tablero:
             for j in range(self.get_columnas()):
                 if (self.get_matriz()[i][j].get_activo() == False):
                     self.get_matriz()[i][j].set_habilitado(True)
+
+
 #______________________________________________________agregado nuevo
 
 
@@ -227,7 +248,7 @@ class Tablero:
                     continue
         filas= self.get_filas()
         columnas= self.get_columnas()
-        letter_tablero = { 'size' : (4,2), 'pad' : (0,0)} # ACA PODEMOS MODIFICAR EL TAMAN
+        letter_tablero = { 'size' : (2,1), 'pad' : (0,0)} # ACA PODEMOS MODIFICAR EL TAMAN
         layout = [[sg.Button(key = (i, j),button_text= self.get_matriz()[i][j].get_premio(),button_color=('white',self.get_matriz()[i][j].get_color()),  **letter_tablero) for i in range(filas)] for j in range(columnas)]
 
         return layout
