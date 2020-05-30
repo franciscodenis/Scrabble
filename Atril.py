@@ -83,21 +83,22 @@ class Atril():
     def llenar_atril(self, lista_letras):
 
         for i in self.get_espacio_fichas():
-            if i.get_letra()== "" or i.get_letra()==' ': # tengo que llenar
+            if i.get_letra()== "" or i.get_letra()==' ': # tengo que llenars
                 i.set_letra(random_letter(lista_letras))
 
     def devolver_fallo(self, window, tablero): #no hace falta mandar la lista de coordenadas si te mandas el tablero -agus
         '''Este metodo devuelve las letras al atril'''
         letra_devolver = []
         letras = self.get_espacio_fichas()
-        for coor in tablero.get_coordenadasActivas(): #actualiza los botones usados en el tablero y se guarda las letras para devolver al atril
-            letra_devolver.append(tablero.get_matriz()[coor[0]][coor[1]].get_letra())
-            tablero.get_matriz()[coor[0]][coor[1]].set_letra(' ')
-            tablero.get_matriz()[coor[0]][coor[1]].set_activo(False)
-            window.Element(coor).Update(tablero.get_matriz()[coor[0]][coor[1]].get_letra(), button_color=(('white', 'white')))
+        for coor in tablero.enlistar_coordenadas_activas(): #actualiza los botones usados en el tablero y se guarda las letras para devolver al atril
+            if (tablero.get_matriz()[coor[0]][coor[1]].get_definitivo() == False): #ahora solo devuelve las letras que no son definitivas
+                letra_devolver.append(tablero.get_matriz()[coor[0]][coor[1]].get_letra())
+                tablero.get_matriz()[coor[0]][coor[1]].set_letra(' ')
+                tablero.get_matriz()[coor[0]][coor[1]].set_activo(False)
+                window.Element(coor).Update(tablero.get_matriz()[coor[0]][coor[1]].get_letra(), button_color=(('white', 'white')))
             # tablero.get_coorUsadas().remove(coor) #NO HACE FALTA PORQUE SE BORRAN CUANDO HACES EL SET.ACTIVO(FALSE)-agus
         for i in range(len(letras)):              #devuelve las letras al atril(falta pulir)... segun agus(yo) esta perfecto, solo faltaba desbloquear el tablero
-            if letras[i].get_letra() == '' or letras[i].get_letra() == ' ':
+            if letras[i].get_letra() == ' ':
                 if (len(letra_devolver) > 0):
                     letras[i].set_letra(letra_devolver[0])
                     window.Element((-1, i)).Update(letras[i].get_letra())
