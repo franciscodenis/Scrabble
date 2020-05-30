@@ -1,4 +1,3 @@
-
 def crear_bolsa_de_fichas ():
     bolsa_de_fichas = []
 
