@@ -49,11 +49,10 @@ def main():
                 window.Element('punt').Update(puntaje_total)
                 atril.llenar_atril(fichas_jugador) #no pude probar el llenar atril
                 atril.refrescar_atril(window)
-                tablero.get_coordenadasActivas().clear() #libera la lista de coordenadas activas para que me tome las coordenadas mini y max correcta
             else:
                 print('Palabra incorrecta, se le devolvera las fichas')
                 atril.devolver_fallo(window, tablero) #Devuelve las letras del tablero al atril(falta pulir)
-                tablero.get_coordenadasActivas().clear() #libera la lista de coordenadas activas para que me tome las coordenadas mini y max correcta
+                #tablero.get_coordenadasActivas().clear() #libera la lista de coordenadas activas para que me tome las coordenadas mini y max correcta
             tablero.desbloquear_tablero() #desbloquea el tablero
         if event in (None, 'Exit'):
             break
