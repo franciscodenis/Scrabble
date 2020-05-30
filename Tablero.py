@@ -66,6 +66,7 @@ class Tablero:
             if atril.get_casilla_seleccionada() is not None:
                 if self.get_matriz()[coordenadas[0]][coordenadas[1]].get_habilitado() and not self.get_matriz()[coordenadas[0]][coordenadas[1]].get_definitivo():
                     self.actualizar_letra_tablero(atril, coordenadas)
+                    atril.get_casilla_seleccionada().set_letra(' ')
                     ventana.Element(atril.get_casilla_seleccionada().get_id()).Update(' ')
                     atril.set_casilla_seleccionada(None)
                     ventana.Element(coordenadas).Update(self.get_matriz()[coordenadas[0]][coordenadas[1]].get_letra(), button_color=('white', '#C8C652'))
@@ -186,7 +187,7 @@ class Tablero:
         for valor in lista:
             try:
                 self.get_matriz()[valor[0]][valor[1]].set_premio(tipo) # si es palabra x2, letrax2, letrax3
-                self.get_matriz()[valor[0]][valor[1]].set_color(color )
+                self.get_matriz()[valor[0]][valor[1]].set_color(color)
             except :
                 continue #por si me equivoque agregando tuplas
 
