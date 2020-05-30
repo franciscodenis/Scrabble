@@ -5,7 +5,20 @@ import Fichas
 
 class Tablero:
 
-        #gettersYsetters
+    def __init__(self, filas, columnas ):
+        coordenadas = []
+        coordenadas_activas = []
+        self.set_filas(filas)
+        self.set_columnas(columnas)
+        self.set_coorUsadas(coordenadas)
+        self.set_coordenadasActivas(coordenadas_activas)
+        self.set_matriz( [[Casilla.Casilla() for x in range(columnas)] for y in range(filas)])
+        for i in range(filas):
+            for j in range(columnas):
+                self.get_matriz()[i][j] = Casilla.Casilla(i,j)
+
+
+#------------------------------Comienzo getters y setters-----------------------
     def set_filas(self, filas):
         self.__filas=filas
     def get_filas(self):
@@ -27,17 +40,8 @@ class Tablero:
     def get_coordenadasActivas(self):
         return self.__coordenadas_activas
 
-    def __init__(self, filas, columnas):
-        coordenadas = []
-        coordenadas_activas = []
-        self.set_filas(filas)
-        self.set_columnas(columnas)
-        self.set_coorUsadas(coordenadas)
-        self.set_coordenadasActivas(coordenadas_activas)
-        self.set_matriz( [[Casilla.Casilla() for x in range(columnas)] for y in range(filas)])
-        for i in range(filas):
-            for j in range(columnas):
-                self.get_matriz()[i][j] = Casilla.Casilla(i,j)
+#---------------------comienzo otros metodos-----------------------------------
+
 
     def imprimir(self):
         ''' imprime el tablero'''
@@ -116,8 +120,10 @@ class Tablero:
             if self.get_matriz()[coor[0]][coor[1]].get_letra() in dic_puntos.keys():
                 total = total + dic_puntos[self.get_matriz()[coor[0]][coor[1]].get_letra()]
         return total
-
-
+    def set_palabra_definitiva(self, lista_coors): #ver si se usa
+        for coor in lista_coors:
+            #eliminar_letra(lista_letras) hay que hacerlo!!
+            self.get_matriz()[coor[0]][coor[1]].set_definitivo(True)
 
     def validar_pal(self, lista_coors):
         puntaje = self.calcular_puntaje(lista_coors)
@@ -128,18 +134,21 @@ class Tablero:
         palabra = ''.join(palabra_separada)
         analisis = parse(palabra.lower()).split('/')
         if analisis[1] == "JJ" or analisis[1] == "VB":
+            self.set_palabra_definitiva(lista_coors)           # la palabra es definitiva
             return (True, puntaje)
         elif (analisis[1] == "NN"):
             article=w.search(palabra.lower())
             if (article != None):
+                self.set_palabra_definitiva(lista_coors)       # la palabra es definitiva
                 return (True, puntaje)
             else:
+
                 return (False, 0)
         else:
             return (False, 0)
 
     def desbloquear_tablero(self):
-        '''desbloquea el tablero menos los botones activos'''
+        '''desbloquea el tablero menos los botones activos'''  #ver botones definitivos
         for i in range(self.get_filas()):
             for j in range(self.get_columnas()):
                 if (self.get_matriz()[i][j].get_activo() == False):

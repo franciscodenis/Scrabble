@@ -8,36 +8,13 @@ def random_letter(lista_letras ):
     lista_nueva= lista_letras.copy() # quiero asegurarme de no agarrar una letra que no exista en la bolsa pero todavia no la quiero borrar del todo
     while True:
         letra= chr(randint(65, 90))
-        if letra in (lista_letras):
+        if letra in (lista_nueva):
             lista_nueva.remove(letra) #no hacer el remove definitivo aca, hacer en el metodo validar
             return letra
 
 class Atril:
-
     __casilla_seleccionada = cas.Casilla()
 
-    #----------- getters y setters-------------------------
-    def set_cambios_atril(self, cantidad):
-        self.__cambios_atril= cantidad
-    def get_cambios_atril(self):
-        return self.__cambios_atril
-    def decrement_cambios_atril(self):
-        self.set_cambios_atril(self.get_cambios_atril()-1)
-
-    def set_espacio_fichas(self, arreglo):
-        self.__espacio_fichas= arreglo
-    def get_espacio_fichas(self):
-        return self.__espacio_fichas
-
-
-    def set_casilla_seleccionada(self, casilla):
-        self.__casilla_seleccionada = casilla
-    def get_casilla_seleccionada(self):
-        return self.__casilla_seleccionada
-    def set_columnas(self,columnas):
-        self.__columnas= columnas
-    def get_columnas(self):
-        return self.__columnas
 
     def __init__(self, columnas):
         self.set_columnas(columnas)
@@ -45,12 +22,56 @@ class Atril:
         for i in range(columnas):
             self.get_espacio_fichas()[i] =(cas.Casilla(-1, i)) #ES CORRECTO?
         self.set_cambios_atril(3)
+        self.set_esta_vacio(True)
 
-    def agregar_letras(self,lista_letras):
-        '''Agrega letras a un atril vacio, o hace cambio de letras '''
+
+    #----------- getters y setters-------------------------
+    # cambios_atril
+    def set_cambios_atril(self, cantidad):
+        self.__cambios_atril= cantidad
+    def get_cambios_atril(self):
+        return self.__cambios_atril
+    def decrement_cambios_atril(self):
+        self.set_cambios_atril(self.get_cambios_atril()-1)
+
+    #__espacio_fichas
+    def set_espacio_fichas(self, arreglo):
+        self.__espacio_fichas= arreglo
+    def get_espacio_fichas(self):
+        return self.__espacio_fichas
+
+    #__casilla_seleccionada
+    def set_casilla_seleccionada(self, casilla):
+        self.__casilla_seleccionada = casilla
+    def get_casilla_seleccionada(self):
+        return self.__casilla_seleccionada
+
+    #__columnas
+    def set_columnas(self,columnas):
+        self.__columnas= columnas
+    def get_columnas(self):
+        return self.__columnas
+
+    #__esta_vacio
+    def set_esta_vacio(self,validez):
+        self.__esta_vacio= validez
+    def esta_vacio(self):
+        return self.__esta_vacio
+
+#_____________________________________________Comienzo de  otros metodos ____________
+    def agregar_letras(self,lista_letras ):
+        '''Agrega letras a un atril vacio'''
         for i in self.get_espacio_fichas():
             i.set_letra( random_letter(lista_letras))
+
+
+    def cambiar_letras(self, lista_letras,window,tablero):
+        ''' cambio las letras del atril por nuevas letras'''
+        self.devolver_fallo(window,tablero) #devuelve las letras al atril
+        self.agregar_letras(lista_letras) #cambio las letras del atril
         self.decrement_cambios_atril()
+        self.refrescar_atril(window)
+
 
     def refrescar_atril(self, window):
         letras=(self.get_espacio_fichas())
@@ -59,47 +80,29 @@ class Atril:
 
 
     def llenar_atril(self, lista_letras):
+
         for i in self.get_espacio_fichas():
             if i.get_letra()== "" or i.get_letra()==' ': # tengo que llenar
                 i.set_letra(random_letter(lista_letras))
 
-    def devolver_fallo(self, lista_coor, window, tablero):
+    def devolver_fallo(self, window, tablero): #no hace falta mandar la lista de coordenadas si te mandas el tablero -agus
         '''Este metodo devuelve las letras al atril'''
         letra_devolver = []
         letras = self.get_espacio_fichas()
-        for coor in lista_coor: #actualiza los botones usados en el tablero y se guarda las letras para devolver al atril
+        for coor in tablero.get_coordenadasActivas(): #actualiza los botones usados en el tablero y se guarda las letras para devolver al atril
             letra_devolver.append(tablero.get_matriz()[coor[0]][coor[1]].get_letra())
             tablero.get_matriz()[coor[0]][coor[1]].set_letra(' ')
             tablero.get_matriz()[coor[0]][coor[1]].set_activo(False)
             window.Element(coor).Update(tablero.get_matriz()[coor[0]][coor[1]].get_letra(), button_color=(('white', 'white')))
-            tablero.get_coorUsadas().remove(coor) #libera la lista de las coordenadas de los botones que se actualizaron
-        for i in range(len(letras)): #devuelve las letras al atril(falta pulir)
+            # tablero.get_coorUsadas().remove(coor) #NO HACE FALTA PORQUE SE BORRAN CUANDO HACES EL SET.ACTIVO(FALSE)-agus
+        for i in range(len(letras)):              #devuelve las letras al atril(falta pulir)... segun agus(yo) esta perfecto, solo faltaba desbloquear el tablero
             if letras[i].get_letra() == '' or letras[i].get_letra() == ' ':
                 if (len(letra_devolver) > 0):
                     letras[i].set_letra(letra_devolver[0])
                     window.Element((-1, i)).Update(letras[i].get_letra())
                     letra_devolver.pop(0)
-        #for letra in letra_devolver:
+        tablero.desbloquear_tablero()
 
-
-
-
-
-
-    #DEJAR PARA COMPARAR
-    #def agregar_letras(self):
-    #    '''Agrega letras a un atril vacio'''
-    #    list_letras = Fichas.crear_bolsa_de_fichas() #lo modifique porque quiero que sirva para cuando  no hay  letras y para cuando quiero renovarlas
-
-    #    for i in self.get_espacio_fichas():
-    #        letra = random.choice(list_letras)
-    #        if (letra.upper() in list_letras):
-    #            i.set_letra(letra)
-    #            list_letras.pop(list_letras.index(letra))
-    #        else:
-    #            letra = random.choice(list_letras)
-    #            i.set_letra(letra)
-    #    print(len(list_letras))
 
     def listado_botones(self):
         ''' retorna una lista con las teclas del atril'''

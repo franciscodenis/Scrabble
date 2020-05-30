@@ -1,5 +1,18 @@
 
 class Casilla:
+
+
+    def __init__(self, fila=-1, columna =-1, multiplicador=1):
+        self.set_id(fila,columna)
+        self.set_activo(False) # Indica si la casilla está en juego, completandose la palabra.
+        self.set_habilitado(True) # Indica si el espacio puede ser usado o no.
+        self.set_definitivo(False) # Evita la modificación de la casilla definitivamente
+        self.set_letra('') # Letra almacenada temporal o definitivamente en la casilla.
+        self.set_multiplicador_de_puntos(multiplicador) # Multiplica los puntos de la letra al ocupar la casilla.
+        self.set_imagen_fondo( '') #String de la dirección de la imagen de fondo.
+
+
+
 #--------------------GETTERS Y SETTERS
 #id
     def set_id(self,fila,columna):
@@ -42,14 +55,5 @@ class Casilla:
         self.__imagen_fondo= imagen
     def get_imagen_fondo(self):
         return self.__imagen_fondo
-    def __init__(self, fila=-1, columna =-1, multiplicador=1):
-        self.set_id(fila,columna)
-        self.set_activo(False) # Indica si la casilla está en juego, completandose la palabra.
-        self.set_habilitado(True) # Indica si el espacio puede ser usado o no.
-        self.set_definitivo(False) # Evita la modificación de la casilla definitivamente
-        self.set_letra('') # Letra almacenada temporal o definitivamente en la casilla.
-        self.set_multiplicador_de_puntos(multiplicador) # Multiplica los puntos de la letra al ocupar la casilla.
-        self.set_imagen_fondo( '') #String de la dirección de la imagen de fondo.
-
 
 #------------------------------------------------------------------
