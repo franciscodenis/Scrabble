@@ -1,29 +1,22 @@
 def mostrarModo():
     pass
 
-
-
 import PySimpleGUI as sg
 import Tablero
 import Atril
 import Casilla
 import Fichas
 def main():
-    filas = 6
-    columnas = 5
+    filas = 15
+    columnas = 15
     tablero = Tablero.Tablero(filas,columnas)
     atril = Atril.Atril(5)
     fichas_jugador= Fichas.crear_bolsa_de_fichas()
     atril.agregar_letras(fichas_jugador)
     list_coor = []
     puntaje_total = 0
-
-
-    letter_tablero = { 'size' : (5, 2), 'pad' : (0,0), 'button_color' : ('white', 'white')} #"image_filename" : 'fondoBoton.png', 'image_subsample': 30
     letter_atril = { 'size' : (5, 2), 'pad' : (0,0), 'button_color' : ('white', '#C8C652')}
-
-    layout = [[sg.Button(key = (i, j),button_text= ' ', **letter_tablero) for i in range(filas)] for j in range(columnas)]
-
+    layout=tablero.crear_tablero('principiante')
     layout.append([sg.Text('Seleccione una letra de abajo', auto_size_text=True, font='Helvetica', background_color=('#5CA2A3'))])
     layout.append([sg.Button(key=(-1, i) , button_text= atril.get_espacio_fichas()[i].get_letra(), **letter_atril) for i in range(5)])
     botones = [sg.Button(key='vali', button_text='Validar', button_color=('white', '#C54F1F'), font='Helvetica'),sg.Button(button_text='Cambiar letras',key ="cambiar_letras", button_color=('white', '#C54F1F'), font='Helvetica'), sg.Text('Puntaje total: ', font='Helvetica', background_color=('#5CA2A3')), sg.Text('0', key='punt', font='Helvetica', background_color=('#5CA2A3'))]
@@ -45,8 +38,6 @@ def main():
         if event ==  "cambiar_letras":
             if atril.get_cambios_atril()>0 and len(fichas_jugador)>7:
                 atril.cambiar_letras(fichas_jugador,window,tablero)
-
-
             else:
                 if(atril.get_cambios_atril()<1):
                     sg.Popup('no tienes mas cambios')

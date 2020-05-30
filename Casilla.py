@@ -10,10 +10,22 @@ class Casilla:
         self.set_letra('') # Letra almacenada temporal o definitivamente en la casilla.
         self.set_multiplicador_de_puntos(multiplicador) # Multiplica los puntos de la letra al ocupar la casilla.
         self.set_imagen_fondo( '') #String de la dirección de la imagen de fondo.
-
+        self.set_premio(' ')
+        self.set_color('white')
 
 
 #--------------------GETTERS Y SETTERS
+    def set_color(self, color):
+        self.__color= color
+    def get_color(self):
+        return self.__color
+
+    def set_premio(self, premio):
+        self.__premio= premio
+    def get_premio(self):
+        return self.__premio
+
+
 #id
     def set_id(self,fila,columna):
         self.__ID= (fila,columna)

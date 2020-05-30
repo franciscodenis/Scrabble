@@ -2,16 +2,16 @@ from pattern.es import *
 from pattern.web import Wiktionary
 import Casilla
 import Fichas
-
+import PySimpleGUI as sg
 class Tablero:
 
-    def __init__(self, filas, columnas ):
+    def __init__(self, filas=15, columnas=15):
         coordenadas = []
         coordenadas_activas = []
         self.set_filas(filas)
         self.set_columnas(columnas)
-        self.set_coorUsadas(coordenadas)
-        self.set_coordenadasActivas(coordenadas_activas)
+        self.set_coorUsadas()
+        self.set_coordenadasActivas()
         self.set_matriz( [[Casilla.Casilla() for x in range(columnas)] for y in range(filas)])
         for i in range(filas):
             for j in range(columnas):
@@ -19,6 +19,12 @@ class Tablero:
 
 
 #------------------------------Comienzo getters y setters-----------------------
+    def crearTablero(self ):
+        pass
+
+
+
+
     def set_filas(self, filas):
         self.__filas=filas
     def get_filas(self):
@@ -31,17 +37,16 @@ class Tablero:
         self.__matriz= matriz
     def get_matriz(self):
         return self.__matriz
-    def set_coorUsadas(self, listCoorUsadas):
+    def set_coorUsadas(self, listCoorUsadas=[]):
         self.__coorUsadas = listCoorUsadas
     def get_coorUsadas(self):
         return self.__coorUsadas
-    def set_coordenadasActivas(self, coorAct):
+    def set_coordenadasActivas(self, coorAct=[]):
         self.__coordenadas_activas = coorAct
     def get_coordenadasActivas(self):
         return self.__coordenadas_activas
 
 #---------------------comienzo otros metodos-----------------------------------
-
 
     def imprimir(self):
         ''' imprime el tablero'''
@@ -153,3 +158,76 @@ class Tablero:
             for j in range(self.get_columnas()):
                 if (self.get_matriz()[i][j].get_activo() == False):
                     self.get_matriz()[i][j].set_habilitado(True)
+#______________________________________________________agregado nuevo
+
+
+    def modificar_premios(self,lista, tipo,clave, color):
+        for valor in lista:
+            try:
+                self.get_matriz()[valor[0]][valor[1]].set_premio(tipo) # si es palabra x2, letrax2, letrax3
+                self.get_matriz()[valor[0]][valor[1]].set_color(color )
+            except :
+                continue #por si me equivoque agregando tuplas
+
+    def devolver_lista(self,lista):
+        #for tupla in lista:
+        #    try:
+        #        lista.append(tupla[1],tupla[0])
+        #    except:
+        #        continue
+        #print(lista)            #me volo la cabeza, no funciona
+        return lista
+
+    def modificaciones_principiante(self):
+        self.set_columnas(15)
+        self.set_filas(15)
+        lista_3p=[(1,1),(1,4),(1,3),(1,12),(1,15),(2,2),(2,14)]# me equivoque, empece desde 1 en vez de 0, despues lo modifico
+        lista_3p= self.devolver_lista(lista_3p)  # la idea era hacer un espejo pero no me estaría funcionando el devolver lista
+        self.modificar_premios(lista_3p,'3P','3P','#33FF71') #verde
+        lista_2p=[(2,5),(2,11),(3,3),(3,6),(3,10),(3,13),(4,4),(4,12,)]
+        lista_2p= self.devolver_lista(lista_2p)
+        self.modificar_premios(lista_2p,'2P','2P','#FFC133') #naranja
+        lista_3L=[(4,7),(4,9),(5,5),(5,11),(6,6),(6,10),(7,8),(8,7),(8,9)]
+        lista_3L=self.devolver_lista(lista_3L)
+        self.modificar_premios(lista_3L,'3L','3L','#334CFF') #azul
+        lista_2L=[(5,8),(7,7),(7,9)]
+        lista_2L= self.devolver_lista(lista_2L)
+        self.modificar_premios(lista_2L,'2L','2L','#33D4FF')#celeste
+
+    def modificaciones_intermedio(self):
+
+        #COMPLETAR
+        pass
+
+    def modificaciones_experto(self):
+
+        #COMPLETAR agus
+
+        pass
+    def modificaciones_usuario(self):
+        #terminarrrrr
+
+        pass
+    def crear_tablero(self, nivel='principiante'):
+
+        if nivel== 'principiante':
+            self.modificaciones_principiante()
+        elif nivel== 'intermedio':
+            self.modificaciones_intermedio()
+        elif nivel=="experto":
+            self.modificaciones_experto()
+        else:
+            self.modificaciones_usuario()
+        for x in range( self.get_filas()):
+            for y in range(self.get_columnas()):
+                try:
+                    self.get_matriz()[x][y].set_color ('white', '#C8C652')
+                    self.get_matriz()[x][y].set_premio(' ')
+                except:
+                    continue
+        filas= self.get_filas()
+        columnas= self.get_columnas()
+        letter_tablero = { 'size' : (4,2), 'pad' : (0,0)} # ACA PODEMOS MODIFICAR EL TAMAN
+        layout = [[sg.Button(key = (i, j),button_text= self.get_matriz()[i][j].get_premio(),button_color=('white',self.get_matriz()[i][j].get_color()),  **letter_tablero) for i in range(filas)] for j in range(columnas)]
+
+        return layout
