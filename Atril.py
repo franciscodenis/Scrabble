@@ -60,11 +60,13 @@ class Atril():
 
 #_____________________________________________Comienzo de  otros metodos ____________
 
-    def agregar_letras(self,lista_letras ):
-        '''Agrega letras a un atril vacio'''
+    def agregar_letras(self, bolsa):
         for i in self.get_espacio_fichas():
-            i.set_letra( random_letter(lista_letras))
-            i.set_tiene_letra(True)
+            if not i.get_tiene_letra():
+                i.set_letra(bolsa.pop(randint(0, len(bolsa))))
+                i.set_tiene_letra(True)
+
+
 
     def cambiar_letras(self, lista_letras,window,tablero):
         ''' cambio las letras del atril por nuevas letras'''
