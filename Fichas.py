@@ -69,4 +69,13 @@ def crear_diccionario_de_puntos():
 
     return diccionario_de_puntos
 
+def crear_diccionario():
+    lista_diccionario = []
+    with open('diccionario.txt', 'r') as file:
+        for line in file:
+            line = line.rstrip('\n')
+            lista_diccionario.append(line)
+    return lista_diccionario
+
+
 #Checkeando como hacer cambios en git
