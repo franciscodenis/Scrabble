@@ -177,8 +177,10 @@ class Tablero:
         '''desbloquea el tablero menos los botones activos'''  #ver botones definitivos
         for i in range(self.get_filas()):
             for j in range(self.get_columnas()):
-                if (self.get_matriz()[i][j].get_activo() == False):
-                    self.get_matriz()[i][j].set_habilitado(True)
+                if self.get_matriz()[i][j].get_activo():
+                    self.get_matriz()[i][j].set_definitivo(True)
+                self.get_matriz()[i][j].set_activo(False)
+                self.get_matriz()[i][j].set_habilitado(True)
 
     def validar_palabra(self, palabra, diccionario, palabras_permitidas):
         palabra_valida = False
