@@ -67,6 +67,7 @@ class Tablero:
                 if self.get_matriz()[coordenadas[0]][coordenadas[1]].get_habilitado() and not self.get_matriz()[coordenadas[0]][coordenadas[1]].get_definitivo():
                     self.actualizar_letra_tablero(atril, coordenadas)
                     atril.get_casilla_seleccionada().set_letra(' ')
+                    atril.get_casilla_seleccionada().set_tiene_letra(False)
                     ventana.Element(atril.get_casilla_seleccionada().get_id()).Update(' ')
                     atril.set_casilla_seleccionada(None)
                     ventana.Element(coordenadas).Update(self.get_matriz()[coordenadas[0]][coordenadas[1]].get_letra(), button_color=('white', '#C8C652'))
@@ -179,6 +180,40 @@ class Tablero:
                 if (self.get_matriz()[i][j].get_activo() == False):
                     self.get_matriz()[i][j].set_habilitado(True)
 
+    def validar_palabra(self, palabra, diccionario, palabras_permitidas):
+        palabra_valida = False
+        print(palabra in diccionario)
+        if palabra in diccionario:
+            if parse(palabra).split('/')[1] in palabras_permitidas:
+                palabra_valida = True
+        return palabra_valida
+
+    def click_validar(self, atril, tablero, window, diccionario, puntaje, bolsa,palabras_permitidas=('NN', 'JJ', 'VB')):
+        coordenadas_activas = tablero.enlistar_coordenadas_activas()
+        palabra_en_lista = []
+        for coordenada in coordenadas_activas:
+            palabra_en_lista.append(self.get_matriz()[coordenada[0]][coordenada[1]].get_letra())
+
+        palabra = ''.join(palabra_en_lista).lower()
+
+        palabra_valida = self.validar_palabra(palabra, diccionario, palabras_permitidas)
+        print(palabra_valida)
+        if palabra_valida:
+            puntaje = puntaje + self.calcular_puntaje(coordenadas_activas)
+            atril.agregar_letras(bolsa)
+            atril.refrescar_atril(window)
+            tablero.desbloquear_tablero()
+            window.Element('punt').Update(puntaje)
+            return puntaje
+        else:
+            atril.devolver_fallo(window, tablero)
+            tablero.desbloquear_tablero()
+            return puntaje
+
+
+
+
+
 
 #______________________________________________________agregado nuevo
 
@@ -289,3 +324,13 @@ class Tablero:
         layout = [[sg.Button(key = (i, j),button_text= self.get_matriz()[i][j].get_premio(),button_color=('white',self.get_matriz()[i][j].get_color()),  **letter_tablero) for i in range(filas)] for j in range(columnas)]
 
         return layout
+
+
+
+
+
+
+
+
+
+        pass

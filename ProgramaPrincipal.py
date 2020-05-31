@@ -21,9 +21,6 @@ def main():
     puntajes_letras = Fichas.crear_diccionario_de_puntos()
     diccionario = Fichas.crear_diccionario()
     palabras_permitidas = ['NN', 'JJ', 'VB' ]
-    f = open("jugadores.txt", "wb")
-    pickle.dump(diccionario, f)
-    f.close()
 
     atril.agregar_letras(fichas_jugador)
 
