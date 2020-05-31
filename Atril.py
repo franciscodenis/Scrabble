@@ -63,16 +63,17 @@ class Atril():
     def agregar_letras(self, bolsa):
         for i in self.get_espacio_fichas():
             if not i.get_tiene_letra():
-                i.set_letra(bolsa.pop(randint(0, len(bolsa))))
+                i.set_letra(bolsa.pop(randint(0, len(bolsa)-1)))
                 i.set_tiene_letra(True)
 
 
 
-    def cambiar_letras(self, lista_letras,window,tablero):
+    def cambiar_letras(self, lista_letras,window,tablero,checkbox,bolsa):
         ''' cambio las letras del atril por nuevas letras'''
-        self.devolver_fallo(window,tablero) #devuelve las letras al atril
-        self.agregar_letras(lista_letras) #cambio las letras del atril
-        self.decrement_cambios_atril()
+        for i in range(7):
+            if self.get_espacio_fichas()[i].get_tiene_letra() and checkbox[('Checkbox', i)]:
+                bolsa.append(self.get_espacio_fichas()[i].get_letra())
+                self.get_espacio_fichas()[i].set_letra(bolsa.pop(randint(0, len(bolsa)-1)))
         self.refrescar_atril(window)
 
 
