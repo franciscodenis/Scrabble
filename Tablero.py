@@ -32,6 +32,7 @@ class Tablero:
 
     def get_columnas(self):
         return self.__columnas
+
     def set_matriz(self, matriz):
         self.__matriz= matriz
 
@@ -40,10 +41,13 @@ class Tablero:
 
     def set_coorUsadas(self, listCoorUsadas=[]):
         self.__coorUsadas = listCoorUsadas
+
     def get_coorUsadas(self):
         return self.__coorUsadas
+
     def set_coordenadasActivas(self, coorAct=[]):
         self.__coordenadas_activas = coorAct
+
     def get_coordenadasActivas(self):
         return self.__coordenadas_activas
 
@@ -72,13 +76,10 @@ class Tablero:
                     atril.set_casilla_seleccionada(None)
                     ventana.Element(coordenadas).Update(self.get_matriz()[coordenadas[0]][coordenadas[1]].get_letra(), button_color=('white', '#C8C652'))
 
-
-
     def actualizar_letra_tablero(self, atril, coordenadas):
         self.get_matriz()[coordenadas[0]][coordenadas[1]].set_letra(atril.get_casilla_seleccionada().get_letra())
         self.get_matriz()[coordenadas[0]][coordenadas[1]].set_activo(True)
         self.bloquear_tablero()
-
 
     def enlistar_coordenadas_activas(self):
         coordenadas_activas = []
