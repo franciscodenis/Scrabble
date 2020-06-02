@@ -229,77 +229,66 @@ class Tablero:
             except :
                 continue #por si me equivoque agregando tuplas
 
-    def devolver_lista(self,lista):
-        #for tupla in lista:
-        #    try:
-        #        lista.append(tupla[1],tupla[0])
-        #    except:
-        #        continue
-        #print(lista)            #me volo la cabeza, no funciona
-        return lista
-
-    def modificaciones_principiante(self):
+    def tablero_comun(self):
         self.set_columnas(15)
         self.set_filas(15)
-        lista_3p=[(1,1),(1,4),(1,3),(1,12),(1,15),(2,2),(2,14)]# me equivoque, empece desde 1 en vez de 0, despues lo modifico
-        lista_3p= self.devolver_lista(lista_3p)  # la idea era hacer un espejo pero no me estaría funcionando el devolver lista
+        lista_3p = []
+        lista_2p = []
+        lista_3l = []
+        lista_2l = []
+        for i in range(0, 15, 2):
+            if ((i-1) != 7) and (i > 0):
+                lista_2l.append(((i-1), (i-1)))
+            lista_3p.append((i, i))
+            lista_3p.append((((self.get_columnas()-1)-i), ((self.get_filas()-1)-i)))
+            if (i < 7):
+                lista_3p.append((i, 7))
+            elif(i > 7):
+                lista_2l.append((i, 7))
         self.modificar_premios(lista_3p,'3P','3P','#33FF71') #verde
-        lista_2p=[(2,5),(2,11),(3,3),(3,6),(3,10),(3,13),(4,4),(4,12,)]
-        lista_2p= self.devolver_lista(lista_2p)
-        self.modificar_premios(lista_2p,'2P','2P','#FFC133') #naranja
-        lista_3L=[(4,7),(4,9),(5,5),(5,11),(6,6),(6,10),(7,8),(8,7),(8,9)]
-        lista_3L=self.devolver_lista(lista_3L)
-        self.modificar_premios(lista_3L,'3L','3L','#334CFF') #azul
-        lista_2L=[(5,8),(7,7),(7,9)]
-        lista_2L= self.devolver_lista(lista_2L)
-        self.modificar_premios(lista_2L,'2L','2L','#33D4FF')#celeste
-        
-   # def modificaciones_principiante(self):
-       # self.set_columnas(15)
-       # self.set_filas(15)
-       # lista_3p = []
-       # lista_2p = []
-       # lista_3l = []
-       # lista_2l = []
-       # for i in range(0, 15, 2):
-       #     tupla = (i, i)
-       #     tupla2 = (((self.get_columnas()-1)-i), ((self.get_filas()-1)-i))
-       #     lista_3p.append(tupla)
-       #     lista_3p.append(tupla2)
-       # self.modificar_premios(lista_3p,'3P','3P','#33FF71') #verde
-       # for i in range(1, 14, 2):
-       #     if (i == 7):
-       #         continue
-       #     tupla = (i, i)
-       #     tupla2 = (((self.get_columnas()-1)-i), ((self.get_filas()-1)-i))
-       #     lista_2l.append(tupla)
-       #     lista_2l.append(tupla2)
-       # self.modificar_premios(lista_2l,'2L','2L','#33D4FF') #naranja
-       # for i in range(0, 15, 2):
-       #     tupla = ((i, (self.get_columnas()-1)-i))
-       #     tupla2 = (((self.get_filas()-1)-i), i)
-       #     lista_3l.append(tupla)
-       #     lista_3l.append(tupla2)
-       # self.modificar_premios(lista_3l,'3L','3L','#334CFF') #azul
-       # for i in range(1, 14, 2):
-       #     if (i == 7):
-       #         continue
-       #     tupla = ((i, (self.get_columnas()-1)-i))
-       #     tupla2 = (((self.get_filas()-1)-i), i)
-       #     lista_2p.append(tupla)
-       #     lista_2p.append(tupla2)
-       # self.modificar_premios(lista_2p,'2P','2P','#FFC133')#celeste    
+        self.modificar_premios(lista_2l,'2L','2L','#33D4FF') #naranja
+        for i in range(0, 15, 2):
+            if ((i-1) != 7) and (i > 0):
+                lista_2p.append((((i-1), (self.get_columnas()-1)-i+1)))
+            lista_3l.append(((i, (self.get_columnas()-1)-i)))
+            lista_3l.append((((self.get_filas()-1)-i), i))
+            if (i < 7):
+                lista_3l.append((7, i))
+            elif(i > 7):
+                lista_2p.append((7, i))
+        self.modificar_premios(lista_3l,'3L','3L','#334CFF') #azul
+        self.modificar_premios(lista_2p,'2P','2P','#FFC133')#celeste
+
+    def modificaciones_principiante(self):
+        lista_2r = []
+        self.tablero_comun()
+        for i in range(6, 9, 2):
+            lista_2r.append((i, 5))
+            lista_2r.append((5, i))
+            lista_2r.append((i, 9))
+            lista_2r.append((9, i))
+        self.modificar_premios(lista_2r,'2R','2R','#C83C26')
 
     def modificaciones_intermedio(self):
-
-        #COMPLETAR
-        pass
+        lista_2r = []
+        self.tablero_comun()
+        for i in range(4, 11, 3):
+            lista_2r.append((i, 3))
+            lista_2r.append((3, i))
+            lista_2r.append((i, 11))
+            lista_2r.append((11, i))
+        self.modificar_premios(lista_2r,'2R','2R','#C83C26')
 
     def modificaciones_experto(self):
-
-        #COMPLETAR agus
-
-        pass
+        lista_2r = []
+        self.tablero_comun()
+        for i in range(2, 13, 2):
+            lista_2r.append((i, 1))
+            lista_2r.append((1, i))
+            lista_2r.append((i, 13))
+            lista_2r.append((13, i))
+        self.modificar_premios(lista_2r,'2R','2R','#C83C26')
+        
     def modificaciones_usuario(self):
         #terminarrrrr
 
