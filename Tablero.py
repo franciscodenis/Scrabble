@@ -191,7 +191,7 @@ class Tablero:
                 palabra_valida = True
         return palabra_valida
 
-    def click_validar(self, atril, tablero, window, diccionario, puntaje, bolsa,palabras_permitidas=('NN', 'JJ', 'VB')):
+    def click_validar(self, atril, tablero, window, diccionario, puntaje, bolsa ,juego,palabras_permitidas=('NN', 'JJ', 'VB')):
         coordenadas_activas = tablero.enlistar_coordenadas_activas()
         palabra_en_lista = []
         for coordenada in coordenadas_activas:
@@ -212,6 +212,8 @@ class Tablero:
             atril.devolver_fallo(window, tablero)
             tablero.desbloquear_tablero()
             return puntaje
+        juego.cambiar_turno()
+
 
 
 
@@ -288,7 +290,7 @@ class Tablero:
             lista_2r.append((i, 13))
             lista_2r.append((13, i))
         self.modificar_premios(lista_2r,'2R','2R','#C83C26')
-        
+
     def modificaciones_usuario(self):
         #terminarrrrr
 

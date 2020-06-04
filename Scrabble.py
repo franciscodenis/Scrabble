@@ -1,6 +1,6 @@
 import PySimpleGUI as sg
 import ProgramaPrincipal
-# Todavia no modifique nada es solo para que quede esto que va a ser la clase principal. (no ProgramaPrincipal)-agus
+
 
 layout = [[ sg.Text('Scrabble'),],
           [sg.Text('', key='_OUTPUT_')],
@@ -27,4 +27,3 @@ while True:
                 win2.Close()
                 win2_active = False
                 break
-
