@@ -72,13 +72,14 @@ class Atril():
 
 
 
-    def cambiar_letras(self, lista_letras,window,tablero,checkbox,bolsa):
+    def cambiar_letras(self, lista_letras,window,tablero,checkbox,bolsa,juego):
         ''' cambio las letras del atril por nuevas letras'''
         for i in range(7):
             if self.get_espacio_fichas()[i].get_tiene_letra() and checkbox[('Checkbox', i)]:
                 bolsa.append(self.get_espacio_fichas()[i].get_letra())
                 self.get_espacio_fichas()[i].set_letra(bolsa.pop(randint(0, len(bolsa)-1)))
         self.refrescar_atril(window)
+        juego.cambiar_turno()
 
 
     def refrescar_atril(self, window, atril ='Atril_jugador' ):
