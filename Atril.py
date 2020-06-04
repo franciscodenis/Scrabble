@@ -3,6 +3,10 @@ import random
 from random import randint
 import Fichas
 import PySimpleGUI as sg
+import itertools
+from pattern.es import *
+from pattern.web import Wiktionary
+
 
 def random_letter(lista_letras ):
     lista_nueva= lista_letras.copy() # quiero asegurarme de no agarrar una letra que no exista en la bolsa pero todavia no la quiero borrar del todo
@@ -15,12 +19,12 @@ def random_letter(lista_letras ):
 class Atril():
 
 
-    def __init__(self, columnas):
+    def __init__(self, columnas, tipo_atril = 'Atril_jugador'):
         self.__casilla_seleccionada  = None
         self.set_columnas(columnas)
         self.set_espacio_fichas( [cas.Casilla() for x in range(columnas)])
         for i in range(columnas):
-            self.get_espacio_fichas()[i] =(cas.Casilla(-1, i))  # ES CORRECTO?
+            self.get_espacio_fichas()[i] =(cas.Casilla(tipo_atril, i))  # ES CORRECTO?
         self.set_cambios_atril(3) # Cantidad de cambios está dada por la cantidad de fichas para cambiar en la bolsa
         self.set_esta_vacio(True)
 
@@ -77,10 +81,10 @@ class Atril():
         self.refrescar_atril(window)
 
 
-    def refrescar_atril(self, window):
+    def refrescar_atril(self, window, atril ='Atril_jugador' ):
         letras=(self.get_espacio_fichas())
         for i in range(len(letras)):
-            window.Element((-1,i)).Update(text=letras[i].get_letra())
+            window.Element((atril,i)).Update(text=letras[i].get_letra())
 
 
     def llenar_atril(self, lista_letras):
@@ -104,7 +108,7 @@ class Atril():
             if letras[i].get_letra() == ' ':
                 if (len(letra_devolver) > 0):
                     letras[i].set_letra(letra_devolver[0])
-                    window.Element((-1, i)).Update(letras[i].get_letra())
+                    window.Element(('Atril_jugador', i)).Update(letras[i].get_letra())
                     letra_devolver.pop(0)
         tablero.desbloquear_tablero()
 
@@ -120,3 +124,78 @@ class Atril():
         self.set_casilla_seleccionada(self.get_espacio_fichas()[coordenadas[1]])
         refresh = self.get_casilla_seleccionada().get_letra()
         return refresh
+
+
+class Atril_PC(Atril):
+    def __init__(self, columnas):
+        super().__init__(columnas, 'Atril_PC')
+
+    def formar_palabra(self, letras_desordenadas, lista_diccionario, palabras_permitidas= ('NN', 'JJ', 'VB' )):
+        conteo_letras = 3
+        seguir = True
+        intento = ""
+        for i in range(3, len(letras_desordenadas)):
+            lista_intentos = list(itertools.permutations(letras_desordenadas, conteo_letras))
+            conteo_letras = conteo_letras + 1
+            for j in lista_intentos:
+                intento = ''.join(j).lower()
+                print(intento)
+                if intento in lista_diccionario:
+                    print("Esta en el diccionario")
+                    if parse(intento).split('/')[1] in palabras_permitidas:
+                        print("está en parse")
+                        seguir = False
+                if not seguir:
+                    break
+            if not seguir: break
+        return intento
+
+    def buscar_espacio(self, tablero, casillas_requeridas):
+        for i in range(tablero.get_filas()):
+            for j in range(tablero.get_columnas()):
+                count = 0
+                for k in range(casillas_requeridas):
+                    if not tablero.get_matriz()[i][j].get_tiene_letra():
+                        count = count + 1
+                if count == casillas_requeridas:
+                    return (i,j)
+        return False
+
+    def orden_coordenadas_atril(self, palabra_armada):
+        lista_coordenadas_de_palabra_en_atril = []
+        for i in palabra_armada:
+            for j in range(len(self.get_espacio_fichas())):
+                if self.get_espacio_fichas()[j].get_letra().lower() == i:
+                    print("encontró la cordenada", i, self.get_espacio_fichas()[j].get_letra().lower() )
+                    lista_coordenadas_de_palabra_en_atril.append(self.get_espacio_fichas()[j].get_id())
+                    break
+        return lista_coordenadas_de_palabra_en_atril
+
+    def colocar_en_tablero(self,tablero,  lista_coordenadas, coordenada_inicial,ventana):
+        print("entra a colocar en tablero")
+        print(lista_coordenadas)
+        for i in range(len(lista_coordenadas)):
+            letra_a_colocar = self.get_espacio_fichas()[lista_coordenadas[i][1]].get_letra()
+            print(letra_a_colocar)
+            print(self.get_espacio_fichas()[lista_coordenadas[i][1]].get_letra())
+            tablero.get_matriz()[coordenada_inicial[0]][coordenada_inicial[1] + i].set_letra(letra_a_colocar)
+            tablero.get_matriz()[coordenada_inicial[0]][coordenada_inicial[1] + i].set_definitivo(True)
+            ventana.Element((coordenada_inicial[0],coordenada_inicial[1] + i) ).Update(letra_a_colocar, button_color=('white', '#C8C652'))
+            self.get_espacio_fichas()[i].set_letra("")
+            self.get_espacio_fichas()[i].set_tiene_letra(False)
+
+
+    def jugar_turno(self,tablero, lista_diccionario,ventana, palabras_permitidas = ('NN', 'JJ', 'VB' ) ):
+        lista_letras = ""
+        for boton in self.listado_botones():
+            lista_letras = lista_letras + self.get_espacio_fichas()[boton[1]].get_letra()
+        palabra_armada = self.formar_palabra( lista_letras, lista_diccionario, palabras_permitidas)
+        coordenada_inicial = self.buscar_espacio(tablero, len(palabra_armada))
+        print(palabra_armada)
+        lista_coordenadas = self.orden_coordenadas_atril(palabra_armada)
+        self.colocar_en_tablero(tablero, lista_coordenadas, coordenada_inicial,ventana)
+        self.refrescar_atril(ventana)
+
+
+
+
