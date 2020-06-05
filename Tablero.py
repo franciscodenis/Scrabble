@@ -297,11 +297,11 @@ class Tablero:
         pass
     def crear_tablero(self, nivel='principiante'):
 
-        if nivel== 'principiante':
+        if nivel== 'Facil':
             self.modificaciones_principiante()
-        elif nivel== 'intermedio':
+        elif nivel== 'Normal':
             self.modificaciones_intermedio()
-        elif nivel=="experto":
+        elif nivel=="Dificil":
             self.modificaciones_experto()
         else:
             self.modificaciones_usuario()
