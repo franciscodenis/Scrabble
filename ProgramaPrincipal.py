@@ -69,7 +69,7 @@ def main():
                 jugar.cambiar_turno() # o terminar
 
 
-            event, values = window.read(timeout=0)
+            event, values = window.Read(timeout=0)
             tiempo_computadora = int(round(time.time() * 100))-current_time - start_time
             window['tempo_compu'].update('{:02d}:{:02d}.{:02d}'.format((tiempo_computadora // 100) // 60,(tiempo_computadora // 100) % 60, tiempo_computadora % 100))
             jugar.jugar_computadora(tablero,atril)
@@ -82,7 +82,7 @@ def main():
                 print('terminoeltiempo jugador') #MODULO TERMINAR
 
                 break
-            event, values = window.read(timeout=10)
+            event, values = window.Read(timeout=10)
             current_time = int(round(time.time() * 100))-(tiempo_computadora) - start_time
             if event in tablero.listado_botones():
                 tablero.click(atril, event, window)
