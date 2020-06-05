@@ -71,7 +71,7 @@ def crear_diccionario_de_puntos():
 
 def crear_diccionario():
     lista_diccionario = []
-    with open('diccionario.txt', 'r') as file:
+    with open('diccionarios/diccionario.txt', 'r') as file:
         for line in file:
             line = line.rstrip('\n')
             lista_diccionario.append(line)
