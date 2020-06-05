@@ -21,7 +21,7 @@ import time
 import Jugar
 
 
-def main(nivel, tiempo):
+def main(nivel = 'Facil', tiempo = 10):
 
     filas = 15
     columnas = 15
@@ -98,4 +98,4 @@ def main(nivel, tiempo):
     return puntaje_total
 
 if __name__ == '__main__':
-    main(nivel, tiempo)
+    main()
