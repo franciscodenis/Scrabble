@@ -107,7 +107,7 @@ class Atril():
             if letras[i].get_letra() == ' ':
                 if (len(letra_devolver) > 0):
                     letras[i].set_letra(letra_devolver[0])
-                    window.Element((-1, i)).Update(letras[i].get_letra())
+                    window.Element(('Atril_jugador', i)).Update(letras[i].get_letra())
                     letra_devolver.pop(0)
         tablero.desbloquear_tablero()
 
