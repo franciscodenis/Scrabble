@@ -21,7 +21,7 @@ import time
 import Jugar
 
 
-def main():
+def main(nivel, tiempo):
 
     filas = 15
     columnas = 15
@@ -43,7 +43,7 @@ def main():
     letter_atril = { 'size' : (3, 2), 'pad' : (0,0), 'button_color' : ('white', '#C8C652')}
     layout= []
     layout.append([sg.Text('', size=(8, 2), font=('Helvetica', 20), justification='center', key='tempo_compu')]) #Temporizador Computadora
-    layout.extend(tablero.crear_tablero('principiante'))
+    layout.extend(tablero.crear_tablero(nivel))
     layout.append([sg.Text('Seleccione una letra de abajo', auto_size_text=True, font='Helvetica', background_color=('#5CA2A3'))])
     layout.append([sg.Button(key=(-1, i) , button_text= atril.get_espacio_fichas()[i].get_letra(), **letter_atril) for i in range(letras_de_atril)])
     botones = [sg.Button(key='vali', button_text='Validar', button_color=('white', '#C54F1F'), font='Helvetica'),sg.Button(button_text='Cambiar letras',key ="cambiar_letras", button_color=('white', '#C54F1F'), font='Helvetica'), sg.Text('Puntaje total: ', font='Helvetica', background_color=('#5CA2A3')), sg.Text('000', key='punt', font='Helvetica', background_color=('#5CA2A3'))]
@@ -58,11 +58,9 @@ def main():
     paused = False
     start_time = int(round(time.time() * 100))
     print(jugar.get_turno())
-    tiempo_max= 1000 # SETEARRRRRRRR
+    tiempo_max= int(tiempo) * 100 # SETEARRRRRRRR
 
     while True:
-
-
         if jugar.get_turno()=='computadora':
             if (tiempo_computadora> tiempo_max):
                 print('terminoeltiempo')
@@ -71,16 +69,13 @@ def main():
 
             event, values = window.Read(timeout=0)
             tiempo_computadora = int(round(time.time() * 100))-current_time - start_time
-            window['tempo_compu'].update('{:02d}:{:02d}.{:02d}'.format((tiempo_computadora // 100) // 60,(tiempo_computadora // 100) % 60, tiempo_computadora % 100))
+            window.Element('tempo_compu').Update('{:02d}:{:02d}.{:02d}'.format((tiempo_computadora // 100) // 60,(tiempo_computadora // 100) % 60, tiempo_computadora % 100))
             jugar.jugar_computadora(tablero,atril)
-
-
 
 
         elif jugar.get_turno()=='jugador':
             if (current_time> tiempo_max):
                 print('terminoeltiempo jugador') #MODULO TERMINAR
-
                 break
             event, values = window.Read(timeout=10)
             current_time = int(round(time.time() * 100))-(tiempo_computadora) - start_time
@@ -96,9 +91,11 @@ def main():
             elif event == 'Run':
                 paused = False
                 start_time = start_time + int(round(time.time() * 100)) - paused_time
-                element = window['button']
+                element = window.Element('button')
 
-            window['text'].update('{:02d}:{:02d}.{:02d}'.format((current_time // 100) // 60, (current_time // 100) % 60, current_time % 100))
+            window.Element('text').Update('{:02d}:{:02d}.{:02d}'.format((current_time // 100) // 60, (current_time // 100) % 60, current_time % 100))
+    window.Close()
+    return puntaje_total
 
 if __name__ == '__main__':
-    main()
+    main(nivel, tiempo)
