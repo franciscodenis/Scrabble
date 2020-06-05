@@ -34,6 +34,7 @@ class Jugar :
 
 
     def jugar_computadora(self, tablero,atril):
+
         # bloquear_tablero
         #iniciar contador
         #bloquear atril

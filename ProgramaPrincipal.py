@@ -29,23 +29,25 @@ def main(nivel = 'Facil', tiempo = 10):
     jugar= Jugar.Jugar()
     tablero = Tablero.Tablero(filas,columnas)
     atril = Atril.Atril(letras_de_atril)
+    atril_pc = Atril.Atril_PC(letras_de_atril)
 
     fichas_jugador= Fichas.crear_bolsa_de_fichas()
     puntajes_letras = Fichas.crear_diccionario_de_puntos()
-    #diccionario = Fichas.crear_diccionario()
-    diccionario=['a','v','b','c'] # lo comento porque no me funca
+    diccionario = Fichas.crear_diccionario()
     palabras_permitidas = ['NN', 'JJ', 'VB' ]
 
     atril.agregar_letras(fichas_jugador)
+    atril_pc.agregar_letras(fichas_jugador)
 
     puntaje_total = 0 # Debería estar en la clase jugador
 
     letter_atril = { 'size' : (3, 2), 'pad' : (0,0), 'button_color' : ('white', '#C8C652')}
     layout= []
+    layout.append([sg.Button(key=('Atril_PC', i), button_text=atril_pc.get_espacio_fichas()[i].get_letra(), **letter_atril) for i in range(letras_de_atril)])
     layout.append([sg.Text('', size=(8, 2), font=('Helvetica', 20), justification='center', key='tempo_compu')]) #Temporizador Computadora
     layout.extend(tablero.crear_tablero(nivel))
     layout.append([sg.Text('Seleccione una letra de abajo', auto_size_text=True, font='Helvetica', background_color=('#5CA2A3'))])
-    layout.append([sg.Button(key=(-1, i) , button_text= atril.get_espacio_fichas()[i].get_letra(), **letter_atril) for i in range(letras_de_atril)])
+    layout.append([sg.Button(key=('Atril_jugador', i) , button_text= atril.get_espacio_fichas()[i].get_letra(), **letter_atril) for i in range(letras_de_atril)])
     botones = [sg.Button(key='vali', button_text='Validar', button_color=('white', '#C54F1F'), font='Helvetica'),sg.Button(button_text='Cambiar letras',key ="cambiar_letras", button_color=('white', '#C54F1F'), font='Helvetica'), sg.Text('Puntaje total: ', font='Helvetica', background_color=('#5CA2A3')), sg.Text('000', key='punt', font='Helvetica', background_color=('#5CA2A3'))]
     layout.append([sg.Checkbox("", key=('Checkbox', i), size=(2, 2))for i in range(letras_de_atril)])
     layout.append(botones)
@@ -58,19 +60,22 @@ def main(nivel = 'Facil', tiempo = 10):
     paused = False
     start_time = int(round(time.time() * 100))
     print(jugar.get_turno())
-    tiempo_max= int(tiempo) * 100 # SETEARRRRRRRR
-
+    tiempo_max= int(tiempo) * 1000 # SETEARRRRRRRR
+    seguir_jugando = True
     while True:
+        event, values = window.Read(timeout=0)
+
         if jugar.get_turno()=='computadora':
-            if (tiempo_computadora> tiempo_max):
+            seguir_jugando = atril_pc.jugar_turno(tablero, diccionario, window, fichas_jugador, palabras_permitidas)
+            if not seguir_jugando:
+                tiempo_computadora = 1000000
+            if (tiempo_computadora > tiempo_max):
                 print('terminoeltiempo')
                 jugar.cambiar_turno() # o terminar
 
-
-            event, values = window.Read(timeout=0)
             tiempo_computadora = int(round(time.time() * 100))-current_time - start_time
             window.Element('tempo_compu').Update('{:02d}:{:02d}.{:02d}'.format((tiempo_computadora // 100) // 60,(tiempo_computadora // 100) % 60, tiempo_computadora % 100))
-            jugar.jugar_computadora(tablero,atril)
+
 
 
         elif jugar.get_turno()=='jugador':
