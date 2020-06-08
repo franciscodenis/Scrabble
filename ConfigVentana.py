@@ -1,4 +1,21 @@
 import PySimpleGUI as sg
+from datetime import date
+import json
+
+def abrirArch (nombreArch, puntos):
+    datos = []
+    try:
+        archivo = open(nombreArch, "r")
+        datos = json.load(archivo)
+        datos.append({'Nombre': puntos[0], 'Puntaje': puntos[1], 'Fecha': "{}/{}/{}".format(puntos[2], puntos[3], puntos[4])})
+        archivo = open(nombreArch, "w")
+        archivo.write(json.dumps(datos))
+        archivo.close()
+    except:
+        archivo = open(nombreArch, "w")
+        datos.append({'Nombre': puntos[0], 'Puntaje': puntos[1], 'Fecha': "{}/{}/{}".format(puntos[2], puntos[3], puntos[4])})
+        json.dump(datos, archivo)
+        archivo.close()
 
 def layoutPrin():
     layoutPrincipal = [
@@ -33,7 +50,23 @@ def layoutUsuario():
     ]
     return layoutUs
 
+def layoutRanking(datos):
+        layoutRank = []
+        for i in range(len(datos)):
+            try:
+                botones = [sg.Text(text='Nombre: ', background_color=('#A72D2D')), sg.Text(text= datos[i]['Nombre'], background_color=('#A72D2D')), sg.Text(text= 'Puntaje: ', background_color=('#A72D2D')), sg.Text(text=datos[i]['Puntaje'], background_color=('#A72D2D')), sg.Text(text= 'Fecha: ', background_color=('#A72D2D')), sg.Text(text=datos[i]['Fecha'], background_color=('#A72D2D'))]
+                layoutRank.append(botones)
+                layoutRank.append([sg.Text('-'*140, background_color=('#A72D2D'))])
+            except:
+                print('No se registraron mas jugadores')
+        return layoutRank
 
+def layoutSelecTop():
+    layoutTop = [
+                [sg.Text('Seleccione el top que desea ver', background_color=('#A72D2D'))],
+                [sg.Button('Facil', key='Facil'), sg.Button('Normal', key='Normal'), sg.Button('Dificil', key='Dificil')]
+    ]
+    return layoutTop
 
 def ventanaConfig (config):
     try:
@@ -68,4 +101,23 @@ def ventanaJugar (config, Scrabble):
         if event == 'ok':
             nombre = value['usuario']
             windowUs.Close()
-            return (nombre, Scrabble.main(config['nivel'], config['tiempo'].split(' ')[0]))
+            return (nombre, Scrabble.main(config['nivel'], config['tiempo'].split(' ')[0]), date.today().day, date.today().month, date.today().year)
+
+def ventanaRanking(datos):
+    windowRank = sg.Window('Top10', size=(600,600), background_color=('#A72D2D')).Layout(layoutRanking(datos))
+    event, value = windowRank.Read()
+
+
+def ventanaSelecTop():
+    windowTop = sg.Window('Seleccion', size=(300,100), background_color=('#A72D2D')).Layout(layoutSelecTop())
+    while True:
+        event, value = windowTop.Read()
+        if (event == 'Facil'):
+            windowTop.Close()
+            return 'Facil'
+        elif(event == 'Normal'):
+            windowTop.Close()
+            return 'Normal'
+        else:
+            windowTop.Close()
+            return 'Dificil'
