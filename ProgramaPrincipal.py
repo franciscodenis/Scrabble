@@ -87,7 +87,10 @@ def main(nivel = 'Facil', tiempo = 10):
             if event in tablero.listado_botones():
                 tablero.click(atril, event, window)
             elif event == "cambiar_letras":
-                atril.cambiar_letras(fichas_jugador,window,tablero,values,fichas_jugador,jugar)
+                if (atril.get_cambios_atril()>0):
+                    atril.cambiar_letras(fichas_jugador,window,tablero,values,fichas_jugador,jugar)
+                else:
+                    sg.popup('no hay mas cambios de atril')
             elif event in atril.listado_botones():
                 atril.click(tablero, event)
 

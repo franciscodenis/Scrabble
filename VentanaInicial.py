@@ -32,7 +32,7 @@ while True:
             elif(niv == 'Normal'):
                 archivo = open('rankingNormal.txt', 'r')
             else:
-                archivo = open('rankingDificil.txt', 'r')       
+                archivo = open('rankingDificil.txt', 'r')
             datos = json.load(archivo)
             conf.ventanaRanking(sorted(datos, key = lambda puntaje: puntaje['Puntaje'], reverse=True))
         except:

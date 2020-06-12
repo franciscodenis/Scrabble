@@ -4,6 +4,7 @@ from random import randint
 import Fichas
 import PySimpleGUI as sg
 import itertools
+from pattern import *
 from pattern.es import *
 
 def random_letter(lista_letras ):
@@ -63,6 +64,7 @@ class Atril():
 #_____________________________________________Comienzo de  otros metodos ____________
 
     def agregar_letras(self, bolsa):
+        '''agrego letras al atril'''
         for i in self.get_espacio_fichas():
             if not i.get_tiene_letra():
                 i.set_letra(bolsa.pop(randint(0, len(bolsa)-1)))
@@ -72,15 +74,19 @@ class Atril():
 
     def cambiar_letras(self, lista_letras,window,tablero,checkbox,bolsa,juego):
         ''' cambio las letras del atril por nuevas letras'''
+        self.devolver_fallo(window,tablero) #devuelve las letras que estan en uso  al atril
         for i in range(7):
             if self.get_espacio_fichas()[i].get_tiene_letra() and checkbox[('Checkbox', i)]:
                 bolsa.append(self.get_espacio_fichas()[i].get_letra())
                 self.get_espacio_fichas()[i].set_letra(bolsa.pop(randint(0, len(bolsa)-1)))
+        self.decrement_cambios_atril() #solo hay 3 cambios de atril, decremento en 1
         self.refrescar_atril(window)
+
         juego.cambiar_turno()
 
 
     def refrescar_atril(self, window, atril ='Atril_jugador'):
+        '''actualizo el atril del jugador '''
         letras=(self.get_espacio_fichas())
         for i in range(len(letras)):
             window.Element((atril,i)).Update(text=letras[i].get_letra())

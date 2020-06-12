@@ -1,8 +1,8 @@
 import Casilla
 import Fichas
 import PySimpleGUI as sg
-from pattern.es import *
-from pattern.web import Wiktionary
+from pattern import *
+#from pattern.es import Wiktionary
 
 
 class Tablero:
