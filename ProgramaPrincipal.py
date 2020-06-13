@@ -44,7 +44,8 @@ def main(nivel = 'Facil', tiempo = 10):
     letter_atril = { 'size' : (3, 2), 'pad' : (0,0), 'button_color' : ('white', '#C8C652')}
     layout= []
     layout.append([sg.Button(key=('Atril_PC', i), button_text=atril_pc.get_espacio_fichas()[i].get_letra(), **letter_atril) for i in range(letras_de_atril)])
-    layout.append([sg.Text('', size=(8, 2), font=('Helvetica', 20), justification='center', key='tempo_compu')]) #Temporizador Computadora
+    PC = [sg.Text('', size=(8, 2), font=('Helvetica', 20), justification='center', key='tempo_compu'), sg.Text('Puntaje computadora: ', font='Helvetica', background_color=('#5CA2A3')), sg.Text('000', key='puntPC', font='Helvetica', background_color='#5CA2A3')] #Temporizador Computadora
+    layout.append(PC)
     layout.extend(tablero.crear_tablero(nivel))
     layout.append([sg.Text('Seleccione una letra de abajo', auto_size_text=True, font='Helvetica', background_color=('#5CA2A3'))])
     layout.append([sg.Button(key=('Atril_jugador', i) , button_text= atril.get_espacio_fichas()[i].get_letra(), **letter_atril) for i in range(letras_de_atril)])
@@ -66,7 +67,7 @@ def main(nivel = 'Facil', tiempo = 10):
         event, values = window.Read(timeout=0)
 
         if jugar.get_turno()=='computadora':
-            seguir_jugando = atril_pc.jugar_turno(tablero, diccionario, window, fichas_jugador, palabras_permitidas)
+            seguir_jugando = atril_pc.jugar_turno(tablero, diccionario, window, fichas_jugador, puntajes_letras, palabras_permitidas)
             if not seguir_jugando:
                 tiempo_computadora = 1000000
             if (tiempo_computadora > tiempo_max):
@@ -90,7 +91,7 @@ def main(nivel = 'Facil', tiempo = 10):
                 if (atril.get_cambios_atril()>0):
                     atril.cambiar_letras(fichas_jugador,window,tablero,values,fichas_jugador,jugar)
                 else:
-                    sg.popup('no hay mas cambios de atril')
+                    sg.Popup('no hay mas cambios de atril')
             elif event in atril.listado_botones():
                 atril.click(tablero, event)
 
