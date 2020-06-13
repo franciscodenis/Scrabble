@@ -74,7 +74,7 @@ class Atril():
 
     def cambiar_letras(self, lista_letras,window,tablero,checkbox,bolsa,juego):
         ''' cambio las letras del atril por nuevas letras'''
-        self.devolver_fallo(window,tablero) #devuelve las letras que estan en uso  al atril
+        #self.devolver_fallo(window,tablero) #devuelve las letras que estan en uso  al atril
         for i in range(7):
             if self.get_espacio_fichas()[i].get_tiene_letra() and checkbox[('Checkbox', i)]:
                 bolsa.append(self.get_espacio_fichas()[i].get_letra())
@@ -107,7 +107,7 @@ class Atril():
                 letra_devolver.append(tablero.get_matriz()[coor[0]][coor[1]].get_letra())
                 tablero.get_matriz()[coor[0]][coor[1]].set_letra(' ')
                 tablero.get_matriz()[coor[0]][coor[1]].set_activo(False)
-                window.Element(coor).Update(tablero.get_matriz()[coor[0]][coor[1]].get_letra(), button_color=(('white', 'white')))
+                window.Element(coor).Update(tablero.get_matriz()[coor[0]][coor[1]].get_premio(), button_color=(('white', tablero.get_matriz()[coor[0]][coor[1]].get_color())))
             # tablero.get_coorUsadas().remove(coor) #NO HACE FALTA PORQUE SE BORRAN CUANDO HACES EL SET.ACTIVO(FALSE)-agus
         for i in range(len(letras)):              #devuelve las letras al atril(falta pulir)... segun agus(yo) esta perfecto, solo faltaba desbloquear el tablero
             if letras[i].get_letra() == ' ':
@@ -135,13 +135,12 @@ class Atril_PC(Atril):
         super().__init__(columnas, 'Atril_PC')
 
     def formar_palabra(self, letras_desordenadas, lista_diccionario, palabras_permitidas= ('NN', 'JJ', 'VB' )):
-        conteo_letras = 3
         seguir = True
-        intento = ""
+        intento = " "
         for i in range(3, len(letras_desordenadas)):
-            lista_intentos = list(itertools.permutations(letras_desordenadas, conteo_letras))
-            conteo_letras = conteo_letras + 1
-            for j in lista_intentos:
+            conteo_let = random.randint(3, 7)
+            lista_intentos = list(itertools.permutations(letras_desordenadas, conteo_let))
+            for j in lista_intentos[:15]:
                 intento = ''.join(j).lower()
                 print(intento)
                 if intento in lista_diccionario:
@@ -152,6 +151,8 @@ class Atril_PC(Atril):
                 if not seguir:
                     break
             if not seguir: break
+        if (seguir):
+            intento = " "
         return intento
 
     def buscar_espacio(self, tablero, casillas_requeridas):
@@ -190,17 +191,31 @@ class Atril_PC(Atril):
             self.get_espacio_fichas()[lista_coordenadas[i][1]].set_letra("")
             self.get_espacio_fichas()[lista_coordenadas[i][1]].set_tiene_letra(False)
 
+    def calcular_puntajePC(self, palabra, puntajes_letras):
+        total = 0
+        aumentos = []
+        print(palabra)
+        for letra in palabra:
+            print(letra)
+            if letra.upper() in puntajes_letras:
+                total = total + puntajes_letras[letra.upper()]
+        return total
 
-    def jugar_turno(self,tablero, lista_diccionario,ventana,bolsa,  palabras_permitidas = ('NN', 'JJ', 'VB' ) ):
+
+
+    def jugar_turno(self,tablero, lista_diccionario,ventana,bolsa, puntajes_letras, palabras_permitidas = ('NN', 'JJ', 'VB' )):
         lista_letras = ""
         for boton in self.listado_botones():
             lista_letras = lista_letras + self.get_espacio_fichas()[boton[1]].get_letra()
         palabra_armada = self.formar_palabra( lista_letras, lista_diccionario, palabras_permitidas)
-        coordenada_inicial = self.buscar_espacio(tablero, len(palabra_armada))
-        print(palabra_armada)
-        lista_coordenadas = self.orden_coordenadas_atril(palabra_armada)
-        self.colocar_en_tablero(tablero, lista_coordenadas, coordenada_inicial,ventana)
-
-        self.agregar_letras(bolsa)
-        self.refrescar_atril(ventana, 'Atril_PC')
+        if (palabra_armada != " "):
+            coordenada_inicial = self.buscar_espacio(tablero, len(palabra_armada))
+            print(palabra_armada)
+            lista_coordenadas = self.orden_coordenadas_atril(palabra_armada)
+            self.colocar_en_tablero(tablero, lista_coordenadas, coordenada_inicial,ventana)
+            puntaje = self.calcular_puntajePC(palabra_armada, puntajes_letras)
+            ventana.Element('puntPC').Update(puntaje)
+            self.agregar_letras(bolsa)
+            self.refrescar_atril(ventana, 'Atril_PC')
         return False
+
