@@ -1,8 +1,8 @@
 import Casilla
 import Fichas
 import PySimpleGUI as sg
-from pattern import *
-#from pattern.es import Wiktionary
+from pattern.es import *
+from pattern.web import Wiktionary
 
 
 class Tablero:
@@ -75,6 +75,7 @@ class Tablero:
                     ventana.Element(atril.get_casilla_seleccionada().get_id()).Update(' ')
                     atril.set_casilla_seleccionada(None)
                     ventana.Element(coordenadas).Update(self.get_matriz()[coordenadas[0]][coordenadas[1]].get_letra(), button_color=('white', '#C8C652'))
+                    print(self.get_matriz()[coordenadas[0]][coordenadas[1]].get_letra())
 
     def actualizar_letra_tablero(self, atril, coordenadas):
         self.get_matriz()[coordenadas[0]][coordenadas[1]].set_letra(atril.get_casilla_seleccionada().get_letra())
@@ -135,9 +136,23 @@ class Tablero:
     def calcular_puntaje(self, lista):
         dic_puntos = Fichas.crear_diccionario_de_puntos()
         total = 0
+        aumentos = []
         for coor in lista:
             if self.get_matriz()[coor[0]][coor[1]].get_letra() in dic_puntos.keys():
                 total = total + dic_puntos[self.get_matriz()[coor[0]][coor[1]].get_letra()]
+                if (self.get_matriz()[coor[0]][coor[1]].get_premio() != ' '):
+                    aumentos.append(self.get_matriz()[coor[0]][coor[1]].get_premio())
+        print("puntaje: ", total)
+        print(len(aumentos))
+        for tipo in aumentos:
+            if (tipo == "3P"):
+                total = total * 3
+            elif(tipo == "3L"):
+                total = total + 3
+            elif (tipo == "2P"):
+                total = total * 2
+            else:
+                total = total + 2
         return total
 
     def desactivar_coordenadas_activas(self, lista_coordenadas_activas):
@@ -308,8 +323,9 @@ class Tablero:
         for x in range( self.get_filas()):
             for y in range(self.get_columnas()):
                 try:
-                    self.get_matriz()[x][y].set_color ('white', '#C8C652')
-                    self.get_matriz()[x][y].set_premio(' ')
+                    if (self.get_matriz()[x][y].get_color == 'white') and (self.get_matriz()[x][y].get_premio == ' '):
+                        self.get_matriz()[x][y].set_color ('white', '#C8C652')
+                        self.get_matriz()[x][y].set_premio(' ')
                 except:
                     continue
         filas= self.get_filas()
@@ -328,3 +344,4 @@ class Tablero:
 
 
         pass
+
