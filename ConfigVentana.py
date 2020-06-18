@@ -38,8 +38,8 @@ def layoutConfig():
 
 def layoutNoConfig():
     layoutNoConfig = [
-                    [sg.Text('Antes de comenzar configure el juego', font='Helvetiva', background_color=('#A72D2D'))],
-                    [sg.Ok()]
+                    [sg.Text('Se ejecutara con la configuracion predeterminada', font='Helvetiva', background_color=('#A72D2D'))],
+                    [sg.Ok(), sg.Cancel()]
     ]
     return layoutNoConfig
 
@@ -89,8 +89,14 @@ def ventanaJugar (config, Scrabble):
             windowNoConfig = sg.Window('Aviso', size=(450,100), background_color=('#A72D2D')).Layout(layoutNoConfig())
             event, value = windowNoConfig.Read()
             if (event == 'Ok'):
-                windowNoConfig.Close()
-            else:
+                windowUs = sg.Window('Usuario', size=(350, 100), background_color=('#A72D2D')).Layout(layoutUsuario())
+                event, value = windowUs.Read()
+                if event == 'ok':
+                    nombre = value['usuario']
+                    windowUs.Close()
+                    windowNoConfig.Close()
+                    return (nombre, Scrabble.main(), date.today().day, date.today().month, date.today().year)
+            elif(event == 'Cancel'):
                 windowNoConfig.Close()
         except:
             print('Error al abrir la ventana')
