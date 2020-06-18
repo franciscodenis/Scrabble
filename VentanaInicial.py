@@ -12,16 +12,19 @@ config2 = {}
 while True:
     event, value = windowPrin.Read()
     if event in (None, 'quit'):
+        windowPrin.Close()
         break
     elif event == 'jugar':
         puntos = conf.ventanaJugar(config2, Scrabble)
-        if (puntos != None):
+        if (puntos != None) and (len(config2) != 0):
             if (config2['nivel'] == 'Facil'):
                 conf.abrirArch("rankingFacil.txt", puntos)
             elif(config2['nivel'] == 'Normal'):
                 conf.abrirArch("rankingNormal.txt", puntos)
             else:
                 conf.abrirArch("rankingDificil.txt", puntos)
+        else:
+            conf.abrirArch("rankingFacil.txt", puntos)
     elif event == 'config':
         config2 = conf.ventanaConfig(config)
     elif event == 'ranking':
