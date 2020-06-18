@@ -131,8 +131,9 @@ class Atril():
         return refresh
 
 class Atril_PC(Atril):
-    def __init__(self, columnas):
+    def __init__(self, columnas, puntaje=0):
         super().__init__(columnas, 'Atril_PC')
+        self._puntaje = 0
 
     def formar_palabra(self, letras_desordenadas, lista_diccionario, palabras_permitidas= ('NN', 'JJ', 'VB' )):
         seguir = True
@@ -177,6 +178,7 @@ class Atril_PC(Atril):
         return lista_coordenadas_de_palabra_en_atril
 
     def colocar_en_tablero(self,tablero,  lista_coordenadas, coordenada_inicial,ventana):
+        coordenadas_tablero = []
         print("entra a colocar en tablero")
         print(lista_coordenadas)
         for i in range(len(lista_coordenadas)):
@@ -186,19 +188,30 @@ class Atril_PC(Atril):
             tablero.get_matriz()[coordenada_inicial[0]][coordenada_inicial[1] + i].set_letra(letra_a_colocar)
             tablero.get_matriz()[coordenada_inicial[0]][coordenada_inicial[1] + i].set_definitivo(True)
             tablero.get_matriz()[coordenada_inicial[0]][coordenada_inicial[1] + i].set_tiene_letra(True)
+            coordenadas_tablero.append(tablero.get_matriz()[coordenada_inicial[0]][coordenada_inicial[1] + i].get_id())
             ventana.Element((coordenada_inicial[0],coordenada_inicial[1] + i) ).Update(letra_a_colocar, button_color=('white', '#C8C652'))
 
             self.get_espacio_fichas()[lista_coordenadas[i][1]].set_letra("")
             self.get_espacio_fichas()[lista_coordenadas[i][1]].set_tiene_letra(False)
+        return coordenadas_tablero
 
-    def calcular_puntajePC(self, palabra, puntajes_letras):
+    def calcular_puntajePC(self, puntajes_letras, botones, tablero):
         total = 0
         aumentos = []
-        print(palabra)
-        for letra in palabra:
-            print(letra)
-            if letra.upper() in puntajes_letras:
-                total = total + puntajes_letras[letra.upper()]
+        for pos in botones:
+            if (tablero.get_matriz()[pos[0]][pos[1]].get_letra() in puntajes_letras):
+                total = total + puntajes_letras[tablero.get_matriz()[pos[0]][pos[1]].get_letra()]
+        for pos in botones:
+            if (tablero.get_matriz()[pos[0]][pos[1]].get_premio() == "3P"):
+                total = total * 3
+            elif(tablero.get_matriz()[pos[0]][pos[1]].get_premio() == "3L"):
+                total = total + 3
+            elif(tablero.get_matriz()[pos[0]][pos[1]].get_premio() == "2P"):
+                total = total * 2
+            elif(tablero.get_matriz()[pos[0]][pos[1]].get_premio() == "2L"):
+                total = total + 2
+            elif(tablero.get_matriz()[pos[0]][pos[1]].get_premio() == "2R"):
+                total = total - 2
         return total
 
 
@@ -212,10 +225,9 @@ class Atril_PC(Atril):
             coordenada_inicial = self.buscar_espacio(tablero, len(palabra_armada))
             print(palabra_armada)
             lista_coordenadas = self.orden_coordenadas_atril(palabra_armada)
-            self.colocar_en_tablero(tablero, lista_coordenadas, coordenada_inicial,ventana)
-            puntaje = self.calcular_puntajePC(palabra_armada, puntajes_letras)
-            ventana.Element('puntPC').Update(puntaje)
+            coordenadas_tablero = self.colocar_en_tablero(tablero, lista_coordenadas, coordenada_inicial,ventana)
+            self._puntaje = self._puntaje + self.calcular_puntajePC(puntajes_letras, coordenadas_tablero, tablero)
+            ventana.Element('puntPC').Update(self._puntaje)
             self.agregar_letras(bolsa)
             self.refrescar_atril(ventana, 'Atril_PC')
         return False
-
