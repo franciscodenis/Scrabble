@@ -21,7 +21,7 @@ import time
 import Jugar
 
 
-def main(nivel = 'Facil', tiempo = 10):
+def main(nivel = 'Facil', tiempo = 20):
 
     filas = 15
     columnas = 15
@@ -101,6 +101,8 @@ def main(nivel = 'Facil', tiempo = 10):
                 paused = False
                 start_time = start_time + int(round(time.time() * 100)) - paused_time
                 element = window.Element('button')
+            elif event == None:
+                break;
 
             window.Element('text').Update('{:02d}:{:02d}.{:02d}'.format((current_time // 100) // 60, (current_time // 100) % 60, current_time % 100))
     window.Close()
@@ -108,3 +110,4 @@ def main(nivel = 'Facil', tiempo = 10):
 
 if __name__ == '__main__':
     main()
+
