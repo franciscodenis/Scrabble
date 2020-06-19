@@ -134,6 +134,10 @@ class Atril_PC(Atril):
     def __init__(self, columnas, puntaje=0):
         super().__init__(columnas, 'Atril_PC')
         self._puntaje = 0
+    def set_puntaje(self, puntaje):
+        self._puntaje= puntaje
+    def get_puntaje(self):
+        return self._puntaje
 
     def formar_palabra(self, letras_desordenadas, lista_diccionario, palabras_permitidas= ('NN', 'JJ', 'VB' )):
         seguir = True
@@ -226,8 +230,8 @@ class Atril_PC(Atril):
             print(palabra_armada)
             lista_coordenadas = self.orden_coordenadas_atril(palabra_armada)
             coordenadas_tablero = self.colocar_en_tablero(tablero, lista_coordenadas, coordenada_inicial,ventana)
-            self._puntaje = self._puntaje + self.calcular_puntajePC(puntajes_letras, coordenadas_tablero, tablero)
-            ventana.Element('puntPC').Update(self._puntaje)
+            set_puntaje( get_puntaje() + self.calcular_puntajePC(puntajes_letras, coordenadas_tablero, tablero))
+            ventana.Element('puntPC').Update(get_puntaje())
             self.agregar_letras(bolsa)
             self.refrescar_atril(ventana, 'Atril_PC')
         return False

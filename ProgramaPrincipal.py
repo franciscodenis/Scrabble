@@ -3,8 +3,6 @@ def seleccionar_turno():
     turno=random.choice(['computadora','jugador'])
     return turno
 
-def cambiarTurno():
-    pass
 
 
 
@@ -19,6 +17,7 @@ import Fichas
 import pickle
 import time
 import Jugar
+import ConfigVentana as conf
 
 
 def main(nivel = 'Facil', tiempo = 20):
@@ -52,7 +51,7 @@ def main(nivel = 'Facil', tiempo = 20):
     botones = [sg.Button(key='vali', button_text='Validar', button_color=('white', '#C54F1F'), font='Helvetica'),sg.Button(button_text='Cambiar letras',key ="cambiar_letras", button_color=('white', '#C54F1F'), font='Helvetica'), sg.Text('Puntaje total: ', font='Helvetica', background_color=('#5CA2A3')), sg.Text('000', key='punt', font='Helvetica', background_color=('#5CA2A3'))]
     layout.append([sg.Checkbox("", key=('Checkbox', i), size=(2, 2))for i in range(letras_de_atril)])
     layout.append(botones)
-    layout.append([sg.Text('', size=(8, 2), font=('Helvetica', 20), justification='center', key='text')]) #Temporizador
+    layout.append([sg.Text('', size=(8, 2), font=('Helvetica', 20), justification='center', key='timer_jugador')]) #Temporizador
 
 
     window = sg.Window('Scrabble', background_color='#5CA2A3').Layout(layout)
@@ -61,53 +60,79 @@ def main(nivel = 'Facil', tiempo = 20):
     paused = False
     start_time = int(round(time.time() * 100))
     print(jugar.get_turno())
-    tiempo_max= int(tiempo) * 1000 # SETEARRRRRRRR
+    tiempo_max= 1000 # SETEARRRRRRRR
     seguir_jugando = True
+    tiempo_comienzo_juego=int(round(time.time() * 100))
+    tiempo_transcurrido=0
+    tiempo_fin_juego=2000
     while True:
         event, values = window.Read(timeout=0)
+        if(int(round(time.time() * 100))-tiempo_comienzo_juego> tiempo_fin_juego):
+            conf.ventanaGanador(puntaje_total, atril_pc.get_puntaje(), nivel)
+            break
+        else:
+            # turno de la computadora
 
-        if jugar.get_turno()=='computadora':
-            seguir_jugando = atril_pc.jugar_turno(tablero, diccionario, window, fichas_jugador, puntajes_letras, palabras_permitidas)
-            if not seguir_jugando:
-                tiempo_computadora = 1000000
-            if (tiempo_computadora > tiempo_max):
-                print('terminoeltiempo')
-                jugar.cambiar_turno() # o terminar
+            if jugar.get_turno()=='computadora':
+                start_time=int(round(time.time()*100)) # momento en el que empiezo a contar
+                window.Read(timeout=0)
+                current_time= 0 #tiempo transcurrido
+                tiempo_computadora = int(round(time.time()*100))-current_time - start_time
+                window.Element('tempo_compu').Update('{:02d}:{:02d}.{:02d}'.format((tiempo_computadora // 100) // 60,(tiempo_computadora // 100) % 60, tiempo_computadora % 100))
+                seguir_jugando = atril_pc.jugar_turno(tablero, diccionario, window, fichas_jugador, puntajes_letras, palabras_permitidas)
+                tiempo_computadora = int(round(time.time()))-current_time - start_time
+                window.Element('tempo_compu').Update('{:02d}:{:02d}.{:02d}'.format((tiempo_computadora // 100) // 60,(tiempo_computadora // 100) % 60, tiempo_computadora % 100))
 
-            tiempo_computadora = int(round(time.time() * 100))-current_time - start_time
-            window.Element('tempo_compu').Update('{:02d}:{:02d}.{:02d}'.format((tiempo_computadora // 100) // 60,(tiempo_computadora // 100) % 60, tiempo_computadora % 100))
+                if not seguir_jugando:
+                    jugar.cambiar_turno()
+                if (tiempo_computadora > tiempo_max):
+                    print('terminoeltiempo')
+                    jugar.cambiar_turno() # o terminar
 
 
+                tiempo_computadora = int(round(time.time()*100))-current_time - start_time
+                window.Element('tempo_compu').Update('{:02d}:{:02d}.{:02d}'.format((tiempo_computadora // 100) // 60,(tiempo_computadora // 100) % 60, tiempo_computadora % 100))
 
-        elif jugar.get_turno()=='jugador':
-            if (current_time> tiempo_max):
-                print('terminoeltiempo jugador') #MODULO TERMINAR
-                break
-            event, values = window.Read(timeout=10)
-            current_time = int(round(time.time() * 100))-(tiempo_computadora) - start_time
-            if event in tablero.listado_botones():
-                tablero.click(atril, event, window)
-            elif event == "cambiar_letras":
-                if (atril.get_cambios_atril()>0):
-                    atril.cambiar_letras(fichas_jugador,window,tablero,values,fichas_jugador,jugar)
-                else:
-                    sg.Popup('no hay mas cambios de atril')
-            elif event in atril.listado_botones():
-                atril.click(tablero, event)
+                if (tiempo_computadora > tiempo_max):
+                    print('terminoeltiempo')
+                    jugar.cambiar_turno()
 
-            elif event == 'vali':
-                puntaje_total = tablero.click_validar(atril, tablero, window, diccionario, puntaje_total, fichas_jugador,jugar, palabras_permitidas)
-            elif event == 'Run':
-                paused = False
-                start_time = start_time + int(round(time.time() * 100)) - paused_time
-                element = window.Element('button')
-            elif event == None:
-                break;
+            #turno del jugador
+            elif jugar.get_turno()=='jugador':
+                #se termino el tiempo del jugador
+                if (current_time> tiempo_max):
+                    sg.Popup('Termino el tiempo')
+                    print('terminoeltiempo jugador') # insertat MODULO tablero. TERMINAR
+                    jugar.cambiar_turno()
+                    continue    #no sacar el continue, lo que hace es volver al while sin pasar por lo que esta abajo
 
-            window.Element('text').Update('{:02d}:{:02d}.{:02d}'.format((current_time // 100) // 60, (current_time // 100) % 60, current_time % 100))
+                # no se termino el tiempo del jugador
+                event, values = window.read(timeout=0)
+                current_time = int(round(time.time() * 100))-(tiempo_computadora) - start_time  # tiempo actual - tiempo de la computadora - el momento en que empezo
+                if event in tablero.listado_botones():
+                    tablero.click(atril, event, window)
+                elif event in atril.listado_botones():
+                    atril.click(tablero, event)
+                elif event == "cambiar_letras":
+                    if (atril.get_cambios_atril()>0):
+                        atril.cambiar_letras(fichas_jugador,window,tablero,values,fichas_jugador,jugar)
+                    else:
+                        sg.Popup('no hay mas cambios de atril')
+                elif event in atril.listado_botones():
+                    atril.click(tablero, event)
+
+                elif event == 'vali':
+                    puntaje_total = tablero.click_validar(atril, tablero, window, diccionario, puntaje_total, fichas_jugador,jugar, palabras_permitidas)
+                elif event == 'Run':
+                    paused = False
+                    start_time = start_time + int(round(time.time() * 100)) - paused_time
+                    element = window.Element('button')
+                elif event == None:
+                    break;
+
+                window.Element('timer_jugador').Update('{:02d}:{:02d}.{:02d}'.format((current_time // 100) // 60, (current_time // 100) % 60, current_time % 100)) #muestro el contador
     window.Close()
     return puntaje_total
 
 if __name__ == '__main__':
     main()
-

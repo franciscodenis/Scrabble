@@ -133,7 +133,7 @@ class Tablero:
                     print("Casilla a desbloquear fuera de rango, se ignora")  # borrar
                     pass
 
-    def calcular_puntaje(self, lista):
+    def calcular_puntaje(self, lista): # creo que no está biennn. Cualquier cosa modificar  agusss
         dic_puntos = Fichas.crear_diccionario_de_puntos()
         total = 0
         aumentos = []
@@ -323,7 +323,7 @@ class Tablero:
         for x in range( self.get_filas()):
             for y in range(self.get_columnas()):
                 try:
-                    if (self.get_matriz()[x][y].get_color == 'white') and (self.get_matriz()[x][y].get_premio == ' '):
+                    if (self.get_matriz()[x][y].get_color() == 'white') and (self.get_matriz()[x][y].get_premi() == ' '):
                         self.get_matriz()[x][y].set_color ('white', '#C8C652')
                         self.get_matriz()[x][y].set_premio(' ')
                 except:
@@ -344,4 +344,3 @@ class Tablero:
 
 
         pass
-

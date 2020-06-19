@@ -28,15 +28,4 @@ while True:
     elif event == 'config':
         config2 = conf.ventanaConfig(config)
     elif event == 'ranking':
-        niv = conf.ventanaSelecTop()
-        try:
-            if (niv == 'Facil'):
-                archivo = open('rankingFacil.txt', 'r')
-            elif(niv == 'Normal'):
-                archivo = open('rankingNormal.txt', 'r')
-            else:
-                archivo = open('rankingDificil.txt', 'r')
-            datos = json.load(archivo)
-            conf.ventanaRanking(sorted(datos, key = lambda puntaje: puntaje['Puntaje'], reverse=True))
-        except:
-            print('No se registro ningun jugador')
+        conf.mostrar_ranking() # MODIF AGUS
