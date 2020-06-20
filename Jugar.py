@@ -30,19 +30,3 @@ class Jugar :
         turno=random.choice(['computadora','jugador'])
         return turno
 
-
-
-
-    def jugar_computadora(self, tablero,atril):
-
-        # bloquear_tablero
-        #iniciar contador
-        #bloquear atril
-        #buscar_palabra
-        #colocar palabra
-        #rellenar atril--- si me quedo sin letras pasar turno
-        #detener_contador
-        # si no pase turno
-            #desbloquear tablero
-            #desbloquear atril
-        pass

@@ -1,13 +1,3 @@
-def seleccionar_turno():
-
-    turno=random.choice(['computadora','jugador'])
-    return turno
-
-
-
-
-def mostrarModo():
-    pass
 
 import PySimpleGUI as sg
 import Tablero
@@ -18,6 +8,16 @@ import pickle
 import time
 import Jugar
 import ConfigVentana as conf
+
+
+
+
+
+
+def seleccionar_turno():
+
+    turno=random.choice(['computadora','jugador'])
+    return turno
 
 
 def main(nivel = 'Facil', tiempo = 20):
@@ -102,7 +102,7 @@ def main(nivel = 'Facil', tiempo = 20):
                 #se termino el tiempo del jugador
                 if (current_time> tiempo_max):
                     sg.Popup('Termino el tiempo')
-                    print('terminoeltiempo jugador') # insertat MODULO tablero. TERMINAR
+                    print('terminoeltiempo jugador') # insertat
                     jugar.cambiar_turno()
                     continue    #no sacar el continue, lo que hace es volver al while sin pasar por lo que esta abajo
 

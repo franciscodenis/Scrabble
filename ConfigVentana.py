@@ -1,7 +1,7 @@
 import PySimpleGUI as sg
 from datetime import date
 import json
-import  os
+import os
 
 
 def abrirArch (nombreArch, puntos):
@@ -15,8 +15,11 @@ def abrirArch (nombreArch, puntos):
         archivo.close()
     except:
         archivo = open(nombreArch, "w")
-        datos.append({'Nombre': puntos[0], 'Puntaje': puntos[1], 'Fecha': "{}/{}/{}".format(puntos[2], puntos[3], puntos[4])})
-        json.dump(datos, archivo)
+        try:
+            datos.append({'Nombre': puntos[0], 'Puntaje': puntos[1], 'Fecha': "{}/{}/{}".format(puntos[2], puntos[3], puntos[4])})
+            json.dump(datos, archivo)
+        except:
+            print('error al llenar el archivo ')
         archivo.close()
 
 def layoutPrin():
@@ -82,26 +85,30 @@ def ventanaConfig (config):
         windowConfig.Close()
         return config
     except:
-        print('Error al abrir la ventana')
+        print('Error al abrir la ventana config')
         pass
 
 def ventanaJugar (config, Scrabble):
+    ''' Cierra las ventanas y abre una nueva ventana con el Scrabble '''
     if (len(config) == 0):
         try:
+
             windowNoConfig = sg.Window('Aviso', size=(450,100), background_color=('#A72D2D')).Layout(layoutNoConfig())
             event, value = windowNoConfig.Read()
+
             if (event == 'Ok'):
+                #se entra sin configuracion al juego
                 windowUs = sg.Window('Usuario', size=(350, 100), background_color=('#A72D2D')).Layout(layoutUsuario())
                 event, value = windowUs.Read()
                 if event == 'ok':
                     nombre = value['usuario']
                     windowUs.Close()
-                    windowNoConfig.Close()
-                    return (nombre, Scrabble.main(), date.today().day, date.today().month, date.today().year)
+                    windowNoConfig.Close()#  ??? QUE ES ESTO
+                    return (nombre,Scrabble.main(), date.today().day, date.today().month, date.today().year) #SCRABBEL MAIN??????????????????????????
             elif(event == 'Cancel'):
                 windowNoConfig.Close()
         except:
-            print('Error al abrir la ventana')
+            print('Error al abrir la ventana JUGar')
             pass
     else:
         windowUs = sg.Window('Usuario', size=(350, 100), background_color=('#A72D2D')).Layout(layoutUsuario())
@@ -130,20 +137,22 @@ def ventanaSelecTop():
             windowTop.Close()
             return 'Dificil'
 def ventanaGanador(puntaje_jugador, puntaje_maquina,nivel):
+    '''imprime en una ventana quien fue el ganador y pone un menu para volver al juego'''
     if (puntaje_jugador< puntaje_maquina):
-        imagen= '/perdiste.png'
+        imagen= '\imagenes\perdiste.png'
         text= 'PERDISTE :()'
     elif (puntaje_maquina< puntaje_jugador):
-        imagen= '/ganaste.png'
+        imagen= '\imagenes\ganaste.png'
         text:'GANASTE :)'
     else:
-        imagen='/empataron.png'
+        imagen='\imagenes\empataron.png'
         text='EMPATE '
 
-    layout = [[sg.Image((os.getcwd()+imagen),size=(600,300))],
-    		[sg.Button('Estadisticas', key='ranking', size=(25,1))],
-    		[sg.Button('Salir', key='quit', size=(25,1))],
+    layout = [[sg.Image((os.getcwd()+imagen), size=(600,300))],
+    		[sg.Button('Estadisticas', key='ranking', size=(25,1),use_ttk_buttons= True)],
+    		[sg.Button('Salir', key='quit', size=(25,1),focus=True)],
             [sg.Button('Volver al menu', key='volver', size=(25,1))],
+
     	]
 
     windowTop = sg.Window(text , size=(700,400), background_color=('white')).Layout(layout)
@@ -152,10 +161,12 @@ def ventanaGanador(puntaje_jugador, puntaje_maquina,nivel):
         if (event == 'quit'):
             break
         elif event== 'ranking':
+            windowTop.close()
             mostrar_ranking()
         elif event== 'volver':
-            import VentanaInicial as vent  #No correr, tengo que mover todo de lugar para poder sacarlo 
-            vent.VentanaInicial() # es correcto? probar agus
+            windowTop.close()
+            import VentanaInicial as vent  #No correr, tengo que mover todo de lugar para poder sacarlo
+            vent.VentanaInicial()
 
 
 def mostrar_ranking():
@@ -169,6 +180,6 @@ def mostrar_ranking():
         else:
             archivo = open('rankingDificil.txt', 'r')
         datos = json.load(archivo)
-        self.ventanaRanking(sorted(datos, key = lambda puntaje: puntaje['Puntaje'], reverse=True))
+        ventanaRanking(sorted(datos, key = lambda puntaje: puntaje['Puntaje'], reverse=True))
     except:
         print('No se registro ningun jugador')

@@ -1,4 +1,4 @@
-import Casilla as cas #podemos cambiarlo si queda feo hacer un from casilla import *
+import Casilla as cas
 import random
 from random import randint
 import Fichas
@@ -150,7 +150,7 @@ class Atril_PC(Atril):
                 print(intento)
                 if intento in lista_diccionario:
                     print("Esta en el diccionario")
-                    if parse(intento).split('/')[1] in palabras_permitidas:
+                    if parse(intento).split('/')[1] in palabras_permitidas: #puede ser que no toma el parse??
                         print("está en parse")
                         seguir = False
                 if not seguir:
@@ -230,8 +230,8 @@ class Atril_PC(Atril):
             print(palabra_armada)
             lista_coordenadas = self.orden_coordenadas_atril(palabra_armada)
             coordenadas_tablero = self.colocar_en_tablero(tablero, lista_coordenadas, coordenada_inicial,ventana)
-            set_puntaje( get_puntaje() + self.calcular_puntajePC(puntajes_letras, coordenadas_tablero, tablero))
-            ventana.Element('puntPC').Update(get_puntaje())
+            self.set_puntaje( self.get_puntaje() + self.calcular_puntajePC(puntajes_letras, coordenadas_tablero, tablero))
+            ventana.Element('puntPC').Update(self.get_puntaje())
             self.agregar_letras(bolsa)
             self.refrescar_atril(ventana, 'Atril_PC')
         return False
