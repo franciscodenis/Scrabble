@@ -161,14 +161,17 @@ class Atril_PC(Atril):
         return intento
 
     def buscar_espacio(self, tablero, casillas_requeridas):
-        for i in range(tablero.get_filas()):
-            for j in range(tablero.get_columnas()):
-                count = 0
-                for k in range(casillas_requeridas):
-                    if not tablero.get_matriz()[i][j].get_tiene_letra():
-                        count = count + 1
-                if count == casillas_requeridas:
-                    return (i,j)
+        for posibilidades in range(3):
+            i = random.randint(0, tablero.get_filas())
+            j = random.randint(0, tablero.get_columnas())
+            count = 0
+            if (casillas_requeridas > tablero.get_filas() - j):
+                break
+            for k in range(casillas_requeridas):
+                if not tablero.get_matriz()[i][j+k].get_activo() and not tablero.get_matriz()[i][j+k].get_definitivo():
+                    count = count + 1
+            if count == casillas_requeridas:
+                return (i,j)
         return False
 
     def orden_coordenadas_atril(self, palabra_armada):
@@ -218,7 +221,14 @@ class Atril_PC(Atril):
                 total = total - 2
         return total
 
-
+    def mezclar_letras(self):
+        lista_letras = []
+        for j in range(len(self.get_espacio_fichas())):
+            lista_letras.append(self.get_espacio_fichas()[j].get_letra())
+        random.shuffle(lista_letras)
+        for j in range(len(self.get_espacio_fichas())):
+            self.get_espacio_fichas()[j].set_letra(lista_letras[0])
+            lista_letras.pop(0)
 
     def jugar_turno(self,tablero, lista_diccionario,ventana,bolsa, puntajes_letras, palabras_permitidas = ('NN', 'JJ', 'VB' )):
         lista_letras = ""
@@ -230,8 +240,10 @@ class Atril_PC(Atril):
             print(palabra_armada)
             lista_coordenadas = self.orden_coordenadas_atril(palabra_armada)
             coordenadas_tablero = self.colocar_en_tablero(tablero, lista_coordenadas, coordenada_inicial,ventana)
-            self.set_puntaje( self.get_puntaje() + self.calcular_puntajePC(puntajes_letras, coordenadas_tablero, tablero))
-            ventana.Element('puntPC').Update(self.get_puntaje())
+            self._puntaje = self._puntaje + self.calcular_puntajePC(puntajes_letras, coordenadas_tablero, tablero)
+            ventana.Element('puntPC').Update(self._puntaje)
             self.agregar_letras(bolsa)
-            self.refrescar_atril(ventana, 'Atril_PC')
+        else:
+            self.mezclar_letras()
+        self.refrescar_atril(ventana, 'Atril_PC')
         return False
