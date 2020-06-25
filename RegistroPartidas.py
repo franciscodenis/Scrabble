@@ -15,16 +15,19 @@ def guardar_score (dificultad, nombre, puntos):
 
 
     try:
-        with open(nombre_archivo_rankings, 'rb') as file:
+        try:
+            file=open(nombre_archivo_rankings, 'rb')
             data = pickle.load(file)
-            print(data)
-            data[dificultad].append(nuevo_record)
-            print(data)
-            file.close()
+        except(FileNotFoundError):
+            file= open(nombre_archivo_rankings,'w')
+            data={}
+        data[dificultad].append(nuevo_record)
+        print(data)
+
     except (FileNotFoundError, IOError,KeyError):
         print("No record yet")
         data[dificultad]= [nuevo_record]
-
+    file.close()
     with open(nombre_archivo_rankings, 'wb') as file:
         pickle.dump(data, file)
         file.close()
