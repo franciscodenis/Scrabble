@@ -60,6 +60,7 @@ class Tablero:
                 print(self.get_matriz()[i][j])
 
     def listado_botones(self):
+        ''' devuelve una lista con el id de los botones'''
         listado =[]
         for i in range(self.get_filas()):
             for j in range(self.get_columnas()):
@@ -67,7 +68,8 @@ class Tablero:
         return listado
 
     def click(self, atril, coordenadas, ventana):
-            if atril.get_casilla_seleccionada() is not None:
+        ''' selecciona una casilla del tablero'''
+        if atril.get_casilla_seleccionada() is not None:
                 if self.get_matriz()[coordenadas[0]][coordenadas[1]].get_habilitado() and not self.get_matriz()[coordenadas[0]][coordenadas[1]].get_definitivo():
                     self.actualizar_letra_tablero(atril, coordenadas)
                     atril.get_casilla_seleccionada().set_letra(' ')
@@ -78,11 +80,13 @@ class Tablero:
                     print(self.get_matriz()[coordenadas[0]][coordenadas[1]].get_letra())
 
     def actualizar_letra_tablero(self, atril, coordenadas):
+        ''' pone la letra del atril en el tablero'''
         self.get_matriz()[coordenadas[0]][coordenadas[1]].set_letra(atril.get_casilla_seleccionada().get_letra())
         self.get_matriz()[coordenadas[0]][coordenadas[1]].set_activo(True)
         self.bloquear_tablero()
 
     def enlistar_coordenadas_activas(self):
+        ''' retorna una lista con las coordenadas activas'''
         coordenadas_activas = []
         for i in range(self.get_filas()):
             for j in range(self.get_columnas()):
@@ -92,6 +96,7 @@ class Tablero:
         return coordenadas_activas
 
     def bloquear_tablero(self):
+        ''' bloqueo tablero, solo habilito en cruz'''
         coordenadas_activas = self.enlistar_coordenadas_activas()
         adyacente_arriba = (0, -1)
         adyacente_abajo = (0, +1)
@@ -133,7 +138,8 @@ class Tablero:
                     print("Casilla a desbloquear fuera de rango, se ignora")  # borrar
                     pass
 
-    def calcular_puntaje(self, lista): # creo que no está biennn. Cualquier cosa modificar  agusss
+    def calcular_puntaje(self, lista): #todo creo que no está biennn. Cualquier cosa modificar  agusss
+        ''' calcula el puntaje '''
         dic_puntos = Fichas.crear_diccionario_de_puntos()
         total = 0
         aumentos = []
@@ -156,6 +162,7 @@ class Tablero:
         return total
 
     def desactivar_coordenadas_activas(self, lista_coordenadas_activas):
+
         for coor in lista_coordenadas_activas:
             self.get_matriz()[coor[0]][coor[1]].set_activo(False)
 
@@ -190,7 +197,7 @@ class Tablero:
             return (False, 0)
 
     def desbloquear_tablero(self):
-        '''desbloquea el tablero menos los botones activos'''  #ver botones definitivos
+        '''desbloquea el tablero menos los botones activos'''
         for i in range(self.get_filas()):
             for j in range(self.get_columnas()):
                 if self.get_matriz()[i][j].get_activo():
@@ -199,6 +206,7 @@ class Tablero:
                 self.get_matriz()[i][j].set_habilitado(True)
 
     def validar_palabra(self, palabra, diccionario, palabras_permitidas):
+        '''valido una palabra retorno true o false '''
         palabra_valida = False
         print(palabra in diccionario)
         if palabra in diccionario:
@@ -207,6 +215,7 @@ class Tablero:
         return palabra_valida
 
     def click_validar(self, atril, tablero, window, diccionario, puntaje, bolsa ,juego,palabras_permitidas=('NN', 'JJ', 'VB')):
+        ''' valido una palabra, si es correcta devuelvo true y calculo el puntaje. paso el turno'''
         coordenadas_activas = tablero.enlistar_coordenadas_activas()
         palabra_en_lista = []
         for coordenada in coordenadas_activas:
@@ -217,36 +226,39 @@ class Tablero:
         palabra_valida = self.validar_palabra(palabra, diccionario, palabras_permitidas)
         print(palabra_valida)
         if palabra_valida:
+            #calculo el puntaje
             puntaje = puntaje + self.calcular_puntaje(coordenadas_activas)
+            #agrego letras en el atril
             atril.agregar_letras(bolsa)
             atril.refrescar_atril(window)
+            #desbloqueo el tablero (queda bloqueado cuando pongo una letra)
             tablero.desbloquear_tablero()
+            #actualizo el puntaje
             window.Element('punt').Update(puntaje)
-            return puntaje
+
         else:
+            #no fue valida la palabra
+            #devuelvo las letras al atril
             atril.devolver_fallo(window, tablero)
-            tablero.desbloquear_tablero()
-            return puntaje
+        #desbloqueo tablero
+        tablero.desbloquear_tablero()
+        #cambio de turno
         juego.cambiar_turno()
+        return puntaje
 
-
-
-
-
-
-
-#______________________________________________________agregado nuevo
 
 
     def modificar_premios(self,lista, tipo,clave, color):
+        ''' segun las tuplas en la lista seteo premios y modifico el aspecto del boton '''
         for valor in lista:
             try:
                 self.get_matriz()[valor[0]][valor[1]].set_premio(tipo) # si es palabra x2, letrax2, letrax3
                 self.get_matriz()[valor[0]][valor[1]].set_color(color)
-            except :
+            except KeyError:
                 continue #por si me equivoque agregando tuplas
 
     def tablero_comun(self):
+        ''' Armo lo que va a ser el tablero comun, modifico en la casilla el nombre, color y valor'''
         self.set_columnas(15)
         self.set_filas(15)
         lista_3p = []
@@ -277,6 +289,7 @@ class Tablero:
         self.modificar_premios(lista_2p,'2P','2P','#FFC133')#celeste
 
     def modificaciones_principiante(self):
+
         lista_2r = []
         self.tablero_comun()
         for i in range(6, 9, 2):
@@ -306,20 +319,16 @@ class Tablero:
             lista_2r.append((13, i))
         self.modificar_premios(lista_2r,'2R','2R','#C83C26')
 
-    def modificaciones_usuario(self):
-        #terminarrrrr
-
-        pass
     def crear_tablero(self, nivel='dificultad_facil'):
-
+        '''creo un tablero segun la dificultad elegida'''
         if nivel== 'dificultad_facil':
             self.modificaciones_principiante()
         elif nivel== 'dificultad_media':
             self.modificaciones_intermedio()
         elif nivel=="dificultad_maxima":
             self.modificaciones_experto()
-        else:
-            self.modificaciones_usuario()
+       # else:
+        #    self.modificaciones_usuario()
         for x in range( self.get_filas()):
             for y in range(self.get_columnas()):
                 try:
@@ -334,13 +343,3 @@ class Tablero:
         layout = [[sg.Button(key = (i, j),button_text= self.get_matriz()[i][j].get_premio(),button_color=('white',self.get_matriz()[i][j].get_color()),  **letter_tablero) for i in range(filas)] for j in range(columnas)]
 
         return layout
-
-
-
-
-
-
-
-
-
-        pass

@@ -136,38 +136,3 @@ def ventanaSelecTop():
         else:
             windowTop.Close()
             return 'Dificil'
-def ventanaGanador(puntaje_jugador, puntaje_maquina,nivel):
-    '''imprime en una ventana quien fue el ganador y pone un menu para volver al juego'''
-    if (puntaje_jugador< puntaje_maquina):
-        imagen= '\imagenes\perdiste.png'
-        text= 'PERDISTE :()'
-    elif (puntaje_maquina< puntaje_jugador):
-        imagen= '\imagenes\ganaste.png'
-        text:'GANASTE :)'
-    else:
-        imagen='\imagenes\empataron.png'
-        text='EMPATE '
-    texto = "TU PUNTAJE= "  + str(puntaje_jugador)
-    texto2= "COMPUTADORA= " + str(puntaje_maquina)
-
-    #AGREGAR EL PUNTAJE A LA LISTA
-    layout = [[sg.Image((os.getcwd()+imagen), size=(400,300))],
-            [sg.Txt(texto )],
-            [sg.Txt(texto2)],
-    		[sg.Button('Salir', key='quit', size=(25,1),focus=True)],
-            [sg.Button('Volver al menu', key='volver', size=(25,1))],
-
-    	]
-
-
-    windowTop = sg.Window(text , size=(800,500), background_color=('white')).Layout(layout)
-    while True:
-        event, value = windowTop.Read()
-        if (event == 'quit'):
-            break
-
-        elif event== 'volver':
-            windowTop.close()
-            import Ventanas as vent  #No correr
-            vent.Ventanas() #Aparece error pero no hay error ???
-

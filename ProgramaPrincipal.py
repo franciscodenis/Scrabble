@@ -59,18 +59,19 @@ def main(nivel = 'Facil', tiempo = 30):
     window = sg.Window('Scrabble', background_color='#5CA2A3').Layout(layout)
     current_time=0
     tiempo_computadora = 0 # inicializo el tiempo actual en 0
-    paused = False
     start_time = int(round(time.time() * 100))
     print(jugar.get_turno())
-    tiempo_max= tiempo * 100
+    tiempo_max= tiempo * 100 #tiempo maximo de turno
     tiempo_comienzo_juego=int(round(time.time() * 100))
-    tiempo_fin_juego=20#MODIFICAR
+    tiempo_fin_juego=2000#este es el tiempo total de partida
     while True:
         event, values = window.Read(timeout=0)
         if(int(round(time.time() * 100))-tiempo_comienzo_juego> tiempo_fin_juego):  # el juego terminó
             window.close()
+            #guardo el puntaje y datos del usuario
             RegistroPartidas.guardar_score(nivel, nombre, puntaje_total)
-            conf.ventanaGanador(puntaje_total, atril_pc.get_puntaje(), nivel)
+            #muestro una ventana con el ganador, opcion retornar al menu
+            RegistroPartidas.ventanaGanador(puntaje_total, atril_pc.get_puntaje(), nivel)
 
             break
         else:
@@ -126,16 +127,13 @@ def main(nivel = 'Facil', tiempo = 30):
 
                 elif event == 'vali':
                     puntaje_total = tablero.click_validar(atril, tablero, window, diccionario, puntaje_total, fichas_jugador,jugar, palabras_permitidas)
-                elif event == 'Run':
-                    paused = False
-                    start_time = start_time + int(round(time.time() * 100)) - paused_time
-                    element = window.Element('button')
+
                 elif event == None:
                     break;
 
                 window.Element('timer_jugador').Update('{:02d}:{:02d}.{:02d}'.format((current_time // 100) // 60, (current_time // 100) % 60, current_time % 100)) #muestro el contador
     window.Close()
-
+    print('llega ??')
     RegistroPartidas.guardar_score(nivel, nombre, puntaje_total)
 
 if __name__ == '__main__':

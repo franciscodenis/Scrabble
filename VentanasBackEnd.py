@@ -1,6 +1,7 @@
 import RegistroPartidas
 
 def click_dificultad(window, evento, botones_dificultad, configuracion_partida):
+    ''' selecciona un boton de dificultad '''
     for boton in botones_dificultad:
         if evento == boton:
             configuracion_partida[0] = evento
@@ -10,6 +11,7 @@ def click_dificultad(window, evento, botones_dificultad, configuracion_partida):
 
 
 def click_tiempo_turno(window, evento, botones_tiempo_turno, configuracion_partida):
+    ''' Selecciona  un tiempo de juego '''
     diccionario_tiempo_turnos = {'tiempo_turno_30_seg': 30, 'tiempo_turno_60_seg': 60, 'tiempo_turno_90_seg': 90}
     for boton in botones_tiempo_turno:
         if evento == boton:
@@ -20,6 +22,7 @@ def click_tiempo_turno(window, evento, botones_tiempo_turno, configuracion_parti
 
 
 def click_mejores_puestos(window, evento, botones_mejores_puestos):
+    ''' muestra los mejores puestos'''
     for boton in botones_mejores_puestos:
         if evento == boton:
             RegistroPartidas.mostrar_ranking(boton)
