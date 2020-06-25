@@ -8,7 +8,7 @@ import pickle
 import time
 import Jugar
 import ConfigVentana as conf
-
+import RegistroPartidas
 
 
 
@@ -20,8 +20,9 @@ def seleccionar_turno():
     return turno
 
 
-def main(nivel = 'Facil', tiempo = 20):
+def main(nivel = 'Facil', tiempo = 30):
 
+    nombre = RegistroPartidas.ingresar_usuario()
     filas = 15
     columnas = 15
     letras_de_atril = 7
@@ -60,11 +61,9 @@ def main(nivel = 'Facil', tiempo = 20):
     paused = False
     start_time = int(round(time.time() * 100))
     print(jugar.get_turno())
-    tiempo_max= 1000 # SETEARRRRRRRR
-    seguir_jugando = True
+    tiempo_max= tiempo * 100
     tiempo_comienzo_juego=int(round(time.time() * 100))
-    tiempo_transcurrido=0
-    tiempo_fin_juego=2000
+    tiempo_fin_juego=20000
     while True:
         event, values = window.Read(timeout=0)
         if(int(round(time.time() * 100))-tiempo_comienzo_juego> tiempo_fin_juego):
@@ -132,7 +131,8 @@ def main(nivel = 'Facil', tiempo = 20):
 
                 window.Element('timer_jugador').Update('{:02d}:{:02d}.{:02d}'.format((current_time // 100) // 60, (current_time // 100) % 60, current_time % 100)) #muestro el contador
     window.Close()
-    return puntaje_total
+
+    RegistroPartidas.guardar_score(nivel, nombre, puntaje_total)
 
 if __name__ == '__main__':
     main()
