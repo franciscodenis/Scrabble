@@ -55,6 +55,3 @@ while True:
         window_principal.Close()
         ProgramaPrincipal.main(configuracion_partida[0], configuracion_partida[1])
         break
-
-
-

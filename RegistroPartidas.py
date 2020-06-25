@@ -21,7 +21,7 @@ def guardar_score (dificultad, nombre, puntos):
             data[dificultad].append(nuevo_record)
             print(data)
             file.close()
-    except (FileNotFoundError, IOError):
+    except (FileNotFoundError, IOError,KeyError):
         print("No record yet")
         data = {dificultad: [nuevo_record]}
 

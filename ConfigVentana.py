@@ -147,39 +147,27 @@ def ventanaGanador(puntaje_jugador, puntaje_maquina,nivel):
     else:
         imagen='\imagenes\empataron.png'
         text='EMPATE '
+    texto = "TU PUNTAJE= "  + str(puntaje_jugador)
+    texto2= "COMPUTADORA= " + str(puntaje_maquina)
 
-    layout = [[sg.Image((os.getcwd()+imagen), size=(600,300))],
-    		[sg.Button('Estadisticas', key='ranking', size=(25,1),use_ttk_buttons= True)],
+    #AGREGAR EL PUNTAJE A LA LISTA
+    layout = [[sg.Image((os.getcwd()+imagen), size=(400,300))],
+            [sg.Txt(texto )],
+            [sg.Txt(texto2)],
     		[sg.Button('Salir', key='quit', size=(25,1),focus=True)],
             [sg.Button('Volver al menu', key='volver', size=(25,1))],
 
     	]
 
-    windowTop = sg.Window(text , size=(700,400), background_color=('white')).Layout(layout)
+
+    windowTop = sg.Window(text , size=(800,500), background_color=('white')).Layout(layout)
     while True:
         event, value = windowTop.Read()
         if (event == 'quit'):
             break
-        elif event== 'ranking':
-            windowTop.close()
-            mostrar_ranking()
+
         elif event== 'volver':
             windowTop.close()
-            import VentanaInicial as vent  #No correr, tengo que mover todo de lugar para poder sacarlo
-            vent.VentanaInicial()
+            import Ventanas as vent  #No correr
+            vent.Ventanas() #Aparece error pero no hay error ???
 
-
-def mostrar_ranking():
-
-    niv = ventanaSelecTop()
-    try:
-        if (niv == 'Facil'):
-            archivo = open('rankingFacil.txt', 'r')
-        elif(niv == 'Normal'):
-            archivo = open('rankingNormal.txt', 'r')
-        else:
-            archivo = open('rankingDificil.txt', 'r')
-        datos = json.load(archivo)
-        ventanaRanking(sorted(datos, key = lambda puntaje: puntaje['Puntaje'], reverse=True))
-    except:
-        print('No se registro ningun jugador')

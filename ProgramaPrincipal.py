@@ -20,6 +20,7 @@ def seleccionar_turno():
     return turno
 
 
+
 def main(nivel = 'Facil', tiempo = 30):
 
     nombre = RegistroPartidas.ingresar_usuario()
@@ -63,11 +64,14 @@ def main(nivel = 'Facil', tiempo = 30):
     print(jugar.get_turno())
     tiempo_max= tiempo * 100
     tiempo_comienzo_juego=int(round(time.time() * 100))
-    tiempo_fin_juego=20000
+    tiempo_fin_juego=20#MODIFICAR
     while True:
         event, values = window.Read(timeout=0)
-        if(int(round(time.time() * 100))-tiempo_comienzo_juego> tiempo_fin_juego):
+        if(int(round(time.time() * 100))-tiempo_comienzo_juego> tiempo_fin_juego):  # el juego terminó
+            window.close()
+            RegistroPartidas.guardar_score(nivel, nombre, puntaje_total)
             conf.ventanaGanador(puntaje_total, atril_pc.get_puntaje(), nivel)
+
             break
         else:
             # turno de la computadora
