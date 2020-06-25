@@ -59,7 +59,7 @@ def mostrar_ranking(nivel):
             dificultad = diccionario_dificultad_según_boton[nivel]
             datos_a_imprimir = datos[dificultad]
             datos_a_imprimir = list(map( lambda x : list([x['Nombre'],x['Puntaje'], x['Fecha']]), datos_a_imprimir ))
-            datos_a_imprimir = sorted(datos_a_imprimir,key= lambda x : x[2], reverse = True)
+            datos_a_imprimir = sorted(datos_a_imprimir,key= lambda x : x[1], reverse = True)
             for linea in datos_a_imprimir:
                 print('Nombre: {}    Puntaje: {}    Fecha: {}'.format(linea[0],linea[1],linea[2]))
         except KeyError:
