@@ -77,5 +77,3 @@ def crear_diccionario():
             lista_diccionario.append(line)
     return lista_diccionario
 
-
-#Checkeando como hacer cambios en git

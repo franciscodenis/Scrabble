@@ -13,14 +13,6 @@ import RegistroPartidas
 
 
 
-
-def seleccionar_turno():
-
-    turno=random.choice(['computadora','jugador'])
-    return turno
-
-
-
 def main(nivel = 'Facil', tiempo = 30):
 
     nombre = RegistroPartidas.ingresar_usuario()
@@ -40,7 +32,7 @@ def main(nivel = 'Facil', tiempo = 30):
     atril.agregar_letras(fichas_jugador)
     atril_pc.agregar_letras(fichas_jugador)
 
-    puntaje_total = 0 # Debería estar en la clase jugador
+    puntaje_total = 0
 
     letter_atril = { 'size' : (3, 2), 'pad' : (0,0), 'button_color' : ('white', '#C8C652')}
     layout= []
@@ -63,7 +55,7 @@ def main(nivel = 'Facil', tiempo = 30):
     print(jugar.get_turno())
     tiempo_max= tiempo * 100 #tiempo maximo de turno
     tiempo_comienzo_juego=int(round(time.time() * 100))
-    tiempo_fin_juego=2000#este es el tiempo total de partida
+    tiempo_fin_juego=20000#0ste es el tiempo total de partida
     while True:
         event, values = window.Read(timeout=0)
         if(int(round(time.time() * 100))-tiempo_comienzo_juego> tiempo_fin_juego):  # el juego terminó
@@ -107,6 +99,7 @@ def main(nivel = 'Facil', tiempo = 30):
                 if (current_time> tiempo_max):
                     sg.Popup('Termino el tiempo')
                     print('terminoeltiempo jugador') # insertat
+                    atril.devolver_fallo(window,tablero)
                     jugar.cambiar_turno()
                     continue    #no sacar el continue, lo que hace es volver al while sin pasar por lo que esta abajo
 
@@ -118,6 +111,7 @@ def main(nivel = 'Facil', tiempo = 30):
                 elif event in atril.listado_botones():
                     atril.click(tablero, event)
                 elif event == "cambiar_letras":
+                    atril.devolver_fallo(window,tablero)
                     if (atril.get_cambios_atril()>0):
                         atril.cambiar_letras(fichas_jugador,window,tablero,values,fichas_jugador,jugar)
                     else:
