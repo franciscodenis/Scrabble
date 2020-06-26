@@ -76,7 +76,7 @@ class Atril():
         '''agrego letras al atril'''
         for i in self.get_espacio_fichas():
             if not i.get_tiene_letra():
-                i.set_letra(bolsa.pop(randint(0, len(bolsa)-1)))
+                i.set_letra(random_letter(bolsa))
                 i.set_tiene_letra(True)
 
 
@@ -257,6 +257,7 @@ class Atril_PC(Atril):
             lista_letras = lista_letras + self.get_espacio_fichas()[boton[1]].get_letra()
         palabra_armada = self.formar_palabra( lista_letras, lista_diccionario, palabras_permitidas)
         if (palabra_armada != " "):
+            Fichas.borrar_de_bolsa(palabra_armada,bolsa)
             coordenada_inicial = self.buscar_espacio(tablero, len(palabra_armada)) #ver si es boole
             if(coordenada_inicial!= False):
                 print(palabra_armada)

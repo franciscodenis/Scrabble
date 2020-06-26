@@ -69,7 +69,7 @@ def crear_diccionario_de_puntos():
 
     return diccionario_de_puntos
 
-def crear_diccionario():
+def crear_diccionario(): #deberiamos correrlo, no tiene sentido que este aca
     lista_diccionario = []
     with open('diccionarios/diccionario.txt', 'r', encoding="cp437", errors='ignore') as file:
         for line in file:
@@ -77,3 +77,6 @@ def crear_diccionario():
             lista_diccionario.append(line)
     return lista_diccionario
 
+def borrar_de_bolsa(palabra,bolsa):
+    for letra in palabra:
+        bolsa.remove(letra.upper())
