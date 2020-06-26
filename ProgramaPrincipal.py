@@ -123,12 +123,13 @@ def main(nivel = 'Facil', tiempo = 30):
                     continue    #no sacar el continue, lo que hace es volver al while sin pasar por lo que esta abajo
 
                 # no se termino el tiempo del jugador
-                event, values = window.read(timeout=0)
                 current_time = int(round(time.time() * 100))-(tiempo_computadora) - start_time  # tiempo actual - tiempo de la computadora - el momento en que empezo
-                if event in tablero.listado_botones():
-                    tablero.click(atril, event, window)
-                elif event in atril.listado_botones():
+
+                if event in atril.listado_botones():
                     atril.click(tablero, event)
+                elif event in tablero.listado_botones():
+                    tablero.click(atril, event, window)
+
                 elif event == "cambiar_letras":
                     atril.devolver_fallo(window,tablero)
                     if (atril.get_cambios_atril()>0):
