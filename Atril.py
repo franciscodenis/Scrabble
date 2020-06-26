@@ -23,7 +23,7 @@ class Atril():
         self.set_columnas(columnas)
         self.set_espacio_fichas( [cas.Casilla() for x in range(columnas)])
         for i in range(columnas):
-            self.get_espacio_fichas()[i] =(cas.Casilla(tipo_atril, i))  # ES CORRECTO?
+            self.get_espacio_fichas()[i] =(cas.Casilla(tipo_atril, i))
         self.set_cambios_atril(3) # Cantidad de cambios está dada por la cantidad de fichas para cambiar en la bolsa
         self.set_esta_vacio(True)
 
@@ -87,9 +87,13 @@ class Atril():
 
     def refrescar_atril(self, window, atril ='Atril_jugador'):
         '''actualizo el atril del jugador '''
-        letras=(self.get_espacio_fichas())
-        for i in range(len(letras)):
-            window.Element((atril,i)).Update(text=letras[i].get_letra())
+        letras = (self.get_espacio_fichas())
+        if atril== 'Atril_PC':
+            for i in range(len(letras)):
+                window.Element((atril, i)).Update(text='?')
+        else:
+            for i in range(len(letras)):
+                window.Element((atril,i)).Update(text=letras[i].get_letra())
 
 
     def llenar_atril(self, lista_letras):
@@ -108,8 +112,8 @@ class Atril():
                 tablero.get_matriz()[coor[0]][coor[1]].set_letra(' ')
                 tablero.get_matriz()[coor[0]][coor[1]].set_activo(False)
                 window.Element(coor).Update(tablero.get_matriz()[coor[0]][coor[1]].get_premio(), button_color=(('white', tablero.get_matriz()[coor[0]][coor[1]].get_color())))
-            # tablero.get_coorUsadas().remove(coor) #NO HACE FALTA PORQUE SE BORRAN CUANDO HACES EL SET.ACTIVO(FALSE)-agus
-        for i in range(len(letras)):              #devuelve las letras al atril(falta pulir)... segun agus(yo) esta perfecto, solo faltaba desbloquear el tablero
+
+        for i in range(len(letras)):
             if letras[i].get_letra() == ' ':
                 if (len(letra_devolver) > 0):
                     letras[i].set_letra(letra_devolver[0])
@@ -134,6 +138,7 @@ class Atril_PC(Atril):
     def __init__(self, columnas, puntaje=0):
         super().__init__(columnas, 'Atril_PC')
         self._puntaje = 0
+
     def set_puntaje(self, puntaje):
         self._puntaje= puntaje
     def get_puntaje(self):
