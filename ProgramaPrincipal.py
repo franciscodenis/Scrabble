@@ -27,8 +27,12 @@ def main(nivel = 'Facil', tiempo = 30):
     fichas_jugador= Fichas.crear_bolsa_de_fichas()
     puntajes_letras = Fichas.crear_diccionario_de_puntos()
     diccionario = Fichas.crear_diccionario()
-    palabras_permitidas = ['NN', 'JJ', 'VB' ]
-
+    if nivel== 'dificultad_facil':
+        palabras_permitidas = ['NN', 'JJ', 'VB' ]
+    elif nivel== 'dificultad_media':
+        palabras_permitidas=['JJ','VB']
+    else:
+        palabras_permitidas=['VB']
     atril.agregar_letras(fichas_jugador)
     atril_pc.agregar_letras(fichas_jugador)
 
@@ -63,10 +67,12 @@ def main(nivel = 'Facil', tiempo = 30):
     tiempo_fin_juego=20000#0ste es el tiempo total de partida
     while True:
         event, values = window.Read(timeout=0)
-        if int(round(time.time() * 100))-tiempo_comienzo_juego> tiempo_fin_juego or event== 'fin_juego':  # el juego terminó
+        if int(round(time.time() * 100))-tiempo_comienzo_juego> tiempo_fin_juego or event== 'fin_juego' or atril.get_terminar_juego():  # el juego terminó
             window.close()
             #guardo el puntaje y datos del usuario
             RegistroPartidas.guardar_score(nivel, nombre, puntaje_total)
+            if(atril.get_terminar_juego()):
+                sg.popup('se terminaron los cambios de atril, se termina el juego ')
             #muestro una ventana con el ganador, opcion retornar al menu
             RegistroPartidas.ventanaGanador(puntaje_total, atril_pc.get_puntaje(), nivel)
 
@@ -80,13 +86,20 @@ def main(nivel = 'Facil', tiempo = 30):
                 current_time= 0 #tiempo transcurrido
                 tiempo_computadora = int(round(time.time()*100))-current_time - start_time
                 window.Element('tempo_compu').Update('{:02d}:{:02d}.{:02d}'.format((tiempo_computadora // 100) // 60,(tiempo_computadora // 100) % 60, tiempo_computadora % 100))
+
+                #Juega la computadora
                 seguir_jugando = atril_pc.jugar_turno(tablero, diccionario, window, fichas_jugador, puntajes_letras, palabras_permitidas)
+
+                #actualizo los relojes
                 tiempo_computadora = int(round(time.time()))-current_time - start_time
                 window.Element('tempo_compu').Update('{:02d}:{:02d}.{:02d}'.format((tiempo_computadora // 100) // 60,(tiempo_computadora // 100) % 60, tiempo_computadora % 100))
+
                 #-------actualizo reloj total
                 tiempo_transcurrido = int(round(time.time() * 100)) - tiempo_comienzo_juego
                 window.Element('timer_juego').Update('{:02d}:{:02d}.{:02d}'.format((tiempo_transcurrido // 100) // 60,(tiempo_transcurrido// 100) % 60, tiempo_transcurrido % 100))
-                if not seguir_jugando:
+
+
+                if not seguir_jugando: # ver si lo puedo borrar
                     jugar.cambiar_turno()
                 if (tiempo_computadora > tiempo_max):
                     print('terminoeltiempo')

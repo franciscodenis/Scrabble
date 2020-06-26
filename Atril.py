@@ -18,9 +18,12 @@ def random_letter(lista_letras ):
 class Atril():
 
 
+
+
     def __init__(self, columnas, tipo_atril = 'Atril_jugador'):
         self.__casilla_seleccionada  = None
         self.set_columnas(columnas)
+        self.set_terminar_juego(False)
         self.set_espacio_fichas( [cas.Casilla() for x in range(columnas)])
         for i in range(columnas):
             self.get_espacio_fichas()[i] =(cas.Casilla(tipo_atril, i))
@@ -29,7 +32,13 @@ class Atril():
 
 
     #----------- getters y setters-------------------------
+    def set_terminar_juego(self, var):
+        self.__terminar_juego = var
+    def get_terminar_juego(self):
+        return self.__terminar_juego
+
     # cambios_atril
+
     def set_cambios_atril(self, cantidad):
         self.__cambios_atril= cantidad
     def get_cambios_atril(self):
@@ -97,10 +106,14 @@ class Atril():
 
 
     def llenar_atril(self, lista_letras):
-
+        ''' lleno los espacios vacios del atril '''
         for i in self.get_espacio_fichas():
-            if i.get_letra()== "" or i.get_letra()==' ': # tengo que llenars
-                i.set_letra(random_letter(lista_letras))
+            if i.get_letra()== "" or i.get_letra()==' ': # tengo que llenar el atril
+                try:
+                    i.set_letra(random_letter(lista_letras))
+                except: #poner la excepcion correcta, no hacerlo general. cual seria?
+                    self.set_terminar_juego(True) # me quede sin fichas, termino el juego
+                    break
 
     def devolver_fallo(self, window, tablero): #no hace falta mandar la lista de coordenadas si te mandas el tablero -agus
         '''Este metodo devuelve las letras al atril'''
@@ -154,6 +167,7 @@ class Atril_PC(Atril):
                 intento = ''.join(j).lower()
                 print(intento)
                 if intento in lista_diccionario:
+
                     print("Esta en el diccionario")
                     if parse(intento).split('/')[1] in palabras_permitidas: #puede ser que no toma el parse??
                         print("está en parse")
@@ -236,6 +250,8 @@ class Atril_PC(Atril):
             lista_letras.pop(0)
 
     def jugar_turno(self,tablero, lista_diccionario,ventana,bolsa, puntajes_letras, palabras_permitidas = ('NN', 'JJ', 'VB' )):
+        '''juega el turno de la computadora, agrega una palabra en el tablero  si encuentra. pasa turno  '''
+
         lista_letras = ""
         for boton in self.listado_botones():
             lista_letras = lista_letras + self.get_espacio_fichas()[boton[1]].get_letra()

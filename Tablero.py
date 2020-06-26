@@ -166,11 +166,14 @@ class Tablero:
         for coor in lista_coordenadas_activas:
             self.get_matriz()[coor[0]][coor[1]].set_activo(False)
 
-    def set_palabra_definitiva(self, lista_coors): #ver si se usa
+    def set_palabra_definitiva(self, lista_coors):
         for coor in lista_coors:
-            #eliminar_letra(lista_letras) hay que hacerlo!!
+            #eliminar_letra(lista_letras) #hay que hacerlo!!
             self.get_matriz()[coor[0]][coor[1]].set_definitivo(True)
 
+
+
+    #METODO VALIDAR PALABRA VIEJO_____________________________________________________
     def validar_pal(self):
         lista_coordenadas_activas = self.enlistar_coordenadas_activas()
         puntaje = self.calcular_puntaje(lista_coordenadas_activas)
@@ -195,6 +198,7 @@ class Tablero:
                 return (False, 0)
         else:
             return (False, 0)
+    #__________________________________________________________________________
 
     def desbloquear_tablero(self):
         '''desbloquea el tablero menos los botones activos'''
