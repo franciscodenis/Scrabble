@@ -236,13 +236,16 @@ class Atril_PC(Atril):
             lista_letras = lista_letras + self.get_espacio_fichas()[boton[1]].get_letra()
         palabra_armada = self.formar_palabra( lista_letras, lista_diccionario, palabras_permitidas)
         if (palabra_armada != " "):
-            coordenada_inicial = self.buscar_espacio(tablero, len(palabra_armada))
-            print(palabra_armada)
-            lista_coordenadas = self.orden_coordenadas_atril(palabra_armada)
-            coordenadas_tablero = self.colocar_en_tablero(tablero, lista_coordenadas, coordenada_inicial,ventana)
-            self._puntaje = self._puntaje + self.calcular_puntajePC(puntajes_letras, coordenadas_tablero, tablero)
-            ventana.Element('puntPC').Update(self._puntaje)
-            self.agregar_letras(bolsa)
+            coordenada_inicial = self.buscar_espacio(tablero, len(palabra_armada)) #ver si es boole
+            if(coordenada_inicial!= False):
+                print(palabra_armada)
+                lista_coordenadas = self.orden_coordenadas_atril(palabra_armada)
+                coordenadas_tablero = self.colocar_en_tablero(tablero, lista_coordenadas, coordenada_inicial,ventana)
+                self._puntaje = self._puntaje + self.calcular_puntajePC(puntajes_letras, coordenadas_tablero, tablero)
+                ventana.Element('puntPC').Update(self._puntaje)
+                self.agregar_letras(bolsa)
+            else:
+                print('no se encontro una coordenada adecuada ')
         else:
             self.mezclar_letras()
         self.refrescar_atril(ventana, 'Atril_PC')
