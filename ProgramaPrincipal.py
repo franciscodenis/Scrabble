@@ -2,9 +2,9 @@
 import PySimpleGUI as sg
 import Tablero
 import Atril
-import Casilla
+
 import Fichas
-import pickle
+
 import time
 import Jugar
 import ConfigVentana as conf
@@ -34,16 +34,21 @@ def main(nivel = 'Facil', tiempo = 30):
 
     puntaje_total = 0
 
+    # ------ Column Definition ------ #
+    column1 = tablero.crear_tablero(nivel)
+    column2=[[sg.Text('Fin del juego:')],[
+              sg.Text('', size=(8, 2), font=('Helvetica', 20), justification='center', key='timer_juego'),],
+             [sg.Button(button_text='Finalizar Juego',key=('fin_juego'))]]
     letter_atril = { 'size' : (3, 2), 'pad' : (0,0), 'button_color' : ('white', '#C8C652')}
     layout= []
     layout.append([sg.Button(key=('Atril_PC', i), button_text=atril_pc.get_espacio_fichas()[i].get_letra(), **letter_atril) for i in range(letras_de_atril)])
     PC = [sg.Text('', size=(8, 2), font=('Helvetica', 20), justification='center', key='tempo_compu'), sg.Text('Puntaje computadora: ', font='Helvetica', background_color=('#5CA2A3')), sg.Text('000', key='puntPC', font='Helvetica', background_color='#5CA2A3')] #Temporizador Computadora
     layout.append(PC)
-    layout.extend(tablero.crear_tablero(nivel))
+    layout.append([sg.Column(column1, background_color='#5CA2A3'), sg.Column(column2,background_color='#5CA2A3' )])
     layout.append([sg.Text('Seleccione una letra de abajo', auto_size_text=True, font='Helvetica', background_color=('#5CA2A3'))])
     layout.append([sg.Button(key=('Atril_jugador', i) , button_text= atril.get_espacio_fichas()[i].get_letra(), **letter_atril) for i in range(letras_de_atril)])
     botones = [sg.Button(key='vali', button_text='Validar', button_color=('white', '#C54F1F'), font='Helvetica'),sg.Button(button_text='Cambiar letras',key ="cambiar_letras", button_color=('white', '#C54F1F'), font='Helvetica'), sg.Text('Puntaje total: ', font='Helvetica', background_color=('#5CA2A3')), sg.Text('000', key='punt', font='Helvetica', background_color=('#5CA2A3'))]
-    layout.append([sg.Checkbox("", key=('Checkbox', i), size=(2, 2))for i in range(letras_de_atril)])
+    layout.append([sg.Checkbox("", key=('Checkbox', i), size=(0, 0))for i in range(letras_de_atril)])
     layout.append(botones)
     layout.append([sg.Text('', size=(8, 2), font=('Helvetica', 20), justification='center', key='timer_jugador')]) #Temporizador
 
@@ -58,7 +63,7 @@ def main(nivel = 'Facil', tiempo = 30):
     tiempo_fin_juego=20000#0ste es el tiempo total de partida
     while True:
         event, values = window.Read(timeout=0)
-        if(int(round(time.time() * 100))-tiempo_comienzo_juego> tiempo_fin_juego):  # el juego terminó
+        if int(round(time.time() * 100))-tiempo_comienzo_juego> tiempo_fin_juego or event== 'fin_juego':  # el juego terminó
             window.close()
             #guardo el puntaje y datos del usuario
             RegistroPartidas.guardar_score(nivel, nombre, puntaje_total)
@@ -78,12 +83,14 @@ def main(nivel = 'Facil', tiempo = 30):
                 seguir_jugando = atril_pc.jugar_turno(tablero, diccionario, window, fichas_jugador, puntajes_letras, palabras_permitidas)
                 tiempo_computadora = int(round(time.time()))-current_time - start_time
                 window.Element('tempo_compu').Update('{:02d}:{:02d}.{:02d}'.format((tiempo_computadora // 100) // 60,(tiempo_computadora // 100) % 60, tiempo_computadora % 100))
-
+                #-------actualizo reloj total
+                tiempo_transcurrido = int(round(time.time() * 100)) - tiempo_comienzo_juego
+                window.Element('timer_juego').Update('{:02d}:{:02d}.{:02d}'.format((tiempo_transcurrido // 100) // 60,(tiempo_transcurrido// 100) % 60, tiempo_transcurrido % 100))
                 if not seguir_jugando:
                     jugar.cambiar_turno()
                 if (tiempo_computadora > tiempo_max):
                     print('terminoeltiempo')
-                    jugar.cambiar_turno() # o terminar
+                    jugar.cambiar_turno()
 
 
                 tiempo_computadora = int(round(time.time()*100))-current_time - start_time
@@ -124,7 +131,9 @@ def main(nivel = 'Facil', tiempo = 30):
 
                 elif event == None:
                     break;
-
+                tiempo_transcurrido=int(round(time.time() * 100))-tiempo_comienzo_juego
+                window.Element('timer_juego').Update('{:02d}:{:02d}.{:02d}'.format((tiempo_transcurrido// 100) // 60, (tiempo_transcurrido // 100) % 60,
+                                                  tiempo_transcurrido % 100))  # muestro el contador
                 window.Element('timer_jugador').Update('{:02d}:{:02d}.{:02d}'.format((current_time // 100) // 60, (current_time // 100) % 60, current_time % 100)) #muestro el contador
     window.Close()
     print('llega ??')
