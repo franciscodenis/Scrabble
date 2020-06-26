@@ -218,7 +218,7 @@ class Tablero:
                 palabra_valida = True
         return palabra_valida
 
-    def click_validar(self, atril, tablero, window, diccionario, puntaje, bolsa ,juego,palabras_permitidas=('NN', 'JJ', 'VB')):
+    def click_validar(self, atril, tablero, window, diccionario, puntaje, bolsa ,juego,palabras_permitidas=('NN', 'JJ', 'VB'),lista_palabras_usadas=[]):
         ''' valido una palabra, si es correcta devuelvo true y calculo el puntaje. paso el turno'''
         coordenadas_activas = tablero.enlistar_coordenadas_activas()
         palabra_en_lista = []
@@ -239,6 +239,9 @@ class Tablero:
             tablero.desbloquear_tablero()
             #actualizo el puntaje
             window.Element('punt').Update(puntaje)
+            #actualizo la lista de palabras usadas
+            lista_palabras_usadas.append(palabra)
+            window.Element('lista').Update(values=lista_palabras_usadas)
 
         else:
             #no fue valida la palabra

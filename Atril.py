@@ -270,4 +270,4 @@ class Atril_PC(Atril):
         else:
             self.mezclar_letras()
         self.refrescar_atril(ventana, 'Atril_PC')
-        return False
+        return palabra_armada

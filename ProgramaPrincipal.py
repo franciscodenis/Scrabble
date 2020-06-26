@@ -37,16 +37,22 @@ def main(nivel = 'Facil', tiempo = 30):
     atril_pc.agregar_letras(fichas_jugador)
 
     puntaje_total = 0
-
+    lista_de_palabras=[]
     # ------ Column Definition ------ #
     column1 = tablero.crear_tablero(nivel)
-    column2=[[sg.Text('Fin del juego:')],[
-              sg.Text('', size=(8, 2), font=('Helvetica', 20), justification='center', key='timer_juego'),],
-             [sg.Button(button_text='Finalizar Juego',key=('fin_juego'))]]
+    column2=[[sg.Text('Fin del juego:')],
+             [sg.Text('', size=(8, 2), font=('Helvetica', 20), justification='center', key='timer_juego'),],
+             [sg.Button(button_text='Finalizar Juego',key=('fin_juego'))],
+             [sg.Text('Ultimas Palabras ingresadas')],
+             [sg.Listbox(values=(lista_de_palabras), size=(30, 6),key='lista')],
+             [sg.Button(button_text='Posponer partida', key=('Posponer'))],
+             ]
+
     letter_atril = { 'size' : (3, 2), 'pad' : (0,0), 'button_color' : ('white', '#C8C652')}
+    #-----------------------LAYOUT VENTANA-----------------------------------
     layout= []
     layout.append([sg.Button(key=('Atril_PC', i), button_text='?', **letter_atril) for i in range(letras_de_atril)])
-    PC = [sg.Text('', size=(8, 2), font=('Helvetica', 20), justification='center', key='tempo_compu'), sg.Text('Puntaje computadora: ', font='Helvetica', background_color=('#5CA2A3')), sg.Text('000', key='puntPC', font='Helvetica', background_color='#5CA2A3')] #Temporizador Computadora
+    PC = [sg.Text('', size=(8, 1), font=('Helvetica', 20), justification='center', key='tempo_compu'), sg.Text('Puntaje computadora: ', font='Helvetica', background_color=('#5CA2A3')), sg.Text('000', key='puntPC', font='Helvetica', background_color='#5CA2A3')] #Temporizador Computadora
     layout.append(PC)
     layout.append([sg.Column(column1, background_color='#5CA2A3'), sg.Column(column2,background_color='#5CA2A3' )])
     layout.append([sg.Text('Seleccione una letra de abajo', auto_size_text=True, font='Helvetica', background_color=('#5CA2A3'))])
@@ -54,7 +60,7 @@ def main(nivel = 'Facil', tiempo = 30):
     botones = [sg.Button(key='vali', button_text='Validar', button_color=('white', '#C54F1F'), font='Helvetica'),sg.Button(button_text='Cambiar letras',key ="cambiar_letras", button_color=('white', '#C54F1F'), font='Helvetica'), sg.Text('Puntaje total: ', font='Helvetica', background_color=('#5CA2A3')), sg.Text('000', key='punt', font='Helvetica', background_color=('#5CA2A3'))]
     layout.append([sg.Checkbox("", key=('Checkbox', i), size=(0, 0))for i in range(letras_de_atril)])
     layout.append(botones)
-    layout.append([sg.Text('', size=(8, 2), font=('Helvetica', 20), justification='center', key='timer_jugador')]) #Temporizador
+    layout.append([sg.Text('', size=(8, 1), font=('Helvetica', 20), justification='center', key='timer_jugador')]) #Temporizador
 
 
     window = sg.Window('Scrabble', background_color='#5CA2A3').Layout(layout)
@@ -88,8 +94,10 @@ def main(nivel = 'Facil', tiempo = 30):
                 window.Element('tempo_compu').Update('{:02d}:{:02d}.{:02d}'.format((tiempo_computadora // 100) // 60,(tiempo_computadora // 100) % 60, tiempo_computadora % 100))
 
                 #Juega la computadora
-                seguir_jugando = atril_pc.jugar_turno(tablero, diccionario, window, fichas_jugador, puntajes_letras, palabras_permitidas)
-
+                palabra_armada = atril_pc.jugar_turno(tablero, diccionario, window, fichas_jugador, puntajes_letras, palabras_permitidas)
+                if(palabra_armada != ' '):
+                    lista_de_palabras.append(palabra_armada)
+                    window.Element('lista').Update(values=lista_de_palabras)
                 #actualizo los relojes
                 tiempo_computadora = int(round(time.time()))-current_time - start_time
                 window.Element('tempo_compu').Update('{:02d}:{:02d}.{:02d}'.format((tiempo_computadora // 100) // 60,(tiempo_computadora // 100) % 60, tiempo_computadora % 100))
@@ -99,19 +107,12 @@ def main(nivel = 'Facil', tiempo = 30):
                 window.Element('timer_juego').Update('{:02d}:{:02d}.{:02d}'.format((tiempo_transcurrido // 100) // 60,(tiempo_transcurrido// 100) % 60, tiempo_transcurrido % 100))
 
 
-                if not seguir_jugando: # ver si lo puedo borrar
-                    jugar.cambiar_turno()
                 if (tiempo_computadora > tiempo_max):
                     print('terminoeltiempo')
-                    jugar.cambiar_turno()
-
+                jugar.cambiar_turno()
 
                 tiempo_computadora = int(round(time.time()*100))-current_time - start_time
                 window.Element('tempo_compu').Update('{:02d}:{:02d}.{:02d}'.format((tiempo_computadora // 100) // 60,(tiempo_computadora // 100) % 60, tiempo_computadora % 100))
-
-                if (tiempo_computadora > tiempo_max):
-                    print('terminoeltiempo')
-                    jugar.cambiar_turno()
 
             #turno del jugador
             elif jugar.get_turno()=='jugador':
@@ -140,7 +141,7 @@ def main(nivel = 'Facil', tiempo = 30):
                     atril.click(tablero, event)
 
                 elif event == 'vali':
-                    puntaje_total = tablero.click_validar(atril, tablero, window, diccionario, puntaje_total, fichas_jugador,jugar, palabras_permitidas)
+                    puntaje_total = tablero.click_validar(atril, tablero, window, diccionario, puntaje_total, fichas_jugador,jugar, palabras_permitidas, lista_de_palabras)
 
                 elif event == None:
                     break;
