@@ -2,9 +2,7 @@
 import PySimpleGUI as sg
 import Tablero
 import Atril
-
 import Fichas
-
 import time
 import Jugar
 import ConfigVentana as conf
