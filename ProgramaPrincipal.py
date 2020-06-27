@@ -11,7 +11,7 @@ import RegistroPartidas
 
 
 
-def main(nivel = 'Facil', tiempo = 30):
+def main(nivel_palabras, nivel = 'Facil', tiempo = 30):
 
     nombre = RegistroPartidas.ingresar_usuario()
     filas = 15
@@ -25,12 +25,7 @@ def main(nivel = 'Facil', tiempo = 30):
     fichas_jugador= Fichas.crear_bolsa_de_fichas()
     puntajes_letras = Fichas.crear_diccionario_de_puntos()
     diccionario = Fichas.crear_diccionario()
-    if nivel== 'dificultad_facil':
-        palabras_permitidas = ['NN', 'JJ', 'VB' ]
-    elif nivel== 'dificultad_media':
-        palabras_permitidas=['JJ','VB']
-    else:
-        palabras_permitidas=['VB']
+    palabras_permitidas = nivel_palabras
     atril.agregar_letras(fichas_jugador)
     atril_pc.agregar_letras(fichas_jugador)
 
