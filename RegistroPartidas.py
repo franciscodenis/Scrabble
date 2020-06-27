@@ -75,6 +75,8 @@ def mostrar_ranking(nivel):
         print("No record yet")
 def ventanaGanador(puntaje_jugador, puntaje_maquina,nivel):
     '''imprime en una ventana quien fue el ganador y pone un menu para volver al juego'''
+
+    text=' '
     if (puntaje_jugador< puntaje_maquina):
         imagen= '\imagenes\perdiste.png'
         text= 'PERDISTE :()'
@@ -105,8 +107,8 @@ def ventanaGanador(puntaje_jugador, puntaje_maquina,nivel):
 
         elif event== 'volver':
             windowTop.close()
-            import Ventanas
-            Ventanas.Ventanas() #Aparece error pero no hay error ???
+            import ScrabbleAR
+            ScrabbleAR.Ventanas() #Aparece error pero no hay error ???
 
 
 

@@ -7,70 +7,75 @@ import itertools
 from pattern import *
 from pattern.es import *
 
-def random_letter(lista_letras ):
-    lista_nueva= lista_letras.copy() # quiero asegurarme de no agarrar una letra que no exista en la bolsa pero todavia no la quiero borrar del todo
+
+def random_letter(lista_letras):
+    lista_nueva = lista_letras.copy()  # quiero asegurarme de no agarrar una letra que no exista en la bolsa pero todavia no la quiero borrar
     while True:
-        letra= chr(randint(65, 90))
+        letra = chr(randint(65, 90))
         if letra in (lista_nueva):
-            lista_nueva.remove(letra) #no hacer el remove definitivo aca, hacer en el metodo validar
+            lista_nueva.remove(letra)  # no hacer el remove definitivo aca, hacer en el metodo validar
             return letra
+
 
 class Atril():
 
-
-
-
-    def __init__(self, columnas, tipo_atril = 'Atril_jugador'):
-        self.__casilla_seleccionada  = None
+    def __init__(self, columnas, tipo_atril='Atril_jugador'):
+        self.__casilla_seleccionada = None
         self.set_columnas(columnas)
         self.set_terminar_juego(False)
-        self.set_espacio_fichas( [cas.Casilla() for x in range(columnas)])
+        self.set_espacio_fichas([cas.Casilla() for x in range(columnas)])
         for i in range(columnas):
-            self.get_espacio_fichas()[i] =(cas.Casilla(tipo_atril, i))
-        self.set_cambios_atril(3) # Cantidad de cambios está dada por la cantidad de fichas para cambiar en la bolsa
+            self.get_espacio_fichas()[i] = (cas.Casilla(tipo_atril, i))
+        self.set_cambios_atril(3)  # Cantidad de cambios está dada por la cantidad de fichas para cambiar en la bolsa
         self.set_esta_vacio(True)
 
-
-    #----------- getters y setters-------------------------
+    # ----------- getters y setters-------------------------
     def set_terminar_juego(self, var):
         self.__terminar_juego = var
+
     def get_terminar_juego(self):
         return self.__terminar_juego
 
     # cambios_atril
 
     def set_cambios_atril(self, cantidad):
-        self.__cambios_atril= cantidad
+        self.__cambios_atril = cantidad
+
     def get_cambios_atril(self):
         return self.__cambios_atril
-    def decrement_cambios_atril(self):
-        self.set_cambios_atril(self.get_cambios_atril()-1)
 
-    #__espacio_fichas
+    def decrement_cambios_atril(self):
+        self.set_cambios_atril(self.get_cambios_atril() - 1)
+
+    # __espacio_fichas
     def set_espacio_fichas(self, arreglo):
-        self.__espacio_fichas= arreglo
+        self.__espacio_fichas = arreglo
+
     def get_espacio_fichas(self):
         return self.__espacio_fichas
 
-    #__casilla_seleccionada
+    # __casilla_seleccionada
     def set_casilla_seleccionada(self, casilla):
         self.__casilla_seleccionada = casilla
+
     def get_casilla_seleccionada(self):
         return self.__casilla_seleccionada
 
-    #__columnas
-    def set_columnas(self,columnas):
-        self.__columnas= columnas
+    # __columnas
+    def set_columnas(self, columnas):
+        self.__columnas = columnas
+
     def get_columnas(self):
         return self.__columnas
 
-    #__esta_vacio
-    def set_esta_vacio(self,validez):
-        self.__esta_vacio= validez
+    # __esta_vacio
+    def set_esta_vacio(self, validez):
+        self.__esta_vacio = validez
+
     def esta_vacio(self):
         return self.__esta_vacio
 
-#_____________________________________________Comienzo de  otros metodos ____________
+    # _____________________________________________Comienzo de  otros metodos ____________
 
     def agregar_letras(self, bolsa):
         '''agrego letras al atril'''
@@ -79,52 +84,51 @@ class Atril():
                 i.set_letra(random_letter(bolsa))
                 i.set_tiene_letra(True)
 
-
-
-    def cambiar_letras(self, lista_letras,window,tablero,checkbox,bolsa,juego):
+    def cambiar_letras(self, lista_letras, window, tablero, checkbox, bolsa, juego):
         ''' cambio las letras del atril por nuevas letras'''
         #self.devolver_fallo(window,tablero) #devuelve las letras que estan en uso  al atril
         for i in range(7):
             if self.get_espacio_fichas()[i].get_tiene_letra() and checkbox[('Checkbox', i)]:
                 bolsa.append(self.get_espacio_fichas()[i].get_letra())
-                self.get_espacio_fichas()[i].set_letra(bolsa.pop(randint(0, len(bolsa)-1)))
-        self.decrement_cambios_atril() #solo hay 3 cambios de atril, decremento en 1
+                self.get_espacio_fichas()[i].set_letra(bolsa.pop(randint(0, len(bolsa) - 1)))
+        self.decrement_cambios_atril()  # solo hay 3 cambios de atril, decremento en 1
         self.refrescar_atril(window)
 
         juego.cambiar_turno()
 
-
-    def refrescar_atril(self, window, atril ='Atril_jugador'):
+    def refrescar_atril(self, window, atril='Atril_jugador'):
         '''actualizo el atril del jugador '''
         letras = (self.get_espacio_fichas())
-        if atril== 'Atril_PC':
+        if atril == 'Atril_PC':
             for i in range(len(letras)):
                 window.Element((atril, i)).Update(text='?')
         else:
             for i in range(len(letras)):
-                window.Element((atril,i)).Update(text=letras[i].get_letra())
-
+                window.Element((atril, i)).Update(text=letras[i].get_letra())
 
     def llenar_atril(self, lista_letras):
         ''' lleno los espacios vacios del atril '''
         for i in self.get_espacio_fichas():
-            if i.get_letra()== "" or i.get_letra()==' ': # tengo que llenar el atril
+            if i.get_letra() == "" or i.get_letra() == ' ':  # tengo que llenar el atril
                 try:
                     i.set_letra(random_letter(lista_letras))
-                except: #poner la excepcion correcta, no hacerlo general. cual seria?
-                    self.set_terminar_juego(True) # me quede sin fichas, termino el juego
+                except:  # poner la excepcion correcta, no hacerlo general. cual seria?
+                    self.set_terminar_juego(True)  # me quede sin fichas, termino el juego
                     break
 
-    def devolver_fallo(self, window, tablero): #no hace falta mandar la lista de coordenadas si te mandas el tablero -agus
+    def devolver_fallo(self, window,
+                       tablero):  # no hace falta mandar la lista de coordenadas si te mandas el tablero -agus
         '''Este metodo devuelve las letras al atril'''
         letra_devolver = []
         letras = self.get_espacio_fichas()
-        for coor in tablero.enlistar_coordenadas_activas(): #actualiza los botones usados en el tablero y se guarda las letras para devolver al atril
-            if (tablero.get_matriz()[coor[0]][coor[1]].get_definitivo() == False): #ahora solo devuelve las letras que no son definitivas
+        for coor in tablero.enlistar_coordenadas_activas():  # actualiza los botones usados en el tablero y se guarda las letras para devolver al atril
+            if (tablero.get_matriz()[coor[0]][
+                coor[1]].get_definitivo() == False):  # ahora solo devuelve las letras que no son definitivas
                 letra_devolver.append(tablero.get_matriz()[coor[0]][coor[1]].get_letra())
                 tablero.get_matriz()[coor[0]][coor[1]].set_letra(' ')
                 tablero.get_matriz()[coor[0]][coor[1]].set_activo(False)
-                window.Element(coor).Update(tablero.get_matriz()[coor[0]][coor[1]].get_premio(), button_color=(('white', tablero.get_matriz()[coor[0]][coor[1]].get_color())))
+                window.Element(coor).Update(tablero.get_matriz()[coor[0]][coor[1]].get_premio(), button_color=(
+                ('white', tablero.get_matriz()[coor[0]][coor[1]].get_color())))
 
         for i in range(len(letras)):
             if letras[i].get_letra() == ' ':
@@ -134,10 +138,9 @@ class Atril():
                     letra_devolver.pop(0)
         tablero.desbloquear_tablero()
 
-
     def listado_botones(self):
         ''' retorna una lista con las teclas del atril'''
-        listado =[]
+        listado = []
         for i in range(self.get_columnas()):
             listado.append(self.get_espacio_fichas()[i].get_id())
         return listado
@@ -147,34 +150,37 @@ class Atril():
         refresh = self.get_casilla_seleccionada().get_letra()
         return refresh
 
+
 class Atril_PC(Atril):
     def __init__(self, columnas, puntaje=0):
         super().__init__(columnas, 'Atril_PC')
         self._puntaje = 0
 
     def set_puntaje(self, puntaje):
-        self._puntaje= puntaje
+        self._puntaje = puntaje
+
     def get_puntaje(self):
         return self._puntaje
 
-    def formar_palabra(self, letras_desordenadas, lista_diccionario, palabras_permitidas= ('NN', 'JJ', 'VB' )):
+    def formar_palabra(self, letras_desordenadas, lista_diccionario, palabras_permitidas=('NN', 'JJ', 'VB')):
+        ''' forma palabra para la pc, devuelve la palabra o " " si no la encuentra '''
         seguir = True
         intento = " "
         for i in range(3, len(letras_desordenadas)):
             conteo_let = random.randint(3, 7)
             lista_intentos = list(itertools.permutations(letras_desordenadas, conteo_let))
-            for j in lista_intentos[:15]:
+            for j in lista_intentos[:15]:     #todo AUMENTE PARA PROBAR. CAMBIAR
                 intento = ''.join(j).lower()
                 print(intento)
                 if intento in lista_diccionario:
 
                     print("Esta en el diccionario")
-                    if parse(intento).split('/')[1] in palabras_permitidas: #puede ser que no toma el parse??
+                    if parse(intento).split('/')[1] in palabras_permitidas:  # puede ser que no toma el parse??
                         print("está en parse")
                         seguir = False
-                if not seguir:
+                if not seguir:  # esta al pedo?
                     break
-            if not seguir: break
+            if not seguir: break  # esta al pedo?
         if (seguir):
             intento = " "
         return intento
@@ -187,25 +193,30 @@ class Atril_PC(Atril):
             if (casillas_requeridas > tablero.get_filas() - j):
                 break
             for k in range(casillas_requeridas):
-                if not tablero.get_matriz()[i][j+k].get_activo() and not tablero.get_matriz()[i][j+k].get_definitivo():
+                if not tablero.get_matriz()[i][j + k].get_activo() and not tablero.get_matriz()[i][j + k].get_definitivo():
                     count = count + 1
             if count == casillas_requeridas:
-                return (i,j)
+                return (i, j)
         return False
 
     def orden_coordenadas_atril(self, palabra_armada):
         lista_coordenadas_de_palabra_en_atril = []
         for i in palabra_armada:
             for j in range(len(self.get_espacio_fichas())):
-                if self.get_espacio_fichas()[j].get_letra().lower() == i:
-                    print("encontró la cordenada", i, self.get_espacio_fichas()[j].get_letra().lower() )
+                if self.get_espacio_fichas()[j].get_letra().lower() == i and self.get_espacio_fichas()[j].get_tiene_letra():
+                    print("encontró la cordenada", i, self.get_espacio_fichas()[j].get_letra().lower())
                     lista_coordenadas_de_palabra_en_atril.append(self.get_espacio_fichas()[j].get_id())
+
                     break
         return lista_coordenadas_de_palabra_en_atril
 
-    def colocar_en_tablero(self,tablero,  lista_coordenadas, coordenada_inicial,ventana):
+    def colocar_en_tablero(self, tablero, lista_coordenadas, coordenada_inicial, ventana):
+        ''' coloca una a una las letras en el tablero '''
+
         coordenadas_tablero = []
         print("entra a colocar en tablero")
+
+
         print(lista_coordenadas)
         for i in range(len(lista_coordenadas)):
             letra_a_colocar = self.get_espacio_fichas()[lista_coordenadas[i][1]].get_letra()
@@ -215,7 +226,8 @@ class Atril_PC(Atril):
             tablero.get_matriz()[coordenada_inicial[0]][coordenada_inicial[1] + i].set_definitivo(True)
             tablero.get_matriz()[coordenada_inicial[0]][coordenada_inicial[1] + i].set_tiene_letra(True)
             coordenadas_tablero.append(tablero.get_matriz()[coordenada_inicial[0]][coordenada_inicial[1] + i].get_id())
-            ventana.Element((coordenada_inicial[0],coordenada_inicial[1] + i) ).Update(letra_a_colocar, button_color=('white', '#C8C652'))
+            ventana.Element((coordenada_inicial[0], coordenada_inicial[1] + i)).Update(letra_a_colocar, button_color=(
+            'white', '#C8C652'))
 
             self.get_espacio_fichas()[lista_coordenadas[i][1]].set_letra("")
             self.get_espacio_fichas()[lista_coordenadas[i][1]].set_tiene_letra(False)
@@ -230,17 +242,18 @@ class Atril_PC(Atril):
         for pos in botones:
             if (tablero.get_matriz()[pos[0]][pos[1]].get_premio() == "3P"):
                 total = total * 3
-            elif(tablero.get_matriz()[pos[0]][pos[1]].get_premio() == "3L"):
+            elif (tablero.get_matriz()[pos[0]][pos[1]].get_premio() == "3L"):
                 total = total + 3
-            elif(tablero.get_matriz()[pos[0]][pos[1]].get_premio() == "2P"):
+            elif (tablero.get_matriz()[pos[0]][pos[1]].get_premio() == "2P"):
                 total = total * 2
-            elif(tablero.get_matriz()[pos[0]][pos[1]].get_premio() == "2L"):
+            elif (tablero.get_matriz()[pos[0]][pos[1]].get_premio() == "2L"):
                 total = total + 2
-            elif(tablero.get_matriz()[pos[0]][pos[1]].get_premio() == "2R"):
+            elif (tablero.get_matriz()[pos[0]][pos[1]].get_premio() == "2R"):
                 total = total - 2
         return total
 
     def mezclar_letras(self):
+        '''mezcla las letras del atril '''
         lista_letras = []
         for j in range(len(self.get_espacio_fichas())):
             lista_letras.append(self.get_espacio_fichas()[j].get_letra())
@@ -249,22 +262,33 @@ class Atril_PC(Atril):
             self.get_espacio_fichas()[j].set_letra(lista_letras[0])
             lista_letras.pop(0)
 
-    def jugar_turno(self,tablero, lista_diccionario,ventana,bolsa, puntajes_letras, palabras_permitidas = ('NN', 'JJ', 'VB' )):
-        '''juega el turno de la computadora, agrega una palabra en el tablero  si encuentra. pasa turno  '''
+    def jugar_turno(self, tablero, lista_diccionario, ventana, bolsa, puntajes_letras,
+                    palabras_permitidas=('NN', 'JJ', 'VB')):
+        '''juega el turno de la computadora, si encuentra una palabra la pone en el tablero . pasa turno  '''
 
         lista_letras = ""
+        # creo una lista con las letras del atril
         for boton in self.listado_botones():
             lista_letras = lista_letras + self.get_espacio_fichas()[boton[1]].get_letra()
-        palabra_armada = self.formar_palabra( lista_letras, lista_diccionario, palabras_permitidas)
-        if (palabra_armada != " "):
-            Fichas.borrar_de_bolsa(palabra_armada,bolsa)
-            coordenada_inicial = self.buscar_espacio(tablero, len(palabra_armada)) #ver si es boole
-            if(coordenada_inicial!= False):
+
+        palabra_armada = self.formar_palabra(lista_letras, lista_diccionario, palabras_permitidas)
+
+        if (not palabra_armada == " "):
+            # borro las fichas definitivamente
+            Fichas.borrar_de_bolsa(palabra_armada, bolsa)
+            coordenada_inicial = self.buscar_espacio(tablero, len(palabra_armada))  # ver si es boole
+            if (coordenada_inicial != False):
                 print(palabra_armada)
+
                 lista_coordenadas = self.orden_coordenadas_atril(palabra_armada)
-                coordenadas_tablero = self.colocar_en_tablero(tablero, lista_coordenadas, coordenada_inicial,ventana)
+
+                # la coloco en el tablero
+                coordenadas_tablero = self.colocar_en_tablero(tablero, lista_coordenadas, coordenada_inicial, ventana)
                 self._puntaje = self._puntaje + self.calcular_puntajePC(puntajes_letras, coordenadas_tablero, tablero)
+
+                #actualizo el atril
                 ventana.Element('puntPC').Update(self._puntaje)
+                # agrego letras al atril
                 self.agregar_letras(bolsa)
             else:
                 print('no se encontro una coordenada adecuada ')
