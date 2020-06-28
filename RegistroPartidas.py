@@ -7,7 +7,7 @@ import os
 nombre_archivo_rankings = 'ranking_nuevo'
 
 def guardar_score (dificultad, nombre, puntos):
-    '''guardo score en archivo '''
+    '''guardo score en archivo ingresado como parametro'''
     dia = date.today().day
     mes = date.today().month
     ano = date.today().year
@@ -107,7 +107,7 @@ def ventanaGanador(puntaje_jugador, puntaje_maquina,nivel):
         elif event== 'volver':
             windowTop.close()
             import ScrabbleAR
-            ScrabbleAR.Ventanas() #Aparece error pero no hay error ???
+            ScrabbleAR.main() #Aparece error pero no hay error ???
 
 
 
