@@ -187,8 +187,11 @@ class Atril_PC(Atril):
             if (casillas_requeridas > tablero.get_filas() - j):
                 break
             for k in range(casillas_requeridas):
-                if not tablero.get_matriz()[i][j+k].get_activo() and not tablero.get_matriz()[i][j+k].get_definitivo():
-                    count = count + 1
+                try:
+                    if not tablero.get_matriz()[i][j+k].get_activo() and not tablero.get_matriz()[i][j+k].get_definitivo():
+                        count = count + 1
+                except IndexError:
+                    print('hay algun error de indexacion ') #todo: ver por que salta error
             if count == casillas_requeridas:
                 return (i,j)
         return False

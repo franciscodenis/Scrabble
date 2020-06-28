@@ -13,6 +13,7 @@ import RegistroPartidas
 
 def main(nivel_palabras, nivel = 'Facil', tiempo = 30):
 
+
     nombre = RegistroPartidas.ingresar_usuario()
     filas = 15
     columnas = 15
@@ -41,10 +42,17 @@ def main(nivel_palabras, nivel = 'Facil', tiempo = 30):
              [sg.Listbox(values=(lista_de_palabras), size=(30, 6),key='lista')],
              [sg.Button(button_text='Posponer partida', key=('Posponer'))],
              ]
+    # ------ Menu Definition ------ #
+    menu_def = [['Menu', ['Ver modo']],
+                 ]
+
+
+
 
     letter_atril = { 'size' : (3, 2), 'pad' : (0,0), 'button_color' : ('white', '#C8C652')}
     #-----------------------LAYOUT VENTANA-----------------------------------
     layout= []
+    layout.append([sg.Menu(menu_def, tearoff=True)])
     layout.append([sg.Button(key=('Atril_PC', i), button_text='?', **letter_atril) for i in range(letras_de_atril)])
     PC = [sg.Text('', size=(8, 1), font=('Helvetica', 20), justification='center', key='tempo_compu'), sg.Text('Puntaje computadora: ', font='Helvetica', background_color=('#5CA2A3')), sg.Text('000', key='puntPC', font='Helvetica', background_color='#5CA2A3')] #Temporizador Computadora
     layout.append(PC)
@@ -58,6 +66,7 @@ def main(nivel_palabras, nivel = 'Facil', tiempo = 30):
 
 
     window = sg.Window('Scrabble', background_color='#5CA2A3').Layout(layout)
+    jugar.mostrar_dificultad(nivel, nivel_palabras)
     current_time=0
     tiempo_computadora = 0 # inicializo el tiempo actual en 0
     start_time = int(round(time.time() * 100))
@@ -137,7 +146,10 @@ def main(nivel_palabras, nivel = 'Facil', tiempo = 30):
 
                 elif event == 'vali':
                     puntaje_total = tablero.click_validar(atril, tablero, window, diccionario, puntaje_total, fichas_jugador,jugar, palabras_permitidas, lista_de_palabras)
-
+                elif event=='Ver modo':
+                    restantes=  tiempo_fin_juego - tiempo_transcurrido
+                    jugar.mostrar_modos(nivel, nivel_palabras,tiempo_max,tiempo_fin_juego,restantes)
+                    pass #todo: agregar texto al menu
                 elif event == None:
                     break;
                 tiempo_transcurrido=int(round(time.time() * 100))-tiempo_comienzo_juego
