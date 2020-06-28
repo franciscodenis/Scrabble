@@ -25,6 +25,7 @@ def main(nivel_palabras, nivel = 'Facil', tiempo = 30):
     fichas_jugador= Fichas.crear_bolsa_de_fichas()
     puntajes_letras = Fichas.crear_diccionario_de_puntos()
     diccionario = Fichas.crear_diccionario()
+
     palabras_permitidas = nivel_palabras
     atril.agregar_letras(fichas_jugador)
     atril_pc.agregar_letras(fichas_jugador)

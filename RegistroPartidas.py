@@ -75,8 +75,7 @@ def mostrar_ranking(nivel):
         print("No record yet")
 def ventanaGanador(puntaje_jugador, puntaje_maquina,nivel):
     '''imprime en una ventana quien fue el ganador y pone un menu para volver al juego'''
-
-    text=' '
+    text=[' ']
     if (puntaje_jugador< puntaje_maquina):
         imagen= '\imagenes\perdiste.png'
         text= 'PERDISTE :()'

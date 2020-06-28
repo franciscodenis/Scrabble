@@ -230,7 +230,7 @@ class Tablero:
         palabra_valida = self.validar_palabra(palabra, diccionario, palabras_permitidas)
         print(palabra_valida)
         if palabra_valida:
-            Fichas.borrar_de_bolsa(palabra,bolsa )
+           # Fichas.borrar_de_bolsa(palabra,bolsa ) # al final las saco de la bolsa cuando las pongo en el atril
             #calculo el puntaje
 
             puntaje = puntaje + self.calcular_puntaje(coordenadas_activas)

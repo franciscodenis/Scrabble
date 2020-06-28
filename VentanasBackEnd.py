@@ -2,6 +2,7 @@ import RegistroPartidas
 
 def click_dificultad(window, evento, botones_dificultad, configuracion_partida):
     ''' selecciona un boton de dificultad '''
+
     for boton in botones_dificultad.keys():
         if evento == boton:
             configuracion_partida[0] = evento

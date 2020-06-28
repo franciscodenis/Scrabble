@@ -3,7 +3,7 @@
 import PySimpleGUI as sg
 import VentanasBackEnd
 import ProgramaPrincipal
-
+import random
 ancho_total = 120
 layout_ventana_principal = [
     [sg.Button('Jugar', key='jugar', pad=((0, 0), 10), size=(ancho_total + 8, 1))],
@@ -27,10 +27,14 @@ layout_ventana_principal = [
     [sg.Button('Salir', key='quit', pad=((0, 0), 35), size=(ancho_total + 8, 1))],
 ]
 
-botones_dificultad = ['dificultad_facil', 'dificultad_media', 'dificultad_maxima']
+
+tipo_palabras = ['NN', 'JJ', 'VB']
+botones_dificultad = {'dificultad_facil': ['NN', 'JJ', 'VB'], 'dificultad_media': ['NN', 'VB'], 'dificultad_maxima': [random.choice(tipo_palabras)]}
+
 botones_tiempo_turno = ['tiempo_turno_30_seg', 'tiempo_turno_60_seg', 'tiempo_turno_90_seg']
 botones_mejores_puestos = ['mejores_puestos_dif_media', 'mejores_puestos_dif_facil', 'mejores_puestos_dif_maxima']
-configuracion_partida = ['dificultad_facil', 90]
+
+configuracion_partida = ['dificultad_facil', 90, ['NN', 'JJ', 'VB']]
 window_principal = sg.Window('Scrabble', size=(ancho_total * 8, 475)).Layout(layout_ventana_principal)
 
 diccionario_mejores_puestos = {'juan' : 90}
@@ -55,5 +59,5 @@ while True:
 
     if event in 'jugar':
         window_principal.Close()
-        ProgramaPrincipal.main(configuracion_partida[0], configuracion_partida[1])
+        ProgramaPrincipal.main(configuracion_partida[2], configuracion_partida[0], configuracion_partida[1])
         break

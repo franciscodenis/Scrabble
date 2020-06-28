@@ -79,4 +79,7 @@ def crear_diccionario(): #deberiamos correrlo, no tiene sentido que este aca
 
 def borrar_de_bolsa(palabra,bolsa):
     for letra in palabra:
-        bolsa.remove(letra.upper())
+        try:
+            bolsa.remove(letra.upper())
+        except (ValueError):
+            pass
