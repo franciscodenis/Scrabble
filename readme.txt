@@ -1,6 +1,6 @@
 integrantes:
     Isabella Valenzi Agustina
     Francisco Denis
-    Manuel Trotta?
+    Manuel Trotta
 
 ejecutar desde ScrabbleAR.py
