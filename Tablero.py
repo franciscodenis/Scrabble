@@ -158,7 +158,7 @@ class Tablero:
             elif (tipo == "2P"):
                 total = total * 2
             else:
-                total = total + 2
+                total = total - 2
         return total
 
     def desactivar_coordenadas_activas(self, lista_coordenadas_activas):

@@ -128,7 +128,7 @@ def main(nivel_palabras, nivel = 'Facil', tiempo = 30):
                     continue    #no sacar el continue, lo que hace es volver al while sin pasar por lo que esta abajo
 
                 # no se termino el tiempo del jugador
-                current_time = int(round(time.time() * 100))-(tiempo_computadora) - start_time  # tiempo actual - tiempo de la computadora - el momento en que empezo
+
 
                 if event in atril.listado_botones():
                     atril.click(tablero, event)
@@ -152,6 +152,8 @@ def main(nivel_palabras, nivel = 'Facil', tiempo = 30):
                     pass #todo: agregar texto al menu
                 elif event == None:
                     break;
+                current_time = int(round(time.time() * 100)) - (
+                    tiempo_computadora) - start_time  # tiempo actual - tiempo de la computadora - el momento en que empezo
                 tiempo_transcurrido=int(round(time.time() * 100))-tiempo_comienzo_juego
                 window.Element('timer_juego').Update('{:02d}:{:02d}.{:02d}'.format((tiempo_transcurrido// 100) // 60, (tiempo_transcurrido // 100) % 60,
                                                   tiempo_transcurrido % 100))  # muestro el contador
