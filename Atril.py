@@ -151,11 +151,16 @@ class Atril_PC(Atril):
     def __init__(self, columnas, puntaje=0):
         super().__init__(columnas, 'Atril_PC')
         self._puntaje = 0
+        self._posicion = ''
 
     def set_puntaje(self, puntaje):
         self._puntaje= puntaje
     def get_puntaje(self):
         return self._puntaje
+    def set_posicion(self, posicion):
+        self._posicion = posicion
+    def get_posicion(self):
+        return self._posicion
 
     def formar_palabra(self, letras_desordenadas, lista_diccionario, palabras_permitidas= ('NN', 'JJ', 'VB' )):
         seguir = True
@@ -181,19 +186,34 @@ class Atril_PC(Atril):
 
     def buscar_espacio(self, tablero, casillas_requeridas):
         for posibilidades in range(3):
+            posicion = random.choice(['vertical', 'horizontal'])
             i = random.randint(0, tablero.get_filas())
             j = random.randint(0, tablero.get_columnas())
             count = 0
-            if (casillas_requeridas > tablero.get_filas() - j):
-                break
-            for k in range(casillas_requeridas):
-                try:
-                    if not tablero.get_matriz()[i][j+k].get_activo() and not tablero.get_matriz()[i][j+k].get_definitivo():
-                        count = count + 1
-                except IndexError:
-                    print('hay algun error de indexacion ') #todo: ver por que salta error
-            if count == casillas_requeridas:
-                return (i,j)
+            if (posicion == 'vertical'):
+                if (casillas_requeridas > tablero.get_filas() - j):
+                    break
+                for k in range(casillas_requeridas):
+                    try:
+                        if not tablero.get_matriz()[i][j+k].get_activo() and not tablero.get_matriz()[i][j+k].get_definitivo():
+                            count = count + 1
+                    except IndexError:
+                        print('hay algun error de indexacion') #todo: ver por que salta error
+                if count == casillas_requeridas:
+                    self.set_posicion(posicion)
+                    return (i,j)
+            else:
+                if (casillas_requeridas > tablero.get_columnas() - i):
+                    break
+                for k in range(casillas_requeridas):
+                    try:
+                        if not tablero.get_matriz()[i + k][j].get_activo() and not tablero.get_matriz()[i + k][j].get_definitivo():
+                            count = count + 1
+                    except IndexError:
+                        print('Error de indexacion')
+                if count == casillas_requeridas:
+                    self.set_posicion(posicion)
+                    return(i, j)
         return False
 
     def orden_coordenadas_atril(self, palabra_armada):
@@ -210,18 +230,20 @@ class Atril_PC(Atril):
     def colocar_en_tablero(self,tablero,  lista_coordenadas, coordenada_inicial,ventana):
         ''' coloca una a una las letras en el tablero '''
         coordenadas_tablero = []
-        print("entra a colocar en tablero")
-        print(lista_coordenadas)
         for i in range(len(lista_coordenadas)):
             letra_a_colocar = self.get_espacio_fichas()[lista_coordenadas[i][1]].get_letra()
-            print(letra_a_colocar)
-            print(self.get_espacio_fichas()[lista_coordenadas[i][1]].get_id())
-            tablero.get_matriz()[coordenada_inicial[0]][coordenada_inicial[1] + i].set_letra(letra_a_colocar)
-            tablero.get_matriz()[coordenada_inicial[0]][coordenada_inicial[1] + i].set_definitivo(True)
-            tablero.get_matriz()[coordenada_inicial[0]][coordenada_inicial[1] + i].set_tiene_letra(True)
-            coordenadas_tablero.append(tablero.get_matriz()[coordenada_inicial[0]][coordenada_inicial[1] + i].get_id())
-            ventana.Element((coordenada_inicial[0],coordenada_inicial[1] + i) ).Update(letra_a_colocar, button_color=('white', '#C8C652'))
-
+            if (self.get_posicion() == 'vertical'):
+                tablero.get_matriz()[coordenada_inicial[0]][coordenada_inicial[1] + i].set_letra(letra_a_colocar)
+                tablero.get_matriz()[coordenada_inicial[0]][coordenada_inicial[1] + i].set_definitivo(True)
+                tablero.get_matriz()[coordenada_inicial[0]][coordenada_inicial[1] + i].set_tiene_letra(True)
+                coordenadas_tablero.append(tablero.get_matriz()[coordenada_inicial[0]][coordenada_inicial[1] + i].get_id())
+                ventana.Element((coordenada_inicial[0],coordenada_inicial[1] + i) ).Update(letra_a_colocar, button_color=('white', '#C8C652'))
+            else:
+                tablero.get_matriz()[coordenada_inicial[0] + i][coordenada_inicial[1]].set_letra(letra_a_colocar)
+                tablero.get_matriz()[coordenada_inicial[0] + i][coordenada_inicial[1]].set_definitivo(True)
+                tablero.get_matriz()[coordenada_inicial[0] + i][coordenada_inicial[1]].set_tiene_letra(True)
+                coordenadas_tablero.append(tablero.get_matriz()[coordenada_inicial[0] + i][coordenada_inicial[1]].get_id())
+                ventana.Element((coordenada_inicial[0] + i, coordenada_inicial[1])).Update(letra_a_colocar, button_color=('white', '#C8C652'))
             self.get_espacio_fichas()[lista_coordenadas[i][1]].set_letra("")
             self.get_espacio_fichas()[lista_coordenadas[i][1]].set_tiene_letra(False)
         return coordenadas_tablero
