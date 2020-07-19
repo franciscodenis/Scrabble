@@ -138,14 +138,13 @@ class Tablero:
                     print("Casilla a desbloquear fuera de rango, se ignora")  # borrar
                     pass
 
-    def calcular_puntaje(self, lista): #todo creo que no está biennn. Cualquier cosa modificar  agusss
+    def calcular_puntaje(self, lista, puntaje_letras): #todo creo que no está biennn. Cualquier cosa modificar  agusss
         ''' calcula el puntaje '''
-        dic_puntos = Fichas.crear_diccionario_de_puntos()
         total = 0
         aumentos = []
         for coor in lista:
-            if self.get_matriz()[coor[0]][coor[1]].get_letra() in dic_puntos.keys():
-                total = total + dic_puntos[self.get_matriz()[coor[0]][coor[1]].get_letra()]
+            if self.get_matriz()[coor[0]][coor[1]].get_letra() in puntaje_letras.keys():
+                total = total + puntaje_letras[self.get_matriz()[coor[0]][coor[1]].get_letra()]
                 if (self.get_matriz()[coor[0]][coor[1]].get_premio() != ' '):
                     aumentos.append(self.get_matriz()[coor[0]][coor[1]].get_premio())
         print("puntaje: ", total)
@@ -218,7 +217,7 @@ class Tablero:
                 palabra_valida = True
         return palabra_valida
 
-    def click_validar(self, atril, tablero, window, diccionario, puntaje, bolsa ,juego,palabras_permitidas=('NN', 'JJ', 'VB'),lista_palabras_usadas=[]):
+    def click_validar(self, atril, tablero, window, diccionario, puntaje, bolsa , puntaje_letras, juego, palabras_permitidas=('NN', 'JJ', 'VB'), lista_palabras_usadas=[]):
         ''' valido una palabra, si es correcta devuelvo true y calculo el puntaje. paso el turno'''
         coordenadas_activas = tablero.enlistar_coordenadas_activas()
         palabra_en_lista = []
@@ -233,7 +232,7 @@ class Tablero:
            # Fichas.borrar_de_bolsa(palabra,bolsa ) # al final las saco de la bolsa cuando las pongo en el atril
             #calculo el puntaje
 
-            puntaje = puntaje + self.calcular_puntaje(coordenadas_activas)
+            puntaje = puntaje + self.calcular_puntaje(coordenadas_activas, puntaje_letras)
             #agrego letras en el atril
             atril.agregar_letras(bolsa)
             atril.refrescar_atril(window)
