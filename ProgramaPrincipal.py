@@ -9,10 +9,7 @@ import ConfigVentana as conf
 import RegistroPartidas
 
 
-
-
-def main(nivel_palabras, nivel = 'Facil', tiempo = 30):
-
+def main(conexion, nivel_palabras, config_fichas, nivel = 'Facil', tiempo_ronda = 30, tiempo_partida = 320):
 
     nombre = RegistroPartidas.ingresar_usuario()
     filas = 15
@@ -23,8 +20,8 @@ def main(nivel_palabras, nivel = 'Facil', tiempo = 30):
     atril = Atril.Atril(letras_de_atril)
     atril_pc = Atril.Atril_PC(letras_de_atril)
 
-    fichas_jugador= Fichas.crear_bolsa_de_fichas()
-    puntajes_letras = Fichas.crear_diccionario_de_puntos()
+    fichas_jugador= Fichas.crear_bolsa_de_fichas(config_fichas)
+    puntajes_letras = Fichas.crear_diccionario_de_puntos(config_fichas)
     diccionario = Fichas.crear_diccionario()
 
     palabras_permitidas = nivel_palabras
@@ -71,15 +68,15 @@ def main(nivel_palabras, nivel = 'Facil', tiempo = 30):
     tiempo_computadora = 0 # inicializo el tiempo actual en 0
     start_time = int(round(time.time() * 100))
     print(jugar.get_turno())
-    tiempo_max= tiempo * 100 #tiempo maximo de turno
+    tiempo_max= tiempo_ronda * 100 #tiempo maximo de turno
     tiempo_comienzo_juego=int(round(time.time() * 100))
-    tiempo_fin_juego=20000#0ste es el tiempo total de partida
+    tiempo_fin_juego= tiempo_partida * 100 #Este es el tiempo total de partida
     while True:
         event, values = window.Read(timeout=0)
         if int(round(time.time() * 100))-tiempo_comienzo_juego> tiempo_fin_juego or event== 'fin_juego' or atril.get_terminar_juego():  # el juego terminó
-            window.close()
+            window.Close()
             #guardo el puntaje y datos del usuario
-            RegistroPartidas.guardar_score(nivel, nombre, puntaje_total)
+            RegistroPartidas.guardar_score(nivel, nombre, puntaje_total, conexion)
             if(atril.get_terminar_juego()):
                 sg.popup('se terminaron los cambios de atril, se termina el juego ')
             #muestro una ventana con el ganador, opcion retornar al menu
@@ -145,7 +142,7 @@ def main(nivel_palabras, nivel = 'Facil', tiempo = 30):
                     atril.click(tablero, event)
 
                 elif event == 'vali':
-                    puntaje_total = tablero.click_validar(atril, tablero, window, diccionario, puntaje_total, fichas_jugador,jugar, palabras_permitidas, lista_de_palabras)
+                    puntaje_total = tablero.click_validar(atril, tablero, window, diccionario, puntaje_total, fichas_jugador, puntajes_letras, jugar, palabras_permitidas, lista_de_palabras)
                 elif event=='Ver modo':
                     restantes=  tiempo_fin_juego - tiempo_transcurrido
                     jugar.mostrar_modos(nivel, nivel_palabras,tiempo_max,tiempo_fin_juego,restantes)
@@ -160,7 +157,7 @@ def main(nivel_palabras, nivel = 'Facil', tiempo = 30):
                 window.Element('timer_jugador').Update('{:02d}:{:02d}.{:02d}'.format((current_time // 100) // 60, (current_time // 100) % 60, current_time % 100)) #muestro el contador
     window.Close()
     print('llega ??')
-    RegistroPartidas.guardar_score(nivel, nombre, puntaje_total)
+    #RegistroPartidas.guardar_score(nivel, nombre, puntaje_total, conexion)
 
 if __name__ == '__main__':
     main()
