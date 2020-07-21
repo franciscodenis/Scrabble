@@ -24,6 +24,7 @@ class Atril():
         self.__casilla_seleccionada  = None
         self.set_columnas(columnas)
         self.set_terminar_juego(False)
+        self.set_puntaje(000)
         self.set_espacio_fichas( [cas.Casilla() for x in range(columnas)])
         for i in range(columnas):
             self.get_espacio_fichas()[i] =(cas.Casilla(tipo_atril, i))
@@ -69,6 +70,13 @@ class Atril():
         self.__esta_vacio= validez
     def esta_vacio(self):
         return self.__esta_vacio
+
+    def set_puntaje (self,puntaje):
+        self.__puntaje=puntaje
+
+    def get_puntaje(self):
+        return self.__puntaje
+
 
 #_____________________________________________Comienzo de  otros metodos ____________
 

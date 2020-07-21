@@ -4,11 +4,12 @@ import VentanasBackEnd
 import ProgramaPrincipal
 import random
 import sqlite3
-
+import os
 def main(conexion):
     ancho_total = 120
     layout_ventana_principal = [
         [sg.Button('Jugar', key='jugar', pad=((0, 0), 10), size=(ancho_total + 8, 1))],
+        [sg.Button('Cargar partida guardada', key='cargar', pad=((0, 0), 10), size=(ancho_total + 8, 1))],
 
         [sg.Text('Seleccione nivel de dificultad: ')],
         [sg.Button('Facil', key='dificultad_facil', pad=((0, 0), 10), size=(round(ancho_total /3), 1)),
@@ -56,24 +57,33 @@ def main(conexion):
             window_principal.Close()
             break
 
-        if event in botones_dificultad:
+        elif event in botones_dificultad:
             VentanasBackEnd.click_dificultad(window_principal, event, botones_dificultad, configuracion_partida, fichas_facil, fichas_media, fichas_maxima)
 
-        if event in botones_tiempo_turno:
+        elif event in botones_tiempo_turno:
             VentanasBackEnd.click_tiempo_turno(window_principal, event, botones_tiempo_turno, configuracion_partida)
 
-        if event in botones_tiempo_partida:
+        elif event in botones_tiempo_partida:
             VentanasBackEnd.click_tiempo_partida(window_principal, event, botones_tiempo_partida, configuracion_partida)
 
-        if event in botones_mejores_puestos:
+        elif event in botones_mejores_puestos:
             window_principal.FindElement('-OUTPUT-').Update('')
             puntero = conexion.cursor()
             VentanasBackEnd.click_mejores_puestos(window_principal, event, botones_mejores_puestos, puntero)
 
-        if event in 'jugar':
+        elif event in 'jugar':
             window_principal.Close()
             ProgramaPrincipal.main(conexion, configuracion_partida[2], configuracion_partida[4], configuracion_partida[0], configuracion_partida[1], configuracion_partida[3])
             break
+        elif event in 'cargar':
+            if(os.path.exists(os.getcwd()+"partida_guardada")):
+                sg.popup('no hay ninguna partida cargada')
+            else:
+                window_principal.Close()
+                ProgramaPrincipal.main(conexion, configuracion_partida[2], configuracion_partida[4],
+                                       configuracion_partida[0], configuracion_partida[1], configuracion_partida[3],cargarJuego=True)
+
+
 if __name__ == '__main__':
     conexion = sqlite3.connect("Usuarios")
     main(conexion)

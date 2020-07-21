@@ -351,3 +351,20 @@ class Tablero:
         layout = [[sg.Button(key = (i, j),button_text= self.get_matriz()[i][j].get_premio(),button_color=('white',self.get_matriz()[i][j].get_color()),  **letter_tablero) for i in range(filas)] for j in range(columnas)]
 
         return layout
+    def cargar_tablero(self,window):
+        ''' hago un refresh del tablero actual '''
+        for i in range(self.get_filas()):
+            for j in range(self.get_columnas()):
+                if(self.get_matriz()[i][j].get_letra()!=''  and self.get_matriz()[i][j].get_letra()!=' ' and (not self.get_matriz()[i][j].get_activo())):
+                    window.Element((i,j)).Update(self.get_matriz()[i][j].get_letra(), button_color=('white', '#C8C652'))
+                    window.Read(timeout=0)
+
+                else:
+                    try:
+                        window.Element((i, j)).Update(self.get_matriz()[i][j].get_premio(),button_color=('white', self.get_matriz()[i][j].get_color()),)
+                        window.read(timeout=0)
+                    except():
+                        sg.popup('un color no fue reconocido')
+
+
+

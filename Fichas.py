@@ -1,3 +1,7 @@
+
+
+
+
 def crear_bolsa_de_fichas (fichas):
     bolsa_de_fichas = []
     for key, value in fichas.items():
