@@ -76,14 +76,13 @@ def main(conexion):
             ProgramaPrincipal.main(conexion, configuracion_partida[2], configuracion_partida[4], configuracion_partida[0], configuracion_partida[1], configuracion_partida[3])
             break
         elif event in 'cargar':
-            if(os.path.exists(os.getcwd()+"partida_guardada")):
-                sg.popup('no hay ninguna partida cargada')
-            else:
+
+            try:
                 window_principal.Close()
                 ProgramaPrincipal.main(conexion, configuracion_partida[2], configuracion_partida[4],
                                        configuracion_partida[0], configuracion_partida[1], configuracion_partida[3],cargarJuego=True)
-
-
+            except(FileNotFoundError):
+                sg.popup('no hay partida guardada :(')
 if __name__ == '__main__':
     conexion = sqlite3.connect("Usuarios")
     main(conexion)
