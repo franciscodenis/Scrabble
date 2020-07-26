@@ -3,36 +3,35 @@ import PySimpleGUI as sg
 import VentanasBackEnd
 import ProgramaPrincipal
 import random
-import sqlite3
 import os
-def main(conexion):
+def main():
     ancho_total = 120
     layout_ventana_principal = [
-        [sg.Button('Jugar', key='jugar', pad=((0, 0), 10), size=(ancho_total + 8, 1))],
-        [sg.Button('Cargar partida guardada', key='cargar', pad=((0, 0), 10), size=(ancho_total + 8, 1))],
+        [sg.Button('Jugar', key='jugar', pad=((0, 0), 10), size=(ancho_total + 8, 1), button_color=('white', '#E1BF56'))],
+        [sg.Button('Cargar partida guardada', key='cargar', pad=((0, 0), 10), size=(ancho_total + 8, 1), button_color=('white', '#E1BF56'))],
 
-        [sg.Text('Seleccione nivel de dificultad: ')],
-        [sg.Button('Facil', key='dificultad_facil', pad=((0, 0), 10), size=(round(ancho_total /3), 1)),
-         sg.Button('Media', key='dificultad_media', pad=((0, 0), 10), size=(round(ancho_total /3), 1)),
-         sg.Button('Máxima', key='dificultad_maxima', pad=((0, 0), 10), size=(round(ancho_total /3), 1))],
+        [sg.Text('Seleccione nivel de dificultad: ', background_color='#2C2C2C', text_color=('#E1BF56'), font=('Helvetica', 12))],
+        [sg.Button('Facil', key='dificultad_facil', pad=((0, 0), 10), size=(round(ancho_total /3), 1), button_color=('white', '#E1BF56')),
+         sg.Button('Media', key='dificultad_media', pad=((0, 0), 10), size=(round(ancho_total /3), 1), button_color=('white', '#E1BF56')),
+         sg.Button('Máxima', key='dificultad_maxima', pad=((0, 0), 10), size=(round(ancho_total /3), 1), button_color=('white', '#E1BF56'))],
 
-        [sg.Text('Seleccione el tiempo por turno: ')],
-        [sg.Button('30 seg', key='tiempo_turno_30_seg', pad=((0, 0), 10), size=(round(ancho_total /3), 1)),
-         sg.Button('60 seg', key='tiempo_turno_60_seg', pad=((0, 0), 10), size=(round(ancho_total /3), 1)),
-         sg.Button('90 seg', key='tiempo_turno_90_seg', pad=((0, 0), 10), size=(round(ancho_total /3), 1))],
+        [sg.Text('Seleccione el tiempo por turno: ', background_color='#2C2C2C', text_color=('#E1BF56'), font=('Helvetica', 12))],
+        [sg.Button('30 seg', key='tiempo_turno_30_seg', pad=((0, 0), 10), size=(round(ancho_total /3), 1), button_color=('white', '#E1BF56')),
+         sg.Button('60 seg', key='tiempo_turno_60_seg', pad=((0, 0), 10), size=(round(ancho_total /3), 1), button_color=('white', '#E1BF56')),
+         sg.Button('90 seg', key='tiempo_turno_90_seg', pad=((0, 0), 10), size=(round(ancho_total /3), 1), button_color=('white', '#E1BF56'))],
 
-        [sg.Text('Seleccione el tiempo de partida: ')],
-        [sg.Button('5 min', key='tiempo_partida_5_min', pad=((0,0), 10), size=(round(ancho_total / 3), 1)),
-         sg.Button('10 min', key='tiempo_partida_10_min', pad=((0,0), 10), size=(round(ancho_total / 3), 1)),
-         sg.Button('15 min', key='tiempo_partida_15_min', pad=((0,0), 10), size=(round(ancho_total / 3), 1))],
+        [sg.Text('Seleccione el tiempo de partida: ', background_color='#2C2C2C', text_color=('#E1BF56'), font=('Helvetica', 12))],
+        [sg.Button('5 min', key='tiempo_partida_5_min', pad=((0,0), 10), size=(round(ancho_total / 3), 1), button_color=('white', '#E1BF56')),
+         sg.Button('10 min', key='tiempo_partida_10_min', pad=((0,0), 10), size=(round(ancho_total / 3), 1), button_color=('white', '#E1BF56')),
+         sg.Button('15 min', key='tiempo_partida_15_min', pad=((0,0), 10), size=(round(ancho_total / 3), 1), button_color=('white', '#E1BF56'))],
 
-        [sg.Text('Ver records por dificultad ')],
-        [sg.Button('Mejores Puestos - Dificultad Facil', key='-dificultad_facil-', pad=((0, 0), 10), size=(round(ancho_total / 3), 1)),
-         sg.Button('Mejores Puestos - Dificultad Media', key='-dificultad_media-', pad=((0, 0), 10), size=(round(ancho_total / 3), 1)),
-         sg.Button('Mejores Puestos - Dificultad Máximo', key='-dificultad_maxima-', pad=((0, 0), 10), size=(round(ancho_total / 3), 1))],
+        [sg.Text('Ver records por dificultad ', background_color='#2C2C2C', text_color=('#E1BF56'), font=('Helvetica', 12))],
+        [sg.Button('Mejores Puestos - Dificultad Facil', key='mejores_puestos_dif_facil', pad=((0, 0), 10), size=(round(ancho_total / 3), 1), button_color=('white', '#E1BF56')),
+         sg.Button('Mejores Puestos - Dificultad Media', key='mejores_puestos_dif_media', pad=((0, 0), 10), size=(round(ancho_total / 3), 1), button_color=('white', '#E1BF56')),
+         sg.Button('Mejores Puestos - Dificultad Máximo', key='mejores_puestos_dif_maxima', pad=((0, 0), 10), size=(round(ancho_total / 3), 1), button_color=('white', '#E1BF56'))],
 
-        [sg.Output(size=(ancho_total +80, 5), key='-OUTPUT-', )],
-        [sg.Button('Salir', key='quit', pad=((0, 0), 35), size=(ancho_total + 8, 1))],
+        [sg.Output(size=(ancho_total +80, 5), key='-OUTPUT-', background_color='#545454', text_color='#E1BF56')],
+        [sg.Button('Salir', key='quit', pad=((0, 0), 35), size=(ancho_total + 8, 1), button_color=('white', '#E1BF56'))],
     ]
 
     tipo_palabras = ['NN', 'JJ', 'VB']
@@ -42,10 +41,10 @@ def main(conexion):
     botones_dificultad = {'dificultad_facil': [['NN', 'JJ', 'VB'], fichas_facil], 'dificultad_media': [['NN', 'VB'], fichas_media], 'dificultad_maxima': [[random.choice(tipo_palabras)], fichas_maxima]}
     botones_tiempo_partida = ['tiempo_partida_5_min', 'tiempo_partida_10_min', 'tiempo_partida_15_min']
     botones_tiempo_turno = ['tiempo_turno_30_seg', 'tiempo_turno_60_seg', 'tiempo_turno_90_seg']
-    botones_mejores_puestos = ['-dificultad_facil-', '-dificultad_media-', '-dificultad_maxima-']
+    botones_mejores_puestos = ['mejores_puestos_dif_facil', 'mejores_puestos_dif_media', 'mejores_puestos_dif_maxima']
 
     configuracion_partida = ['dificultad_facil', 90, ['NN', 'JJ', 'VB'], 320, fichas_facil]
-    window_principal = sg.Window('Scrabble', size=(ancho_total * 8, 600)).Layout(layout_ventana_principal)
+    window_principal = sg.Window('Scrabble', size=(ancho_total * 8, 650), background_color='#2C2C2C').Layout(layout_ventana_principal)
 
     diccionario_mejores_puestos = {'juan' : 90}
 
@@ -68,22 +67,20 @@ def main(conexion):
 
         elif event in botones_mejores_puestos:
             window_principal.FindElement('-OUTPUT-').Update('')
-            puntero = conexion.cursor()
-            VentanasBackEnd.click_mejores_puestos(window_principal, event, botones_mejores_puestos, puntero)
+            VentanasBackEnd.click_mejores_puestos(window_principal, event, botones_mejores_puestos)
 
         elif event in 'jugar':
             window_principal.Close()
-            ProgramaPrincipal.main(conexion, configuracion_partida[2], configuracion_partida[4], configuracion_partida[0], configuracion_partida[1], configuracion_partida[3])
+            ProgramaPrincipal.main(configuracion_partida[2], configuracion_partida[4], configuracion_partida[0], configuracion_partida[1], configuracion_partida[3])
             break
         elif event in 'cargar':
-
-            try:
+            if(os.path.exists(os.getcwd()+"partida_guardada")):
+                sg.popup('no hay ninguna partida cargada')
+            else:
                 window_principal.Close()
                 ProgramaPrincipal.main(conexion, configuracion_partida[2], configuracion_partida[4],
                                        configuracion_partida[0], configuracion_partida[1], configuracion_partida[3],cargarJuego=True)
-            except(FileNotFoundError):
-                sg.popup('no hay partida guardada :(')
+
+
 if __name__ == '__main__':
-    conexion = sqlite3.connect("Usuarios")
-    main(conexion)
-    conexion.close()
+    main()
