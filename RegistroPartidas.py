@@ -1,96 +1,125 @@
 import PySimpleGUI as sg
 from datetime import date
-import sqlite3
 import pickle
 import os
 import ScrabbleAR
 
 nombre_archivo_rankings = 'ranking_nuevo'
 
-def guardar_score (dificultad, nombre, puntos, conexion):
+def guardar_score (dificultad, nombre, puntos):
     '''guardo score en archivo ingresado como parametro'''
-    puntero = conexion.cursor()
     dia = date.today().day
     mes = date.today().month
     ano = date.today().year
-    fecha = "{}/{}/{}".format(dia, mes, ano)
-    score = [
-            (nombre, puntos, fecha, dificultad)
-    ]
+    nuevo_record = {'Nombre': nombre, 'Puntaje': puntos, 'Fecha': "{}/{}/{}".format(dia, mes, ano)}
+    print(nuevo_record)
     try:
-        puntero.executemany("INSERT INTO RANKING VALUES (?, ?, ?, ?)", score)
-        conexion.commit()
-    except sqlite3.OperationalError:
-        puntero.execute("CREATE TABLE RANKING (NOMBRE VARCHAR(50), PUNTOS INTEGER, FECHA VARCHAR(10), NIVEL VARCHAR(10))")
-        puntero.executemany("INSERT INTO RANKING VALUES (?, ?, ?, ?)", score)
-        conexion.commit()
+        try:
+            file=open(nombre_archivo_rankings, 'rb')
+            data = pickle.load(file)
+        except(FileNotFoundError):
+            file= open(nombre_archivo_rankings,'w')
+            data={}
+        data[dificultad].append(nuevo_record)
+        print(data)
+    except (KeyError):
+        print("No record yet")
+        data[dificultad]= [nuevo_record]
+    file.close()
+    with open(nombre_archivo_rankings, 'wb') as file:
+        pickle.dump(data, file)
+        file.close()
 
 
 
 def ingresar_usuario():
     '''muestro una ventana para ingresar nombre de usuario. si no se ingresa se toma como nombre "anonimo"'''
     layout_ingreso_usuario = [
-               [sg.Text('Ingrese un nombre de usuario: ', background_color=('#A72D2D')), sg.InputText(key='usuario')],
-               [sg.Button('Aceptar', pad=(100,10), key='ok')]
+               [sg.Text('Ingrese un nombre de usuario: ', background_color=('#2C2C2C'), text_color='#E1BF56'), sg.InputText(key='usuario', background_color='#545454', text_color='#E1BF56')],
+               [sg.Button('Aceptar', pad=(100,10), key='ok', button_color=('white', '#E1BF56'))]
     ]
     nombre = 'Anonimo'
-    windowUs = sg.Window('Usuario', size=(350, 100), background_color=('#A72D2D')).Layout(layout_ingreso_usuario)
+    windowUs = sg.Window('Usuario', size=(350, 100), background_color='#2C2C2C').Layout(layout_ingreso_usuario)
     event, value = windowUs.Read()
-    if event == 'ok':
-        nombre = value['usuario']
-        windowUs.Close()
-
+    while True:
+        if event == 'ok':
+            nombre = value['usuario']
+            windowUs.Close()
+            break
+        elif event == None:
+            break
     return nombre
 
-def mostrar_ranking(nivel, puntero):
+def mostrar_ranking(nivel):
     '''Muestro ranking '''
+    diccionario_dificultad_según_boton = {'mejores_puestos_dif_facil': 'dificultad_facil',
+                                          'mejores_puestos_dif_media': 'dificultad_media',
+                                          'mejores_puestos_dif_maxima' : 'dificultad_maxima'
+                                          }
     try:
-        query = "SELECT * FROM RANKING WHERE NIVEL = ?  ORDER BY PUNTOS DESC"
-        puntero.execute(query, (nivel.strip('-'),))
-        usuarios_ranking = puntero.fetchall()
-        if (len(usuarios_ranking) > 0):
-            for linea in usuarios_ranking[:10]:
+        with open(nombre_archivo_rankings, 'rb') as f:
+            datos = pickle.load(f)
+            f.close()
+        try:
+            dificultad = diccionario_dificultad_según_boton[nivel]
+            datos_a_imprimir = datos[dificultad]
+            datos_a_imprimir = list(map( lambda x : list([x['Nombre'],x['Puntaje'], x['Fecha']]), datos_a_imprimir ))
+            datos_a_imprimir = sorted(datos_a_imprimir,key= lambda x : x[1], reverse = True)
+            for linea in datos_a_imprimir[:10]:
                 print('Nombre: {}    Puntaje: {}    Fecha: {}'.format(linea[0],linea[1],linea[2]))
-        else:
-            print('No se han cargado datos en este nivel')
-    except sqlite3.OperationalError:
-        puntero.execute("CREATE TABLE RANKING (NOMBRE VARCHAR(50), PUNTOS INTEGER, FECHA VARCHAR(10), NIVEL VARCHAR(10))")
+        except KeyError:
+            print('No hay jugadores record en esta dificultad')
+    except (FileNotFoundError, IOError):
+        print("No record yet")
 
 
-def ventanaGanador(puntaje_jugador, puntaje_maquina,nivel):
-    '''imprime en una ventana quien fue el ganador y pone un menu para volver al juego'''
-    text=[' ']
-    if (puntaje_jugador< puntaje_maquina):
-        imagen= '/imagenes/perdiste.png'
-        text= 'PERDISTE :()'
-    elif (puntaje_maquina< puntaje_jugador):
-        imagen= '/imagenes/ganaste.png'
-        text:'GANASTE :)'
+def ventana_Ganador(puntaje_jugador, puntaje_maquina, atril, atril_pc, puntaje_letras):
+    '''organiza la ventana que muestra el ganador'''
+    letter_atril = { 'size' : (3, 2), 'pad' : (0,0), 'button_color' : ('white', '#C8C652')}
+    puntaje_letras_jugador = []
+    puntaje_letras_pc = []
+    for i in range(7):
+        puntaje_letras_jugador.append(puntaje_letras[atril.get_espacio_fichas()[i].get_letra()])
+        puntaje_letras_pc.append(puntaje_letras[atril_pc.get_espacio_fichas()[i].get_letra()])
+
+    puntaje_final_jugador = puntaje_jugador - sum(puntaje_letras_jugador)
+    puntaje_final_Pc = puntaje_maquina - sum(puntaje_letras_pc)
+
+    if (puntaje_final_jugador < puntaje_final_Pc):
+        imagen = '/imagenes/perder.png'
+    elif(puntaje_final_jugador > puntaje_final_Pc):
+        imagen = '/imagenes/ganaste.png'
     else:
-        imagen='/imagenes/empataron.png'
-        text='EMPATE '
-    texto = "TU PUNTAJE= "  + str(puntaje_jugador)
-    texto2= "COMPUTADORA= " + str(puntaje_maquina)
+        imagen = '/imagenes/empataron.png'
 
-    #AGREGAR EL PUNTAJE A LA LISTA
-    layout = [[sg.Image((os.getcwd()+imagen), size=(400,300))],
-            [sg.Txt(texto )],
-            [sg.Txt(texto2)],
-    		[sg.Button('Salir', key='quit', size=(25,1),focus=True)],
-            [sg.Button('Volver al menu', key='volver', size=(25,1))],
+    columna1_PC = [[sg.Button(button_text= atril_pc.get_espacio_fichas()[i].get_letra(), **letter_atril) for i in range(7)]]
+    columna2_PC = [[sg.Text('Puntaje Final Pc', key='puntaje_pc', background_color='#2C2C2C', text_color=('#E1BF56'), font=('Helvetica', 12))],
+                   [sg.Text(puntaje_final_Pc, key='puntaje_final_pc', background_color='#2C2C2C', text_color=('#E1BF56'), font=('Helvetica', 12))]]
 
-    	]
+    columna1_jugador = [[sg.Button(button_text= atril.get_espacio_fichas()[i].get_letra(), **letter_atril) for i in range(7)]]
+    columna2_jugador = [[sg.Text('Puntaje Final Jugador', key='Puntaje_jugador', background_color='#2C2C2C', text_color=('#E1BF56'), font=('Helvetica', 12))],
+                        [sg.Text(puntaje_final_jugador, key='puntaje_final_jugador', background_color='#2C2C2C', text_color=('#E1BF56'), font=('Helvetica', 12))]]
+
+    layout = []
+    layout.append([sg.Text('Atril PC', background_color='#2C2C2C', text_color=('#E1BF56'), font=('Helvetica', 12))])
+    layout.append([sg.Column(columna1_PC, background_color='#2C2C2C'), sg.Column(columna2_PC, background_color='#2C2C2C')])
+    layout.append([sg.Image((os.getcwd()+imagen), size=(400,300), background_color='#2C2C2C')])
+    layout.append([sg.Text('Atril Jugador', background_color='#2C2C2C', text_color=('#E1BF56'), font=('Helvetica', 12))])
+    layout.append([sg.Column(columna1_jugador, background_color='#2C2C2C'), sg.Column(columna2_jugador, background_color='#2C2C2C')])
+    layout.append([sg.Button(key='quit', button_text='Salir', button_color=('white', '#E1BF56')), sg.Button(key='volver', button_text='Volver', button_color=('white', '#E1BF56'))])
+    return layout
 
 
-    windowTop = sg.Window(text , size=(800,500), background_color=('white')).Layout(layout)
+def muestra_Ganador(puntaje_jugador, puntaje_maquina, atril, atril_pc, puntajes_letras):
+    '''imprime en una ventana quien fue el ganador y pone un menu para volver al juego'''
+    windowTop = sg.Window('Final', background_color='#2C2C2C').Layout(ventana_Ganador(puntaje_jugador, puntaje_maquina, atril, atril_pc, puntajes_letras))
     while True:
         event, value = windowTop.Read()
         if (event == 'quit'):
+            windowTop.Close()
             break
 
         elif event== 'volver':
             windowTop.Close()
-            conexion = sqlite3.connect("Usuarios")
-            ScrabbleAR.main(conexion)
-            conexion.close()
+            ScrabbleAR.main()
             break
