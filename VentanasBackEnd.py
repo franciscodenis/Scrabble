@@ -10,7 +10,7 @@ def click_dificultad(window, evento, botones_dificultad, configuracion_partida, 
             configuracion_partida[4] = botones_dificultad[evento][1]
             window.Element(boton).Update(button_color=('white', 'black'))
         else:
-            window.Element(boton).Update(button_color=('#FFFFFF', '#283b5b'))
+            window.Element(boton).Update(button_color=('#FFFFFF', '#545454'))
 
 
 def click_tiempo_turno(window, evento, botones_tiempo_turno, configuracion_partida):
@@ -21,7 +21,7 @@ def click_tiempo_turno(window, evento, botones_tiempo_turno, configuracion_parti
             configuracion_partida[1] = diccionario_tiempo_turnos[evento]
             window.Element(boton).Update(button_color=('white', 'black'))
         else:
-            window.Element(boton).Update(button_color=('#FFFFFF', '#283b5b'))
+            window.Element(boton).Update(button_color=('#FFFFFF', '#545454'))
 
 
 def click_tiempo_partida(window, evento, botones_tiempo_partida, configuracion_partida):
@@ -32,16 +32,16 @@ def click_tiempo_partida(window, evento, botones_tiempo_partida, configuracion_p
             configuracion_partida[3] = diccionario_tiempo_partida[evento]
             window.Element(boton).Update(button_color=('white', 'black'))
         else:
-            window.Element(boton).Update(button_color=('#FFFFFF', '#283b5b'))
+            window.Element(boton).Update(button_color=('#FFFFFF', '#545454'))
 
 
-def click_mejores_puestos(window, evento, botones_mejores_puestos, puntero):
+def click_mejores_puestos(window, evento, botones_mejores_puestos):
     ''' muestra los mejores puestos'''
     for boton in botones_mejores_puestos:
         if evento == boton:
-            RegistroPartidas.mostrar_ranking(boton, puntero)
+            RegistroPartidas.mostrar_ranking(boton)
             window.Element(boton).Update(button_color=('white', 'black'))
 
 
         else:
-            window.Element(boton).Update(button_color=('#FFFFFF', '#283b5b'))
+            window.Element(boton).Update(button_color=('#FFFFFF', '#545454'))
