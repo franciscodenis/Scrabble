@@ -96,14 +96,14 @@ def main(nivel_palabras, config_fichas, nivel = 'Facil', tiempo_ronda = 30, tiem
     layout= []
     layout.append([sg.Menu(menu_def, tearoff=True)])
     atril_PC = [[sg.Button(key=('Atril_PC', i), button_text='?', **letter_atril) for i in range(letras_de_atril)]]
-    imagen = [[sg.Text(' '*10, background_color='#2C2C2C'), sg.Image((os.getcwd()+imagen), size=(370, 40), background_color='#2C2C2C')]]
+    imagen = [[sg.Text(' '*10, background_color='#2C2C2C'), sg.Image((os.getcwd()+imagen), size=(370, 10), background_color='#2C2C2C')]]
     layout.append([sg.Column(atril_PC, background_color='#2C2C2C'), sg.Column(imagen, background_color='#2C2C2C')])
-    PC = [sg.Text('', size=(8, 1), font=('Helvetica', 20), justification='center', key='tempo_compu', background_color='#2C2C2C', text_color=('#E1BF56')), sg.Text('Puntaje computadora: ', font='Helvetica', background_color='#2C2C2C', text_color=('#E1BF56')), sg.Text(atril_pc.get_puntaje(), key='puntPC', font='Helvetica', background_color='#2C2C2C', text_color=('#E1BF56'))] #Temporizador Computadora
+    PC = [sg.Text('', size=(8, 1), font=('Helvetica', 20), justification='center', key='tempo_compu', background_color='#2C2C2C', text_color=('#E1BF56')), sg.Text('Puntaje computadora: ', font='Helvetica', background_color='#2C2C2C', text_color=('#E1BF56')), sg.Text(atril_pc.get_puntaje(), key='puntPC', font='Helvetica', background_color='#2C2C2C', text_color=('#E1BF56' ),size=(2, 1) )]
     layout.append(PC)
     layout.append([sg.Column(column1, background_color='#2C2C2C'), sg.Column(column2, background_color='#2C2C2C')])
     layout.append([sg.Text('Seleccione una letra de abajo', auto_size_text=True, font='Helvetica', background_color='#2C2C2C', text_color=('#E1BF56'))])
     layout.append([sg.Button(key=('Atril_jugador', i) , button_text= atril.get_espacio_fichas()[i].get_letra(), **letter_atril) for i in range(letras_de_atril)])
-    botones = [sg.Button(key='vali', button_text='Validar', button_color=('white', '#E1BF56'), font='Helvetica'),sg.Button(button_text='Cambiar letras',key ="cambiar_letras", button_color=('white', '#E1BF56'), font='Helvetica'), sg.Text('Puntaje total: ', font='Helvetica', background_color='#2C2C2C', text_color=('#E1BF56')), sg.Text(puntaje_total, key='punt', font='Helvetica', background_color='#2C2C2C', text_color=('#E1BF56'))]
+    botones = [sg.Button(key='vali', button_text='Validar', button_color=('white', '#E1BF56'), font='Helvetica'),sg.Button(button_text='Cambiar letras',key ="cambiar_letras", button_color=('white', '#E1BF56'), font='Helvetica'), sg.Text('Puntaje total: ', font='Helvetica', background_color='#2C2C2C', text_color=('#E1BF56')), sg.Text(puntaje_total, key='punt', font='Helvetica', background_color='#2C2C2C', text_color=('#E1BF56'),size=(2,1))]
     layout.append([sg.Checkbox("", key=('Checkbox', i), size=(2, 2), background_color='#2C2C2C', text_color='#E1BF56')for i in range(letras_de_atril)])
     layout.append(botones)
     layout.append([sg.Text('', size=(8, 1), font=('Helvetica', 20), justification='center', key='timer_jugador', background_color='#2C2C2C', text_color=('#E1BF56'))]) #Temporizador
@@ -117,6 +117,7 @@ def main(nivel_palabras, config_fichas, nivel = 'Facil', tiempo_ronda = 30, tiem
     while True:
         event, values = window.Read(timeout=0)
         if int(round(time.time() * 100))-tiempo_comienzo_juego> tiempo_fin_juego or event== 'fin_juego' or atril.get_terminar_juego():  # el juego terminó
+            atril.devolver_fallo(window,tablero)
             window.Close()
             #guardo el puntaje y datos del usuario
             RegistroPartidas.guardar_score(nivel, nombre, puntaje_total)
@@ -143,7 +144,7 @@ def main(nivel_palabras, config_fichas, nivel = 'Facil', tiempo_ronda = 30, tiem
 
                 #Juega la computadora
                 palabra_armada = atril_pc.jugar_turno(tablero, diccionario, window, fichas_jugador, puntajes_letras, palabras_permitidas)
-                if(palabra_armada != ' '):
+                if(palabra_armada != ' ' and palabra_armada != ''):
                     lista_de_palabras.append(palabra_armada)
                     window.Element('lista').Update(values=lista_de_palabras)
                 #actualizo los relojes

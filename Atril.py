@@ -28,7 +28,7 @@ class Atril():
         self.set_espacio_fichas( [cas.Casilla() for x in range(columnas)])
         for i in range(columnas):
             self.get_espacio_fichas()[i] =(cas.Casilla(tipo_atril, i))
-        self.set_cambios_atril(3) # Cantidad de cambios está dada por la cantidad de fichas para cambiar en la bolsa
+        self.set_cambios_atril(9) # Cantidad de cambios está dada por la cantidad de fichas para cambiar en la bolsa
         self.set_esta_vacio(True)
 
 
@@ -171,26 +171,22 @@ class Atril_PC(Atril):
         return self._posicion
 
     def formar_palabra(self, letras_desordenadas, lista_diccionario, palabras_permitidas= ('NN', 'JJ', 'VB' )):
-        seguir = True
-        intento = " "
-        for i in range(3, len(letras_desordenadas)):
-            conteo_let = random.randint(3, 7)
-            lista_intentos = list(itertools.permutations(letras_desordenadas, conteo_let))
-            for j in lista_intentos[:15]:
-                intento = ''.join(j).lower()
-                print(intento)
-                if intento in lista_diccionario:
+        retorno = ' '
+        print("formar palabras ", letras_desordenadas)
+        letras_desordenadas = letras_desordenadas.lower()
+        lista_intentos = set()
+        for i in range(3, 7):
+            lista_intentos.update((map("".join, itertools.permutations(letras_desordenadas, i))))
+        print(lista_intentos)
+        for intento in lista_intentos:
+            if intento in lexicon:
+                if parse(intento).split('/')[1] in palabras_permitidas: #puede ser que no toma el parse??
+                    print("está en parse")
+                    if intento in lista_diccionario:
+                        print("Esta en el diccionario")
+                        return intento
 
-                    print("Esta en el diccionario")
-                    if parse(intento).split('/')[1] in palabras_permitidas: #puede ser que no toma el parse??
-                        print("está en parse")
-                        seguir = False
-                if not seguir:
-                    break
-            if not seguir: break
-        if (seguir):
-            intento = " "
-        return intento
+        return retorno
 
     def buscar_espacio(self, tablero, casillas_requeridas):
         for posibilidades in range(3):
@@ -291,9 +287,12 @@ class Atril_PC(Atril):
         for boton in self.listado_botones():
             lista_letras = lista_letras + self.get_espacio_fichas()[boton[1]].get_letra()
         palabra_armada = self.formar_palabra( lista_letras, lista_diccionario, palabras_permitidas)
-        if (palabra_armada != " "):
-            #Fichas.borrar_de_bolsa(palabra_armada,bolsa) # al final las borro cuando la saco de la bolsa
-            coordenada_inicial = self.buscar_espacio(tablero, len(palabra_armada)) #ver si es boole
+        if (palabra_armada != " ") and len(palabra_armada)>2:
+            coordenada_inicial = False
+            for i in range (3):
+                coordenada_inicial = self.buscar_espacio(tablero, len(palabra_armada)) #ver si es boole
+                if coordenada_inicial == True:
+                    return ' '
             if(coordenada_inicial!= False):
                 print(palabra_armada)
                 lista_coordenadas = self.orden_coordenadas_atril(palabra_armada)
@@ -302,8 +301,21 @@ class Atril_PC(Atril):
                 ventana.Element('puntPC').Update(self._puntaje)
                 self.agregar_letras(bolsa)
             else:
+
                 print('no se encontro una coordenada adecuada ')
+                return ''
+
         else:
-            self.mezclar_letras()
+            self.cambiar_todas_letras(ventana,bolsa)
+            return ' '
         self.refrescar_atril(ventana, 'Atril_PC')
         return palabra_armada
+
+
+    def cambiar_todas_letras(self,window,bolsa):
+        '''la PC cambia todas las letras del atril'''
+        for i in range(7):
+            bolsa.append(self.get_espacio_fichas()[i].get_letra())
+            self.get_espacio_fichas()[i].set_letra(bolsa.pop(randint(0, len(bolsa)-1)))
+        self.decrement_cambios_atril() #solo hay 3 cambios de atril, decremento en 1
+        self.refrescar_atril(window, 'Atril_PC')
