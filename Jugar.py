@@ -77,7 +77,7 @@ class Jugar :
         if dificultad=='dificultad_maxima':
             diccionario= dict(NN='sustantivos', JJ='adjetivos', VB='verbos')
             text= 'Usted eligio la dificultad maxima.\n  Debe jugar con ' + diccionario[tipo[0]]
-            sg.popup(text)
+            sg.Popup(text)
 
     def mostrar_modos(self, dificultad, tipo, minutos_partida, minutos_ronda,restantes):
 
@@ -91,16 +91,16 @@ class Jugar :
 
 
         texto=(''' DIFICULTAD:'''+diccionario_dificultad[dificultad]+'''
-        
-            
+
+
     ----------USTED PUEDE INGRESAR----------
             '''+string+'''
     MINUTOS DE PARTIDA:'''+ str(minutos_partida)+'''
-                    
+
     MINUTOS DE RONDA :'''+ str(minutos_ronda) +'''
-     
+
      RESTAN:'''+ str(restantes)+ 'min')
-        sg.popup(texto, title='Modo de juego')
+        sg.Popup(texto, title='Modo de juego', background_color='#2C2C2C', text_color='#E1BF56', button_color=('white', '#E1BF56'), font=('Helvetica', 12))
     def guardar_partida(self,tablero, atril_jugador,atril_computadora,juego):
 
         diccionario=dict(tablero=tablero,atril_jugador=atril_jugador,atril_computadora=atril_computadora,juego=juego)
@@ -122,5 +122,3 @@ class Jugar :
         self.set_nivel(nivel)
         self.set_hora(hora)
         self.set_nombre(nombre)
-
-
