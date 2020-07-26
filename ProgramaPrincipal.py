@@ -1,4 +1,4 @@
-
+import os
 import PySimpleGUI as sg
 import Tablero
 import Atril
@@ -11,7 +11,7 @@ from pickle import load, loads, dump, dumps
 
 
 
-def main(conexion, nivel_palabras, config_fichas, nivel = 'Facil', tiempo_ronda = 30, tiempo_partida = 320,cargarJuego=False):
+def main(nivel_palabras, config_fichas, nivel = 'Facil', tiempo_ronda = 30, tiempo_partida = 320,cargarJuego=False):
 
 
 
@@ -77,16 +77,16 @@ def main(conexion, nivel_palabras, config_fichas, nivel = 'Facil', tiempo_ronda 
 
 
     current_time = 0
-
+    imagen = '/imagenes/scrabble.png'
 
     # ------ Column Definition ------ #
     column1 = tablero.crear_tablero(nivel)
-    column2=[[sg.Text('Fin del juego:')],
-             [sg.Text('', size=(8, 2), font=('Helvetica', 20), justification='center', key='timer_juego'),],
-             [sg.Button(button_text='Finalizar Juego',key=('fin_juego'))],
-             [sg.Text('Ultimas Palabras ingresadas')],
-             [sg.Listbox(values=(lista_de_palabras), size=(30, 6),key='lista')],
-             [sg.Button(button_text='Posponer partida', key=('Posponer'))],
+    column2=[[sg.Text('Fin del juego:', background_color='#2C2C2C', text_color=('#E1BF56'), font=('Helvetica', 12))],
+             [sg.Text('', size=(8, 2), font=('Helvetica', 20), justification='center', key='timer_juego', background_color='#2C2C2C', text_color=('#E1BF56'))],
+             [sg.Button(button_text='Finalizar Juego',key=('fin_juego'), button_color=('white', '#E1BF56'))],
+             [sg.Text('Ultimas Palabras ingresadas', background_color='#2C2C2C', text_color=('#E1BF56'), font=('Helvetica', 12))],
+             [sg.Listbox(values=(lista_de_palabras), size=(30, 6),key='lista', background_color='#545454', text_color=('#E1BF56'))],
+             [sg.Button(button_text='Posponer partida', key=('Posponer'), button_color=('white', '#E1BF56'))],
              ]
     # ------ Menu Definition ------ #
     menu_def = [['Menu', ['Ver modo']],
@@ -95,43 +95,42 @@ def main(conexion, nivel_palabras, config_fichas, nivel = 'Facil', tiempo_ronda 
     #-----------------------LAYOUT VENTANA-----------------------------------
     layout= []
     layout.append([sg.Menu(menu_def, tearoff=True)])
-    layout.append([sg.Button(key=('Atril_PC', i), button_text='?', **letter_atril) for i in range(letras_de_atril)])
-    PC = [sg.Text('', size=(8, 1), font=('Helvetica', 20), justification='center', key='tempo_compu'), sg.Text('Puntaje computadora: ', font='Helvetica', background_color=('#5CA2A3')), sg.Text(atril_pc.get_puntaje(), key='puntPC', font='Helvetica', background_color='#5CA2A3')] #Temporizador Computadora
+    atril_PC = [[sg.Button(key=('Atril_PC', i), button_text='?', **letter_atril) for i in range(letras_de_atril)]]
+    imagen = [[sg.Text(' '*10, background_color='#2C2C2C'), sg.Image((os.getcwd()+imagen), size=(370, 40), background_color='#2C2C2C')]]
+    layout.append([sg.Column(atril_PC, background_color='#2C2C2C'), sg.Column(imagen, background_color='#2C2C2C')])
+    PC = [sg.Text('', size=(8, 1), font=('Helvetica', 20), justification='center', key='tempo_compu', background_color='#2C2C2C', text_color=('#E1BF56')), sg.Text('Puntaje computadora: ', font='Helvetica', background_color='#2C2C2C', text_color=('#E1BF56')), sg.Text(atril_pc.get_puntaje(), key='puntPC', font='Helvetica', background_color='#2C2C2C', text_color=('#E1BF56'))] #Temporizador Computadora
     layout.append(PC)
-    layout.append([sg.Column(column1, background_color='#5CA2A3'), sg.Column(column2,background_color='#5CA2A3' )])
-    layout.append([sg.Text('Seleccione una letra de abajo', auto_size_text=True, font='Helvetica', background_color=('#5CA2A3'))])
+    layout.append([sg.Column(column1, background_color='#2C2C2C'), sg.Column(column2, background_color='#2C2C2C')])
+    layout.append([sg.Text('Seleccione una letra de abajo', auto_size_text=True, font='Helvetica', background_color='#2C2C2C', text_color=('#E1BF56'))])
     layout.append([sg.Button(key=('Atril_jugador', i) , button_text= atril.get_espacio_fichas()[i].get_letra(), **letter_atril) for i in range(letras_de_atril)])
-    botones = [sg.Button(key='vali', button_text='Validar', button_color=('white', '#C54F1F'), font='Helvetica'),sg.Button(button_text='Cambiar letras',key ="cambiar_letras", button_color=('white', '#C54F1F'), font='Helvetica'), sg.Text('Puntaje total: ', font='Helvetica', background_color=('#5CA2A3')), sg.Text(puntaje_total, key='punt', font='Helvetica', background_color=('#5CA2A3'))]
-    layout.append([sg.Checkbox("", key=('Checkbox', i), size=(0, 0))for i in range(letras_de_atril)])
+    botones = [sg.Button(key='vali', button_text='Validar', button_color=('white', '#E1BF56'), font='Helvetica'),sg.Button(button_text='Cambiar letras',key ="cambiar_letras", button_color=('white', '#E1BF56'), font='Helvetica'), sg.Text('Puntaje total: ', font='Helvetica', background_color='#2C2C2C', text_color=('#E1BF56')), sg.Text(puntaje_total, key='punt', font='Helvetica', background_color='#2C2C2C', text_color=('#E1BF56'))]
+    layout.append([sg.Checkbox("", key=('Checkbox', i), size=(2, 2), background_color='#2C2C2C', text_color='#E1BF56')for i in range(letras_de_atril)])
     layout.append(botones)
-    layout.append([sg.Text('', size=(8, 1), font=('Helvetica', 20), justification='center', key='timer_jugador')]) #Temporizador
+    layout.append([sg.Text('', size=(8, 1), font=('Helvetica', 20), justification='center', key='timer_jugador', background_color='#2C2C2C', text_color=('#E1BF56'))]) #Temporizador
 
 
-    window = sg.Window('Scrabble', background_color='#5CA2A3').Layout(layout)
+    window = sg.Window('Scrabble', background_color='#2C2C2C').Layout(layout)
 
     if (cargarJuego):
         tablero.cargar_tablero(window)
 
-
-
-    window.Read()
     while True:
         event, values = window.Read(timeout=0)
         if int(round(time.time() * 100))-tiempo_comienzo_juego> tiempo_fin_juego or event== 'fin_juego' or atril.get_terminar_juego():  # el juego terminó
             window.Close()
             #guardo el puntaje y datos del usuario
-            RegistroPartidas.guardar_score(nivel, nombre, puntaje_total, conexion)
+            RegistroPartidas.guardar_score(nivel, nombre, puntaje_total)
             if(atril.get_terminar_juego()):
                 sg.popup('se terminaron los cambios de atril, se termina el juego ')
             #muestro una ventana con el ganador, opcion retornar al menu
-            RegistroPartidas.ventanaGanador(puntaje_total, atril_pc.get_puntaje(), nivel)
+            RegistroPartidas.muestra_Ganador(puntaje_total, atril_pc.get_puntaje(), atril, atril_pc, puntajes_letras)
 
             break
         elif event== 'Posponer':
             jugar.cargar_datos(puntaje_total,atril_pc.get_puntaje(),fichas_jugador, fichas_jugador, lista_de_palabras,nivel_palabras,tiempo_transcurrido,nombre)
             jugar.guardar_partida(tablero,atril,atril_pc,jugar)
-            sg.popup("SE GUARDO LA PARTIDA")
-            window.close()
+            sg.Popup("SE GUARDO LA PARTIDA")
+            window.Close()
         else:
             # turno de la computadora
 
@@ -167,7 +166,7 @@ def main(conexion, nivel_palabras, config_fichas, nivel = 'Facil', tiempo_ronda 
             elif jugar.get_turno()=='jugador':
                 #se termino el tiempo del jugador
                 if (current_time> tiempo_max):
-                    sg.Popup('Termino el tiempo')
+                    sg.Popup('Termino el tiempo', background_color='#2C2C2C', text_color='#E1BF56', button_color=('white', '#E1BF56'), font=('Helvetica', 12))
                     print('terminoeltiempo jugador') # insertat
                     atril.devolver_fallo(window,tablero)
                     jugar.cambiar_turno()
@@ -186,7 +185,7 @@ def main(conexion, nivel_palabras, config_fichas, nivel = 'Facil', tiempo_ronda 
                     if (atril.get_cambios_atril()>0):
                         atril.cambiar_letras(fichas_jugador,window,tablero,values,fichas_jugador,jugar)
                     else:
-                        sg.Popup('no hay mas cambios de atril')
+                        sg.Popup('no hay mas cambios de atril', background_color='#2C2C2C', text_color='#E1BF56', button_color=('white', '#E1BF56'), font=('Helvetica', 12))
                 elif event in atril.listado_botones():
                     atril.click(tablero, event)
 
@@ -208,7 +207,7 @@ def main(conexion, nivel_palabras, config_fichas, nivel = 'Facil', tiempo_ronda 
 
     window.Close()
     print('llega ??')
-    #RegistroPartidas.guardar_score(nivel, nombre, puntaje_total, conexion)
+    #RegistroPartidas.guardar_score(nivel, nombre, puntaje_total)
 
 if __name__ == '__main__':
     main()
