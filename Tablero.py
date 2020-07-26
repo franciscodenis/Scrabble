@@ -156,7 +156,9 @@ class Tablero:
                 total = total + 3
             elif (tipo == "2P"):
                 total = total * 2
-            else:
+            elif (tipo == "2L"):
+                total = total + 2
+            elif (tipo == "2R"):
                 total = total - 2
         return total
 
