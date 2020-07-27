@@ -78,7 +78,7 @@ def main():
                 sg.popup('no hay ninguna partida cargada')
             else:
                 window_principal.Close()
-                ProgramaPrincipal.main(conexion, configuracion_partida[2], configuracion_partida[4],
+                ProgramaPrincipal.main(configuracion_partida[2], configuracion_partida[4],
                                        configuracion_partida[0], configuracion_partida[1], configuracion_partida[3],cargarJuego=True)
 
 
