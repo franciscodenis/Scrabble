@@ -74,14 +74,14 @@ def main():
             ProgramaPrincipal.main(configuracion_partida[2], configuracion_partida[4], configuracion_partida[0], configuracion_partida[1], configuracion_partida[3])
             break
         elif event in 'cargar':
-            if(os.path.exists(os.getcwd()+"partida_guardada")):
-                sg.popup('no hay ninguna partida cargada')
-            else:
+
+            try:
                 window_principal.Close()
                 ProgramaPrincipal.main(configuracion_partida[2], configuracion_partida[4],
                                        configuracion_partida[0], configuracion_partida[1], configuracion_partida[3],cargarJuego=True)
-                window_principal.Close()
-                break
+            except(FileExistsError,FileNotFoundError):
+                sg.popup('no hay ninguna partida guardada :(')
+                main()
 
 
 if __name__ == '__main__':
