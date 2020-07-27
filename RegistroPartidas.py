@@ -73,7 +73,7 @@ def mostrar_ranking(nivel):
         print("No record yet")
 
 
-def ventana_Ganador(puntaje_jugador, puntaje_maquina, atril, atril_pc, puntaje_letras):
+def ventana_Ganador(puntaje_jugador, puntaje_maquina, atril, atril_pc, puntaje_letras, nombre, nivel):
     '''organiza la ventana que muestra el ganador'''
     letter_atril = { 'size' : (3, 2), 'pad' : (0,0), 'button_color' : ('white', '#C8C652')}
     puntaje_letras_jugador = []
@@ -84,6 +84,7 @@ def ventana_Ganador(puntaje_jugador, puntaje_maquina, atril, atril_pc, puntaje_l
 
     puntaje_final_jugador = puntaje_jugador - sum(puntaje_letras_jugador)
     puntaje_final_Pc = puntaje_maquina - sum(puntaje_letras_pc)
+    guardar_score(nivel, nombre, puntaje_final_jugador)
 
     if (puntaje_final_jugador < puntaje_final_Pc):
         imagen = '/imagenes/perder.png'
@@ -110,9 +111,9 @@ def ventana_Ganador(puntaje_jugador, puntaje_maquina, atril, atril_pc, puntaje_l
     return layout
 
 
-def muestra_Ganador(puntaje_jugador, puntaje_maquina, atril, atril_pc, puntajes_letras):
+def muestra_Ganador(puntaje_jugador, puntaje_maquina, atril, atril_pc, puntajes_letras, nivel, nombre):
     '''imprime en una ventana quien fue el ganador y pone un menu para volver al juego'''
-    windowTop = sg.Window('Final', background_color='#2C2C2C').Layout(ventana_Ganador(puntaje_jugador, puntaje_maquina, atril, atril_pc, puntajes_letras))
+    windowTop = sg.Window('Final', background_color='#2C2C2C').Layout(ventana_Ganador(puntaje_jugador, puntaje_maquina, atril, atril_pc, puntajes_letras, nombre, nivel))
     while True:
         event, value = windowTop.Read()
         if (event == 'quit'):
