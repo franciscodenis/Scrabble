@@ -34,7 +34,7 @@ class Jugar :
         self.__puntaje_jugador= puntaje
 
     def get_puntaje_jugador(self):
-        return self.__puntaje_computadora
+        return self.__puntaje_jugador
 
     def set_bolsa_jugador(self, bolsa):
         self.__bolsa_jugador= bolsa
