@@ -80,6 +80,8 @@ def main():
                 window_principal.Close()
                 ProgramaPrincipal.main(configuracion_partida[2], configuracion_partida[4],
                                        configuracion_partida[0], configuracion_partida[1], configuracion_partida[3],cargarJuego=True)
+                window_principal.Close()
+                break
 
 
 if __name__ == '__main__':
