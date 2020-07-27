@@ -129,7 +129,7 @@ def main(nivel_palabras, config_fichas, nivel = 'Facil', tiempo_ronda = 30, tiem
         elif event== 'Posponer':
             jugar.cargar_datos(puntaje_total,atril_pc.get_puntaje(),fichas_jugador, fichas_jugador, lista_de_palabras,nivel_palabras,tiempo_transcurrido,nombre)
             jugar.guardar_partida(tablero,atril,atril_pc,jugar)
-            sg.Popup("SE GUARDO LA PARTIDA")
+            sg.Popup("SE GUARDO LA PARTIDA", background_color='#2C2C2C', text_color='#E1BF56', button_color=('white', '#E1BF56'), font=('Helvetica', 12))
             window.Close()
         else:
             # turno de la computadora
