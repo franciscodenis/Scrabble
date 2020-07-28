@@ -95,7 +95,7 @@ def main():
                 window_principal.Close()
                 break
             except(FileExistsError,FileNotFoundError):
-                sg.popup('no hay ninguna partida guardada :(')
+                sg.popup('no hay ninguna partida guardada :(', background_color='#2C2C2C', text_color='#E1BF56', button_color=('white', '#E1BF56'), font=('Helvetica', 12))
                 main()
                 break
 
