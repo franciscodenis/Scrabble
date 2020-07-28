@@ -6,7 +6,10 @@ import random
 import os
 def main():
     ancho_total = 120
+    menu_def = [['Menu', ['Configuracion avanzada ']],
+                ]
     layout_ventana_principal = [
+        [sg.Menu(menu_def, tearoff=True)],
         [sg.Button('Jugar', key='jugar', pad=((0, 0), 10), size=(ancho_total + 8, 1), button_color=('white', '#E1BF56'))],
         [sg.Button('Cargar partida guardada', key='cargar', pad=((0, 0), 10), size=(ancho_total + 8, 1), button_color=('white', '#E1BF56'))],
 
@@ -49,12 +52,16 @@ def main():
     diccionario_mejores_puestos = {'juan' : 90}
 
     jugar = False
+    diccionario= False
 
     while True:
         event, value = window_principal.Read()
         if event in (None, 'quit'):
             window_principal.Close()
             break
+        if event== 'Configuracion avanzada ':
+            diccionario=VentanasBackEnd.ventanaConfig()
+
 
         elif event in botones_dificultad:
             VentanasBackEnd.click_dificultad(window_principal, event, botones_dificultad, configuracion_partida, fichas_facil, fichas_media, fichas_maxima)
@@ -71,7 +78,12 @@ def main():
 
         elif event in 'jugar':
             window_principal.Close()
-            ProgramaPrincipal.main(configuracion_partida[2], configuracion_partida[4], configuracion_partida[0], configuracion_partida[1], configuracion_partida[3])
+            if (diccionario!= False):
+                ProgramaPrincipal.main(configuracion_partida[2], diccionario, configuracion_partida[0], configuracion_partida[1], configuracion_partida[3])
+            else:
+                ProgramaPrincipal.main(configuracion_partida[2], configuracion_partida[4], configuracion_partida[0],
+                                       configuracion_partida[1], configuracion_partida[3])
+
             break
         elif event in 'cargar':
 

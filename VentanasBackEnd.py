@@ -45,3 +45,56 @@ def click_mejores_puestos(window, evento, botones_mejores_puestos):
 
         else:
             window.Element(boton).Update(button_color=('#FFFFFF', '#545454'))
+
+
+def ventanaConfig():
+    ABC = 'ABCDEFGHIJKLMN'
+    columna1 = []
+    import PySimpleGUI as sg
+    for letra in ABC:
+        lista = [sg.Text(letra + ':'), sg.InputText('Cantidad', key=(letra, 1), size=(5, 5)),
+                 sg.InputText('Valor', key=(letra, 2), size=(5, 5))]
+        columna1.append(lista)
+
+    columna2 = []
+    ABC2 = 'OPQRSTUVWXYZ'
+    for letra in ABC2:
+        lista = [sg.Text(letra + ':'), sg.InputText('Cantidad', key=(letra, 1), size=(5, 5)),
+                 sg.InputText('Valor', key=(letra, 2), size=(5, 5))]
+        columna2.append(lista)
+
+    layout = [[sg.Column(columna1), sg.Column(columna2)],
+              [sg.Button(button_text='ACEPTAR', key=('ACEPTAR'), button_color=('white', '#E1BF56')),
+               sg.Button(button_text='CANCELAR', key=('CANCELAR'), button_color=('white', '#E1BF56'))
+               ]
+              ]
+
+    window = sg.Window('Scrabble', background_color='#2C2C2C').Layout(layout)
+    diccionario = {}
+
+    while True:
+        event, values = window.Read(timeout=0)
+
+        if event == 'ACEPTAR':
+            abc=ABC+ABC2
+            for letra in abc:
+
+                try:
+                    valor1 = int(values[letra, 1])
+                except ValueError:
+                    valor1 = 0
+
+                try:
+                    valor2 = int(values[letra, 2])
+                except ValueError:
+                    valor2 = 0
+
+                diccionario[letra] = (valor1, valor2)
+            window.close()
+            return diccionario
+        elif event == "CANCELAR":
+            window.close()
+            return False
+
+
+

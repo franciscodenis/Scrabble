@@ -8,12 +8,10 @@ from pattern import *
 from pattern.es import *
 
 def random_letter(lista_letras ):
-    lista_nueva= lista_letras.copy() # quiero asegurarme de no agarrar una letra que no exista en la bolsa pero todavia no la quiero borrar del todo
-    while True:
-        letra= chr(randint(65, 90))
-        if letra in (lista_nueva):
-            lista_nueva.remove(letra) #no hacer el remove definitivo aca, hacer en el metodo validar
-            return letra
+    letra= chr(randint(65, 90))
+    if letra in (lista_letras):
+        lista_letras.remove(letra)
+        return letra
 
 class Atril():
 
@@ -81,25 +79,44 @@ class Atril():
 #_____________________________________________Comienzo de  otros metodos ____________
 
     def agregar_letras(self, bolsa):
-        '''agrego letras al atril'''
-        for i in self.get_espacio_fichas():
-            if not i.get_tiene_letra():
-                i.set_letra(random_letter(bolsa))
-                i.set_tiene_letra(True)
 
+        '''agrego letras al atril'''
+        import PySimpleGUI as sg
+        if(len(bolsa)>7):
+            for i in self.get_espacio_fichas():
+                if not i.get_tiene_letra():
+                    letra= bolsa.pop(randint(0, len(bolsa)-1))
+                    i.set_letra(letra)
+                    i.set_tiene_letra(True)
+            return  True
+        else:
+            self.set_terminar_juego(True)
+            sg.popup('upss no hay mas letras ')
+            return False
 
 
     def cambiar_letras(self, lista_letras,window,tablero,checkbox,bolsa,juego):
         ''' cambio las letras del atril por nuevas letras'''
         #self.devolver_fallo(window,tablero) #devuelve las letras que estan en uso  al atril
-        for i in range(7):
-            if self.get_espacio_fichas()[i].get_tiene_letra() and checkbox[('Checkbox', i)]:
-                bolsa.append(self.get_espacio_fichas()[i].get_letra())
-                self.get_espacio_fichas()[i].set_letra(bolsa.pop(randint(0, len(bolsa)-1)))
-        self.decrement_cambios_atril() #solo hay 3 cambios de atril, decremento en 1
-        self.refrescar_atril(window)
+        if len(bolsa)>7:
 
-        juego.cambiar_turno()
+            for i in range(7):
+                if self.get_espacio_fichas()[i].get_tiene_letra() and checkbox[('Checkbox', i)]:
+                    bolsa.append(self.get_espacio_fichas()[i].get_letra())
+                    letra = bolsa.pop(randint(0, len(bolsa) - 1))
+                    self.get_espacio_fichas()[i].set_letra(letra)
+
+            self.decrement_cambios_atril() #solo hay 3 cambios de atril, decremento en 1
+            self.refrescar_atril(window)
+
+            juego.cambiar_turno()
+        else:
+            self.set_terminar_juego(True)
+            sg.popup('no hay mas letras')
+            return False
+
+
+
 
 
     def refrescar_atril(self, window, atril ='Atril_jugador'):
@@ -111,17 +128,6 @@ class Atril():
         else:
             for i in range(len(letras)):
                 window.Element((atril,i)).Update(text=letras[i].get_letra())
-
-
-    def llenar_atril(self, lista_letras):
-        ''' lleno los espacios vacios del atril '''
-        for i in self.get_espacio_fichas():
-            if i.get_letra()== "" or i.get_letra()==' ': # tengo que llenar el atril
-                try:
-                    i.set_letra(random_letter(lista_letras))
-                except: #poner la excepcion correcta, no hacerlo general. cual seria?
-                    self.set_terminar_juego(True) # me quede sin fichas, termino el juego
-                    break
 
     def devolver_fallo(self, window, tablero): #no hace falta mandar la lista de coordenadas si te mandas el tablero -agus
         '''Este metodo devuelve las letras al atril'''
@@ -314,8 +320,17 @@ class Atril_PC(Atril):
 
     def cambiar_todas_letras(self,window,bolsa):
         '''la PC cambia todas las letras del atril'''
-        for i in range(7):
-            bolsa.append(self.get_espacio_fichas()[i].get_letra())
-            self.get_espacio_fichas()[i].set_letra(bolsa.pop(randint(0, len(bolsa)-1)))
-        self.decrement_cambios_atril() #solo hay 3 cambios de atril, decremento en 1
+        if len(bolsa)<7:
+            self.set_terminar_juego(True)
+            sg.popup('La pc se quedo sin letras ')
+            return False
+
+        else:
+            for i in range(7):
+                bolsa.append(self.get_espacio_fichas()[i].get_letra())
+                if(len(bolsa)>1):
+                    self.get_espacio_fichas()[i].set_letra(bolsa.pop(randint(0, len(bolsa)-1)))
+                else:
+                    self.set_terminar_juego(True)
+            self.decrement_cambios_atril() #solo hay 3 cambios de atril, decremento en 1
         self.refrescar_atril(window, 'Atril_PC')

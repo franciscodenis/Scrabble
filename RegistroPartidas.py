@@ -79,9 +79,13 @@ def ventana_Ganador(puntaje_jugador, puntaje_maquina, atril, atril_pc, puntaje_l
     puntaje_letras_jugador = []
     puntaje_letras_pc = []
     for i in range(7):
-            puntaje_letras_jugador.append(puntaje_letras[atril.get_espacio_fichas()[i].get_letra()])
-            puntaje_letras_pc.append(puntaje_letras[atril_pc.get_espacio_fichas()[i].get_letra()])
+        try:
 
+            puntaje_letras_jugador.append(puntaje_letras[atril.get_espacio_fichas()[i].get_letra()])
+
+            puntaje_letras_pc.append(puntaje_letras[atril_pc.get_espacio_fichas()[i].get_letra()])
+        except KeyError:
+            continue
     puntaje_final_jugador = puntaje_jugador - sum(puntaje_letras_jugador)
     puntaje_final_Pc = puntaje_maquina - sum(puntaje_letras_pc)
     guardar_score(nivel, nombre, puntaje_final_jugador)

@@ -5,15 +5,14 @@ import Atril
 import Fichas
 import time
 import Jugar
-import ConfigVentana as conf
+import ScrabbleAR
+
 import RegistroPartidas
-from pickle import load, loads, dump, dumps
+from pickle import load
 
 
 
 def main(nivel_palabras, config_fichas, nivel = 'Facil', tiempo_ronda = 30, tiempo_partida = 320,cargarJuego=False):
-
-
 
     if(cargarJuego):
         with open("partida_guardada", "rb") as f: #antes de entrar se fija que exista
@@ -24,7 +23,6 @@ def main(nivel_palabras, config_fichas, nivel = 'Facil', tiempo_ronda = 30, tiem
 
 
         jugar = diccionario2['juego']
-        fichas_jugador = jugar.get_bolsa_jugador()
         letras_de_atril = 7
         tiempo_ini = jugar.get_hora()
         puntaje_total= jugar.get_puntaje_jugador()
@@ -49,15 +47,10 @@ def main(nivel_palabras, config_fichas, nivel = 'Facil', tiempo_ronda = 30, tiem
         atril = Atril.Atril(letras_de_atril)
         atril_pc = Atril.Atril_PC(letras_de_atril)
         palabras_permitidas = nivel_palabras
-        fichas_jugador= Fichas.crear_bolsa_de_fichas(config_fichas)
-        puntajes_letras = Fichas.crear_diccionario_de_puntos(config_fichas)
         diccionario = Fichas.crear_diccionario()
 
-        atril.agregar_letras(fichas_jugador)
-        atril_pc.agregar_letras(fichas_jugador)
 
         jugar = Jugar.Jugar()
-        fichas_jugador = Fichas.crear_bolsa_de_fichas(config_fichas)
         letras_de_atril = 7
 
         print(jugar.get_turno())
@@ -68,11 +61,21 @@ def main(nivel_palabras, config_fichas, nivel = 'Facil', tiempo_ronda = 30, tiem
         tiempo_ini=0
         jugar.mostrar_dificultad(nivel, nivel_palabras)
 
+    fichas_jugador = Fichas.crear_bolsa_de_fichas(config_fichas)
+    fichas_compu = Fichas.crear_bolsa_de_fichas(config_fichas)
 
     start_time = int(round(time.time() * 100))
     tiempo_computadora = 0  # inicializo el tiempo actual en 0
     puntajes_letras = Fichas.crear_diccionario_de_puntos(config_fichas)
     diccionario = Fichas.crear_diccionario()
+    continuar= atril.agregar_letras(fichas_jugador) #si no hay suficientes fichas  devuelve false
+
+    if(continuar):
+
+        atril_pc.agregar_letras(fichas_compu)
+    else:
+        sg.popup("upsss, no hay suficientes letras, prueba agregar mas")
+        ScrabbleAR.main()
 
 
 
@@ -108,15 +111,11 @@ def main(nivel_palabras, config_fichas, nivel = 'Facil', tiempo_ronda = 30, tiem
     layout.append(botones)
     layout.append([sg.Text('', size=(8, 1), font=('Helvetica', 20), justification='center', key='timer_jugador', background_color='#2C2C2C', text_color=('#E1BF56'))]) #Temporizador
 
-
     window = sg.Window('Scrabble', background_color='#2C2C2C').Layout(layout)
 
-    if (cargarJuego):
-        tablero.cargar_tablero(window)
-
-    while True:
+    while continuar:
         event, values = window.Read(timeout=0)
-        if int(round(time.time() * 100))-tiempo_comienzo_juego> tiempo_fin_juego or event== 'fin_juego' or atril.get_terminar_juego():  # el juego terminó
+        if int(round(time.time() * 100))-tiempo_comienzo_juego> tiempo_fin_juego or event== 'fin_juego' or atril.get_terminar_juego() or atril_pc.get_terminar_juego():  # el juego terminó
             atril.devolver_fallo(window,tablero)
             window.Close()
             #guardo el puntaje y datos del usuario
@@ -127,7 +126,7 @@ def main(nivel_palabras, config_fichas, nivel = 'Facil', tiempo_ronda = 30, tiem
 
             break
         elif event== 'Posponer':
-            jugar.cargar_datos(puntaje_total,atril_pc.get_puntaje(),fichas_jugador, fichas_jugador, lista_de_palabras,nivel_palabras,tiempo_transcurrido,nombre)
+            jugar.cargar_datos(puntaje_total,atril_pc.get_puntaje(),fichas_jugador, fichas_compu, lista_de_palabras,nivel_palabras,tiempo_transcurrido,nombre)
             jugar.guardar_partida(tablero,atril,atril_pc,jugar)
             sg.Popup("SE GUARDO LA PARTIDA", background_color='#2C2C2C', text_color='#E1BF56', button_color=('white', '#E1BF56'), font=('Helvetica', 12))
             window.Close()
@@ -142,7 +141,7 @@ def main(nivel_palabras, config_fichas, nivel = 'Facil', tiempo_ronda = 30, tiem
                 window.Element('tempo_compu').Update('{:02d}:{:02d}.{:02d}'.format((tiempo_computadora // 100) // 60,(tiempo_computadora // 100) % 60, tiempo_computadora % 100))
 
                 #Juega la computadora
-                palabra_armada = atril_pc.jugar_turno(tablero, diccionario, window, fichas_jugador, puntajes_letras, palabras_permitidas)
+                palabra_armada = atril_pc.jugar_turno(tablero, diccionario, window, fichas_compu, puntajes_letras, palabras_permitidas)
                 if(palabra_armada != ' ' and palabra_armada != ''):
                     lista_de_palabras.append(palabra_armada)
                     window.Element('lista').Update(values=lista_de_palabras)
