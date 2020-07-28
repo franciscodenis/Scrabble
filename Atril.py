@@ -81,7 +81,6 @@ class Atril():
     def agregar_letras(self, bolsa):
 
         '''agrego letras al atril'''
-        import PySimpleGUI as sg
         if(len(bolsa)>7):
             for i in self.get_espacio_fichas():
                 if not i.get_tiene_letra():
@@ -91,7 +90,7 @@ class Atril():
             return  True
         else:
             self.set_terminar_juego(True)
-            sg.popup('upss no hay mas letras ')
+            sg.Popup('upss no hay mas letras ', background_color='#2C2C2C', text_color='#E1BF56', button_color=('white', '#E1BF56'), font=('Helvetica', 12))
             return False
 
 
@@ -112,7 +111,7 @@ class Atril():
             juego.cambiar_turno()
         else:
             self.set_terminar_juego(True)
-            sg.popup('no hay mas letras')
+            sg.popup('no hay mas letras', background_color='#2C2C2C', text_color='#E1BF56', button_color=('white', '#E1BF56'), font=('Helvetica', 12))
             return False
 
 
