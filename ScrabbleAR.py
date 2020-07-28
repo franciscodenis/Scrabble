@@ -80,6 +80,7 @@ def main():
             window_principal.Close()
             if (diccionario!= False):
                 ProgramaPrincipal.main(configuracion_partida[2], diccionario, configuracion_partida[0], configuracion_partida[1], configuracion_partida[3])
+                break
             else:
                 ProgramaPrincipal.main(configuracion_partida[2], configuracion_partida[4], configuracion_partida[0],
                                        configuracion_partida[1], configuracion_partida[3])
@@ -91,9 +92,12 @@ def main():
                 window_principal.Close()
                 ProgramaPrincipal.main(configuracion_partida[2], configuracion_partida[4],
                                        configuracion_partida[0], configuracion_partida[1], configuracion_partida[3],cargarJuego=True)
+                window_principal.Close()
+                break
             except(FileExistsError,FileNotFoundError):
                 sg.popup('no hay ninguna partida guardada :(')
                 main()
+                break
 
 
 if __name__ == '__main__':
