@@ -1,4 +1,5 @@
 import RegistroPartidas
+import PySimpleGUI as sg
 
 def click_dificultad(window, evento, botones_dificultad, configuracion_partida, fichas_facil, fichas_media, fichas_maxima):
     ''' selecciona un boton de dificultad '''
@@ -50,20 +51,19 @@ def click_mejores_puestos(window, evento, botones_mejores_puestos):
 def ventanaConfig():
     ABC = 'ABCDEFGHIJKLMN'
     columna1 = []
-    import PySimpleGUI as sg
     for letra in ABC:
-        lista = [sg.Text(letra + ':'), sg.InputText('Cantidad', key=(letra, 1), size=(5, 5)),
-                 sg.InputText('Valor', key=(letra, 2), size=(5, 5))]
+        lista = [sg.Text(letra + ':', background_color='#2C2C2C', text_color=('#E1BF56'), font=('Helvetica', 12)), sg.InputText('Cantidad', key=(letra, 1), size=(5, 5), background_color='#2C2C2C', text_color=('#E1BF56'), font=('Helvetica', 12)),
+                 sg.InputText('Valor', key=(letra, 2), size=(5, 5), background_color='#2C2C2C', text_color=('#E1BF56'), font=('Helvetica', 12))]
         columna1.append(lista)
 
     columna2 = []
     ABC2 = 'OPQRSTUVWXYZ'
     for letra in ABC2:
-        lista = [sg.Text(letra + ':'), sg.InputText('Cantidad', key=(letra, 1), size=(5, 5)),
-                 sg.InputText('Valor', key=(letra, 2), size=(5, 5))]
+        lista = [sg.Text(letra + ':', background_color='#2C2C2C', text_color=('#E1BF56'), font=('Helvetica', 12)), sg.InputText('Cantidad', key=(letra, 1), size=(5, 5), background_color='#2C2C2C', text_color=('#E1BF56'), font=('Helvetica', 12)),
+                 sg.InputText('Valor', key=(letra, 2), size=(5, 5), background_color='#2C2C2C', text_color=('#E1BF56'), font=('Helvetica', 12))]
         columna2.append(lista)
 
-    layout = [[sg.Column(columna1), sg.Column(columna2)],
+    layout = [[sg.Column(columna1, background_color='#2C2C2C'), sg.Column(columna2, background_color='#2C2C2C')],
               [sg.Button(button_text='ACEPTAR', key=('ACEPTAR'), button_color=('white', '#E1BF56')),
                sg.Button(button_text='CANCELAR', key=('CANCELAR'), button_color=('white', '#E1BF56'))
                ]
