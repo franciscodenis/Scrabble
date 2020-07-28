@@ -74,7 +74,7 @@ def main(nivel_palabras, config_fichas, nivel = 'Facil', tiempo_ronda = 30, tiem
 
         atril_pc.agregar_letras(fichas_compu)
     else:
-        sg.popup("upsss, no hay suficientes letras, prueba agregar mas")
+        sg.popup("upsss, no hay suficientes letras, prueba agregar mas", background_color='#2C2C2C', text_color='#E1BF56', button_color=('white', '#E1BF56'), font=('Helvetica', 12))
         ScrabbleAR.main()
 
 
