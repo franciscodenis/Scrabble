@@ -112,6 +112,9 @@ def main(nivel_palabras, config_fichas, nivel = 'Facil', tiempo_ronda = 30, tiem
     layout.append([sg.Text('', size=(8, 1), font=('Helvetica', 20), justification='center', key='timer_jugador', background_color='#2C2C2C', text_color=('#E1BF56'))]) #Temporizador
 
     window = sg.Window('Scrabble', background_color='#2C2C2C').Layout(layout)
+    
+    if (cargarJuego):
+        tablero.cargar_tablero(window)
 
     while continuar:
         event, values = window.Read(timeout=0)
@@ -120,7 +123,7 @@ def main(nivel_palabras, config_fichas, nivel = 'Facil', tiempo_ronda = 30, tiem
             window.Close()
             #guardo el puntaje y datos del usuario
             if(atril.get_terminar_juego()):
-                sg.popup('se terminaron los cambios de atril, se termina el juego ')
+                sg.popup('se terminaron los cambios de atril, se termina el juego ', background_color='#2C2C2C', text_color='#E1BF56', button_color=('white', '#E1BF56'), font=('Helvetica', 12))
             #muestro una ventana con el ganador, opcion retornar al menu
             RegistroPartidas.muestra_Ganador(puntaje_total, atril_pc.get_puntaje(), atril, atril_pc, puntajes_letras, nivel, nombre)
 
