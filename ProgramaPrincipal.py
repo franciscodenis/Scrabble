@@ -106,7 +106,7 @@ def main(nivel_palabras, config_fichas, nivel = 'Facil', tiempo_ronda = 30, tiem
     layout.append([sg.Column(column1, background_color='#2C2C2C'), sg.Column(column2, background_color='#2C2C2C')])
     layout.append([sg.Text('Seleccione una letra de abajo', auto_size_text=True, font='Helvetica', background_color='#2C2C2C', text_color=('#E1BF56'))])
     layout.append([sg.Button(key=('Atril_jugador', i) , button_text= atril.get_espacio_fichas()[i].get_letra(), **letter_atril) for i in range(letras_de_atril)])
-    botones = [sg.Button(key='vali', button_text='Validar', button_color=('white', '#E1BF56'), font='Helvetica'),sg.Button(button_text='Cambiar letras',key ="cambiar_letras", button_color=('white', '#E1BF56'), font='Helvetica'), sg.Text('Puntaje total: ', font='Helvetica', background_color='#2C2C2C', text_color=('#E1BF56')), sg.Text(puntaje_total, key='punt', font='Helvetica', background_color='#2C2C2C', text_color=('#E1BF56'),size=(20,1))]
+    botones = [sg.Button(key='vali', button_text='Validar', button_color=('white', '#E1BF56'), font='Helvetica'),sg.Button(button_text='Cambiar letras',key ="cambiar_letras", button_color=('white', '#E1BF56'), font='Helvetica'), sg.Button(button_text='devolver', key='devolver_al_atril', button_color=('white', '#E1BF56'), font='Helvetica'), sg.Text('Puntaje total: ', font='Helvetica', background_color='#2C2C2C', text_color=('#E1BF56')), sg.Text(puntaje_total, key='punt', font='Helvetica', background_color='#2C2C2C', text_color=('#E1BF56'),size=(20,1))]
     layout.append([sg.Checkbox("", key=('Checkbox', i), size=(2, 2), background_color='#2C2C2C', text_color='#E1BF56')for i in range(letras_de_atril)])
     layout.append(botones)
     layout.append([sg.Text('', size=(8, 1), font=('Helvetica', 20), justification='center', key='timer_jugador', background_color='#2C2C2C', text_color=('#E1BF56'))]) #Temporizador
@@ -175,7 +175,9 @@ def main(nivel_palabras, config_fichas, nivel = 'Facil', tiempo_ronda = 30, tiem
                     continue    #no sacar el continue, lo que hace es volver al while sin pasar por lo que esta abajo
 
                 # no se termino el tiempo del jugador
-
+                
+                if event == 'devolver_al_atril':
+                    atril.devolver_fallo(window, tablero)
 
                 if event in atril.listado_botones():
                     atril.click(tablero, event)
