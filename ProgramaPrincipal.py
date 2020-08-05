@@ -90,7 +90,7 @@ def main(nivel_palabras, config_fichas, nivel = 'Facil', tiempo_ronda = 30, tiem
              [sg.Text('Ultimas Palabras ingresadas', background_color='#2C2C2C', text_color=('#E1BF56'), font=('Helvetica', 12))],
              [sg.Listbox(values=(lista_de_palabras), size=(30, 6),key='lista', background_color='#545454', text_color=('#E1BF56'))],
              [sg.Button(button_text='Posponer partida', key=('Posponer'), button_color=('white', '#E1BF56'))],
-             ]
+             [sg.Text(key='quien_juega',background_color='#2C2C2C', text_color=('#E1BF56'),size=(21,1))]]
     # ------ Menu Definition ------ #
     menu_def = [['Menu', ['Ver modo']],
                  ]
@@ -137,6 +137,7 @@ def main(nivel_palabras, config_fichas, nivel = 'Facil', tiempo_ronda = 30, tiem
             # turno de la computadora
 
             if jugar.get_turno()=='computadora':
+                window.Element('quien_juega').Update("COMPUTADORA JUGANDO")
                 start_time=int(round(time.time()*100)) # momento en el que empiezo a contar
                 window.Read(timeout=0)
                 current_time= 0 #tiempo transcurrido
@@ -166,6 +167,7 @@ def main(nivel_palabras, config_fichas, nivel = 'Facil', tiempo_ronda = 30, tiem
 
             #turno del jugador
             elif jugar.get_turno()=='jugador':
+                window.Element('quien_juega').Update(" TU TURNO ")
                 #se termino el tiempo del jugador
                 if (current_time> tiempo_max):
                     sg.Popup('Termino el tiempo', background_color='#2C2C2C', text_color='#E1BF56', button_color=('white', '#E1BF56'), font=('Helvetica', 12))
