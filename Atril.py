@@ -26,7 +26,7 @@ class Atril():
         self.set_espacio_fichas( [cas.Casilla() for x in range(columnas)])
         for i in range(columnas):
             self.get_espacio_fichas()[i] =(cas.Casilla(tipo_atril, i))
-        self.set_cambios_atril(9) # Cantidad de cambios está dada por la cantidad de fichas para cambiar en la bolsa
+        self.set_cambios_atril(3)
         self.set_esta_vacio(True)
 
 
