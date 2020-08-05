@@ -63,7 +63,11 @@ def ventanaConfig():
                  sg.InputText('Valor', key=(letra, 2), size=(5, 5), background_color='#2C2C2C', text_color=('#E1BF56'), font=('Helvetica', 12))]
         columna2.append(lista)
 
-    layout = [[sg.Column(columna1, background_color='#2C2C2C'), sg.Column(columna2, background_color='#2C2C2C')],
+
+    layout = [[sg.Text('INGRESE LA CANTIDAD DE FICHAS Y SU VALOR CORRESPONDIENTE.')],[sg.Text(
+                       'El minimo por ficha es 1, en caso de colocar un numero menor, este se tomara como 1')
+                       ],
+                [sg.Column(columna1, background_color='#2C2C2C'), sg.Column(columna2, background_color='#2C2C2C')],
               [sg.Button(button_text='ACEPTAR', key=('ACEPTAR'), button_color=('white', '#E1BF56')),
                sg.Button(button_text='CANCELAR', key=('CANCELAR'), button_color=('white', '#E1BF56'))
                ]
@@ -81,13 +85,16 @@ def ventanaConfig():
 
                 try:
                     valor1 = int(values[letra, 1])
+                    if (valor1==0):
+                        valor1=1    #porque dice que no puede ser 0 el valor minimo de la cantidad de fichas
                 except ValueError:
-                    valor1 = 0
+                    valor1 = 1
 
                 try:
                     valor2 = int(values[letra, 2])
+
                 except ValueError:
-                    valor2 = 0
+                    valor2 = 1
 
                 diccionario[letra] = (valor1, valor2)
             window.close()
