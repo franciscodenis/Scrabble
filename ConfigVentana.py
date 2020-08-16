@@ -5,6 +5,8 @@ import os
 
 
 def abrirArch (nombreArch, puntos):
+
+    '''abre o crea y llena el archivo de puntajes'''
     datos = []
     try:
         archivo = open(nombreArch, "r")
@@ -23,6 +25,7 @@ def abrirArch (nombreArch, puntos):
         archivo.close()
 
 def layoutPrin():
+    '''layout del menu principal'''
     layoutPrincipal = [
             [sg.Button('Jugar', key='jugar', pad=((130, 0), 35), size=(25,1))],
             [sg.Button('Configurar', key='config', pad=((130, 0), 35), size=(25,1))],
@@ -32,6 +35,8 @@ def layoutPrin():
     return layoutPrincipal
 
 def layoutConfig():
+    '''layout del menu de configuracion'''
+
     layoutconfig = [
                 [sg.Text('Seleccione el nivel de dificultad:', font='Helvetica', background_color=('#A72D2D'))],
                 [sg.InputCombo(('Facil', 'Normal', 'Dificil'), size=(25,1), key='nivel')],
@@ -42,6 +47,8 @@ def layoutConfig():
     return layoutconfig
 
 def layoutNoConfig():
+    '''No configurado'''
+    # no lo usamos, puede servir en otro momento
     layoutNoConfig = [
                     [sg.Text('Se ejecutara con la configuracion predeterminada', font='Helvetiva', background_color=('#A72D2D'))],
                     [sg.Ok(), sg.Cancel()]
@@ -49,6 +56,8 @@ def layoutNoConfig():
     return layoutNoConfig
 
 def layoutUsuario():
+
+    '''layout ingreso de usuario '''
     layoutUs = [
                [sg.Text('Ingrese un nombre de usuario: ', background_color=('#A72D2D')), sg.InputText(key='usuario')],
                [sg.Button('Aceptar', pad=(100,10), key='ok')]
@@ -56,6 +65,7 @@ def layoutUsuario():
     return layoutUs
 
 def layoutRanking(datos):
+    '''Layout ranking  '''
         layoutRank = []
         for i in range(len(datos)):
             try:

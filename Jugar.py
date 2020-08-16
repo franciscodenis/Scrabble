@@ -73,6 +73,7 @@ class Jugar :
         return turno
 
     def mostrar_dificultad(self, dificultad, tipo ):
+        ''' muestra el tipo de palabras  para jugar'''
 
         if dificultad=='dificultad_maxima':
             diccionario= dict(NN='sustantivos', JJ='adjetivos', VB='verbos')
@@ -109,11 +110,14 @@ class Jugar :
             dump(diccionario, f)
 
     def devolver_diccionario(self):
+        ''' devuelve un diccionario con la partida guardada'''
         with open("partida_guardada", "rb") as f:
             diccionario=load(f)
         return diccionario
 
     def cargar_datos(self,puntaje_jugador, puntaje_compu,bolsa_jugador, bolsa_compu, lista_palabras, nivel,hora,nombre):
+        '''cargo datos en la clase'''
+
         self.set_bolsa_compu(bolsa_compu)
         self.set_bolsa_jugador(bolsa_jugador)
         self.set_puntaje_computadora(puntaje_compu)

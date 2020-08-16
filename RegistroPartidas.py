@@ -7,6 +7,7 @@ import ScrabbleAR
 nombre_archivo_rankings = 'ranking_nuevo'
 
 def guardar_score (dificultad, nombre, puntos):
+
     '''guardo score en archivo ingresado como parametro'''
     dia = date.today().day
     mes = date.today().month

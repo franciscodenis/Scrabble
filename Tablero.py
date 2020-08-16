@@ -1,5 +1,5 @@
 import Casilla
-import Fichas
+
 import PySimpleGUI as sg
 from pattern.es import *
 from pattern.web import Wiktionary

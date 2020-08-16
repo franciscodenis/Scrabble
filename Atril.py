@@ -1,10 +1,10 @@
 import Casilla as cas
 import random
 from random import randint
-import Fichas
+
 import PySimpleGUI as sg
 import itertools
-from pattern import *
+
 from pattern.es import *
 
 def random_letter(lista_letras ):
@@ -13,10 +13,10 @@ def random_letter(lista_letras ):
         lista_letras.remove(letra)
         return letra
 
+
+
+
 class Atril():
-
-
-
 
     def __init__(self, columnas, tipo_atril = 'Atril_jugador'):
         self.__casilla_seleccionada  = None
@@ -227,6 +227,7 @@ class Atril_PC(Atril):
         return False
 
     def orden_coordenadas_atril(self, palabra_armada):
+
         lista_coordenadas_de_palabra_en_atril = []
         for i in palabra_armada:
             for j in range(len(self.get_espacio_fichas())):
@@ -278,6 +279,7 @@ class Atril_PC(Atril):
         return total
 
     def mezclar_letras(self):
+        '''Mezcla las letras del atril '''
         lista_letras = []
         for j in range(len(self.get_espacio_fichas())):
             lista_letras.append(self.get_espacio_fichas()[j].get_letra())

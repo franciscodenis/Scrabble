@@ -3,6 +3,8 @@
 
 
 def crear_bolsa_de_fichas (fichas):
+
+    '''creo una lista con las letras disponibles '''
     bolsa_de_fichas = []
     try:
         for key, value in fichas.items():
@@ -17,6 +19,7 @@ def crear_bolsa_de_fichas (fichas):
     return bolsa_de_fichas
 
 def crear_diccionario_de_puntos(fichas):
+
     diccionario_de_puntos = dict()
     try:
         for key, value in fichas.items():
